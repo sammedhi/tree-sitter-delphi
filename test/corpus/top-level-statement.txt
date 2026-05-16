@@ -1,0 +1,93 @@
+================================================================================
+Program
+================================================================================
+program Foo;
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (program_block
+      (kBegin)
+      (kEnd))))
+
+
+================================================================================
+Library
+================================================================================
+library Foo;
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (library_file
+    (kLibrary)
+    name: (identifier)
+    body: (program_block
+      (kBegin)
+      (kEnd))))
+
+================================================================================
+Unit - minimal (no initialization or finalization)
+================================================================================
+unit Foo;
+interface
+implementation
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (unit_file
+    (kUnit)
+    name: (identifier)
+    interface: (interface_section
+      (kInterface))
+    implementation: (implementation_section
+      (kImplementation))
+    (kEnd)))
+
+================================================================================
+Unit - with initialization
+================================================================================
+unit Foo;
+interface
+implementation
+initialization
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (unit_file
+    (kUnit)
+    name: (identifier)
+    interface: (interface_section
+      (kInterface))
+    implementation: (implementation_section
+      (kImplementation))
+    initialization: (initialization_section
+      (kInitialization))
+    (kEnd)))
+
+================================================================================
+Unit - with initialization and finalization
+================================================================================
+unit Foo;
+interface
+implementation
+initialization
+finalization
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (unit_file
+    (kUnit)
+    name: (identifier)
+    interface: (interface_section
+      (kInterface))
+    implementation: (implementation_section
+      (kImplementation))
+    initialization: (initialization_section
+      (kInitialization))
+    finalization: (finalization_section
+      (kFinalization))
+    (kEnd)))
