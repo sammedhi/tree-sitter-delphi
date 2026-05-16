@@ -9,7 +9,7 @@ end.
   (program_file
     (kProgram)
     name: (identifier)
-    body: (program_block
+    body: (block_statement
       (kBegin)
       (kEnd))))
 
@@ -25,7 +25,7 @@ end.
   (library_file
     (kLibrary)
     name: (identifier)
-    body: (program_block
+    body: (block_statement
       (kBegin)
       (kEnd))))
 

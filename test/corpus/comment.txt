@@ -10,7 +10,7 @@ end.
     (kProgram)
     name: (identifier)
     (line_comment)
-    body: (program_block
+    body: (block_statement
       (kBegin)
       (kEnd))))
 
@@ -27,7 +27,7 @@ end.
   (program_file
     (kProgram)
     name: (identifier)
-    body: (program_block
+    body: (block_statement
       (kBegin)
       (kEnd))))
 
@@ -44,7 +44,7 @@ end.
     (kProgram)
     name: (identifier)
     (brace_comment)
-    body: (program_block
+    body: (block_statement
       (kBegin)
       (kEnd))))
 
@@ -61,7 +61,7 @@ end.
     (kProgram)
     name: (identifier)
     (block_comment)
-    body: (program_block
+    body: (block_statement
       (kBegin)
       (kEnd))))
 
@@ -107,7 +107,7 @@ end.
     (kProgram)
     name: (identifier)
     (brace_comment)
-    body: (program_block
+    body: (block_statement
       (kBegin)
       (kEnd))))
 
@@ -127,6 +127,6 @@ end.
     (kProgram)
     name: (identifier)
     (block_comment)
-    body: (program_block
+    body: (block_statement
       (kBegin)
       (kEnd))))

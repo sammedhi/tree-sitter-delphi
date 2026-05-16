@@ -22,6 +22,7 @@ export default grammar({
 
   supertypes: $ => [
     $.comment,
+    $.statement,
   ],
 
   // Case-insensitive keywords are handled via extras/externals later
@@ -38,7 +39,7 @@ export default grammar({
       $.kProgram,
       field('name', $.identifier),
       ';',
-      field('body', $.program_block),
+      field('body', $.block_statement),
       '.',
     ),
 
@@ -46,7 +47,7 @@ export default grammar({
       $.kLibrary,
       field('name', $.identifier),
       ';',
-      field('body', $.program_block),
+      field('body', $.block_statement),
       '.',
     ),
 
@@ -82,9 +83,14 @@ export default grammar({
       $.kFinalization,
     ),
 
-    // Stub — will hold statements later
-    program_block: $ => seq(
+    statement: $ => choice(
+      $.block_statement
+    ),
+
+    block_statement: $ => seq(
       $.kBegin,
+      repeat(seq($.statement, ';')),
+      optional($.statement),
       $.kEnd,
     ),
 

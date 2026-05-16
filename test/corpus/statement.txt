@@ -1,0 +1,59 @@
+================================================================================
+Empty block statement in program
+================================================================================
+program Foo;
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+        (kBegin)
+        (kEnd))))
+
+================================================================================
+Nested block statement
+================================================================================
+program Foo;
+begin
+  begin
+  end;
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+        (kBegin)
+        (block_statement
+            (kBegin)
+            (kEnd))
+        (kEnd))))
+
+================================================================================
+Multiple nested block statements
+================================================================================
+program Foo;
+begin
+  begin
+  end;
+  begin
+  end;
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+        (kBegin)
+        (block_statement
+            (kBegin)
+            (kEnd))
+        (block_statement
+            (kBegin)
+            (kEnd))
+        (kEnd))))
