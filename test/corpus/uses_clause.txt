@@ -1,0 +1,81 @@
+================================================================================
+Uses clause in program - mixed simple and qualified units
+================================================================================
+program Foo;
+uses
+  SysUtils,
+  System.Generics.Collections,
+  Classes;
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    (uses_clause
+      (kUses)
+      (unit_reference
+        name: (identifier))
+      (unit_reference
+        name: (qualified_name
+          qualifier: (qualified_name
+            qualifier: (identifier)
+            name: (identifier))
+          name: (identifier)))
+      (unit_reference
+        name: (identifier)))
+    body: (block_statement
+      (kBegin)
+      (kEnd))))
+
+================================================================================
+Uses clause in library
+================================================================================
+library Foo;
+uses
+  SysUtils;
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (library_file
+    (kLibrary)
+    name: (identifier)
+    (uses_clause
+      (kUses)
+      (unit_reference
+        name: (identifier)))
+    body: (block_statement
+      (kBegin)
+      (kEnd))))
+
+================================================================================
+Uses clause in both interface and implementation
+================================================================================
+unit Foo;
+interface
+uses
+  SysUtils;
+implementation
+uses
+  Classes;
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (unit_file
+    (kUnit)
+    name: (identifier)
+    interface: (interface_section
+      (kInterface)
+      (uses_clause
+        (kUses)
+        (unit_reference
+          name: (identifier))))
+    implementation: (implementation_section
+      (kImplementation)
+      (uses_clause
+        (kUses)
+        (unit_reference
+          name: (identifier))))
+    (kEnd)))

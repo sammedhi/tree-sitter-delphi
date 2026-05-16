@@ -39,6 +39,7 @@ export default grammar({
       $.kProgram,
       field('name', $.identifier),
       ';',
+      optional($.uses_clause),
       field('body', $.block_statement),
       '.',
     ),
@@ -47,6 +48,7 @@ export default grammar({
       $.kLibrary,
       field('name', $.identifier),
       ';',
+      optional($.uses_clause),
       field('body', $.block_statement),
       '.',
     ),
@@ -66,11 +68,13 @@ export default grammar({
     // Stub — will hold declarations later
     interface_section: $ => seq(
       $.kInterface,
+      optional($.uses_clause),
     ),
 
     // Stub — will hold declarations later
     implementation_section: $ => seq(
       $.kImplementation,
+      optional($.uses_clause),
     ),
 
     // Stub — will hold statements later
@@ -92,6 +96,28 @@ export default grammar({
       repeat(seq($.statement, ';')),
       optional($.statement),
       $.kEnd,
+    ),
+
+
+    // uses clause
+    uses_clause: $ => seq(
+      $.kUses,
+      sep1($.unit_reference, ','),
+      ';',
+    ),
+
+    unit_reference: $ => field('name', $._name),
+
+    // qualified name, following C# grammar structure
+    _name: $ => choice(
+      $.qualified_name,
+      $.identifier,
+    ),
+
+    qualified_name: $ => seq(
+      field('qualifier', $._name),
+      '.',
+      field('name', $.identifier),
     ),
 
     comment: $ => choice(
@@ -118,5 +144,44 @@ export default grammar({
     kImplementation: _ => /implementation/i,
     kInitialization: _ => /initialization/i,
     kFinalization: _ => /finalization/i,
+    kUses: _ => /uses/i,
   },
 });
+
+/**
+ * Creates a rule to optionally match one or more of the rules separated by `separator`
+ *
+ * @param {RuleOrLiteral} rule
+ *
+ * @param {RuleOrLiteral} separator
+ *
+ * @returns {ChoiceRule}
+ */
+function sep(rule, separator) {
+  return optional(sep1(rule, separator));
+}
+
+
+/**
+ * Creates a rule to match one or more of the rules separated by `separator`
+ *
+ * @param {RuleOrLiteral} rule
+ *
+ * @param {RuleOrLiteral} separator
+ *
+ * @returns {SeqRule}
+ */
+function sep1(rule, separator) {
+  return seq(rule, repeat(seq(separator, rule)));
+}
+
+/**
+ * Creates a rule to match one or more of the rules separated by a comma
+ *
+ * @param {Rule} rule
+ *
+ * @returns {SeqRule}
+ */
+function commaSep1(rule) {
+  return seq(rule, repeat(seq(',', rule)));
+}
