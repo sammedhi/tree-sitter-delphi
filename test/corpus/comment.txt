@@ -1,0 +1,132 @@
+================================================================================
+Line comment in program
+================================================================================
+program Foo; // this is a comment
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    (line_comment)
+    body: (program_block
+      (kBegin)
+      (kEnd))))
+
+================================================================================
+Doc comment in program
+================================================================================
+/// This is a doc comment
+program Foo;
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (doc_comment)
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (program_block
+      (kBegin)
+      (kEnd))))
+
+================================================================================
+Brace comment in program
+================================================================================
+program Foo;
+{ this is a brace comment }
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    (brace_comment)
+    body: (program_block
+      (kBegin)
+      (kEnd))))
+
+================================================================================
+Block comment in program
+================================================================================
+program Foo;
+(* this is a block comment *)
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    (block_comment)
+    body: (program_block
+      (kBegin)
+      (kEnd))))
+
+================================================================================
+Multiple comment types in unit
+================================================================================
+/// Doc comment for the unit
+unit Foo;
+// line comment
+interface
+{ brace comment }
+implementation
+(* block comment *)
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (doc_comment)
+  (unit_file
+    (kUnit)
+    name: (identifier)
+    (line_comment)
+    interface: (interface_section
+      (kInterface))
+    (brace_comment)
+    implementation: (implementation_section
+      (kImplementation))
+    (block_comment)
+    (kEnd)))
+
+================================================================================
+Multiline brace comment
+================================================================================
+program Foo;
+{
+  this is a
+  multiline comment
+}
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    (brace_comment)
+    body: (program_block
+      (kBegin)
+      (kEnd))))
+
+================================================================================
+Multiline block comment
+================================================================================
+program Foo;
+(*
+  this is a
+  multiline comment
+*)
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    (block_comment)
+    body: (program_block
+      (kBegin)
+      (kEnd))))

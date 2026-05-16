@@ -13,11 +13,16 @@ export default grammar({
   // Skip whitespace and newlines everywhere
   extras: $ => [
     /\s/,
+    $.comment,
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
   // so keyword rules that match the same pattern take priority
   word: $ => $.identifier,
+
+  supertypes: $ => [
+    $.comment,
+  ],
 
   // Case-insensitive keywords are handled via extras/externals later
   rules: {
@@ -82,6 +87,18 @@ export default grammar({
       $.kBegin,
       $.kEnd,
     ),
+
+    comment: $ => choice(
+      $.line_comment,
+      $.doc_comment,
+      $.brace_comment,
+      $.block_comment,
+    ),
+
+    doc_comment: _ => token(prec(1, seq('///', /.*/))),
+    line_comment: _ => token(seq('//', /.*/)),
+    brace_comment: _ => token(seq('{', /[^}]*/, '}')),
+    block_comment: _ => token(seq('(*', /[^*]*\*+([^*)][^*]*\*+)*/, ')')),
 
     identifier: _ => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
