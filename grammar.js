@@ -23,6 +23,7 @@ export default grammar({
   supertypes: $ => [
     $.comment,
     $.statement,
+    $.type
   ],
 
   // Case-insensitive keywords are handled via extras/externals later
@@ -69,12 +70,14 @@ export default grammar({
     interface_section: $ => seq(
       $.kInterface,
       optional($.uses_clause),
+      repeat($.type_declaration_section)
     ),
 
     // Stub — will hold declarations later
     implementation_section: $ => seq(
       $.kImplementation,
       optional($.uses_clause),
+      repeat($.type_declaration_section)
     ),
 
     // Stub — will hold statements later
@@ -85,6 +88,22 @@ export default grammar({
     // Stub — will hold statements later
     finalization_section: $ => seq(
       $.kFinalization,
+    ),
+
+    type_declaration_section: $ => seq(
+      $.kType,
+      repeat1($.type_declaration),
+    ),
+
+    type_declaration: $ => seq(
+      field('name', $.identifier),
+      '=',
+      field('type', $.type),
+      ';',
+    ),
+
+    type: $ => choice(
+      alias($._name, $.type_alias),  // covers both simple and qualified aliases
     ),
 
     statement: $ => choice(
@@ -135,16 +154,17 @@ export default grammar({
     identifier: _ => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
     // Keywords — case insensitive
-    kBegin: _ => /begin/i,
-    kEnd: _ => /end/i,
-    kProgram: _ => /program/i,
-    kLibrary: _ => /library/i,
-    kUnit: _ => /unit/i,
-    kInterface: _ => /interface/i,
-    kImplementation: _ => /implementation/i,
-    kInitialization: _ => /initialization/i,
-    kFinalization: _ => /finalization/i,
-    kUses: _ => /uses/i,
+    kBegin: _ => token(prec(1, /begin/i)),
+    kEnd: _ => token(prec(1, /end/i)),
+    kProgram: _ => token(prec(1, /program/i)),
+    kLibrary: _ => token(prec(1, /library/i)),
+    kUnit: _ => token(prec(1, /unit/i)),
+    kInterface: _ => token(prec(1, /interface/i)),
+    kImplementation: _ => token(prec(1, /implementation/i)),
+    kInitialization: _ => token(prec(1, /initialization/i)),
+    kFinalization: _ => token(prec(1, /finalization/i)),
+    kUses: _ => token(prec(1, /uses/i)),
+    kType: _ => token(prec(1, /type/i)),
   },
 });
 

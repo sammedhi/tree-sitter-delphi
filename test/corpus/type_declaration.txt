@@ -1,0 +1,144 @@
+================================================================================
+Simple type alias
+================================================================================
+unit Foo;
+interface
+type
+  TFoo = Integer;
+implementation
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (unit_file
+    (kUnit)
+    name: (identifier)
+    interface: (interface_section
+      (kInterface)
+      (type_declaration_section
+        (kType)
+        (type_declaration
+          name: (identifier)
+          type: (type_alias
+            (identifier)))))
+    implementation: (implementation_section
+      (kImplementation))
+    (kEnd)))
+
+================================================================================
+Multiple type aliases in one section
+================================================================================
+unit Foo;
+interface
+type
+  TFoo = Integer;
+  TBar = String;
+implementation
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (unit_file
+    (kUnit)
+    name: (identifier)
+    interface: (interface_section
+      (kInterface)
+      (type_declaration_section
+        (kType)
+        (type_declaration
+          name: (identifier)
+          type: (type_alias 
+            (identifier)))
+        (type_declaration
+          name: (identifier)
+          type: (type_alias (identifier)))))
+    implementation: (implementation_section
+      (kImplementation))
+    (kEnd)))
+
+================================================================================
+Multiple type declaration sections
+================================================================================
+unit Foo;
+interface
+type
+  TFoo = Integer;
+type
+  TBar = String;
+implementation
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (unit_file
+    (kUnit)
+    name: (identifier)
+    interface: (interface_section
+      (kInterface)
+      (type_declaration_section
+        (kType)
+        (type_declaration
+          name: (identifier)
+          type: (type_alias
+                (identifier))))
+      (type_declaration_section
+        (kType)
+        (type_declaration
+          name: (identifier)
+          type: (type_alias
+                (identifier)))))
+    implementation: (implementation_section
+      (kImplementation))
+    (kEnd)))
+
+================================================================================
+Qualified name type alias
+================================================================================
+unit Foo;
+interface
+type
+  TFoo = System.SysUtils.TStringList;
+implementation
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (unit_file
+    (kUnit)
+    name: (identifier)
+    interface: (interface_section
+      (kInterface)
+      (type_declaration_section
+        (kType)
+        (type_declaration
+          name: (identifier)
+          type: (type_alias (qualified_name
+            qualifier: (qualified_name
+              qualifier: (identifier)
+              name: (identifier))
+            name: (identifier))))))
+    implementation: (implementation_section
+      (kImplementation))
+    (kEnd)))
+
+================================================================================
+Type alias in implementation section
+================================================================================
+unit Foo;
+interface
+implementation
+type
+  TFoo = Integer;
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (unit_file
+    (kUnit)
+    name: (identifier)
+    interface: (interface_section
+      (kInterface))
+    implementation: (implementation_section
+      (kImplementation)
+      (type_declaration_section
+        (kType)
+        (type_declaration
+          name: (identifier)
+          type: (type_alias
+                (identifier)))))
+    (kEnd)))
