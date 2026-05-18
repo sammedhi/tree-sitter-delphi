@@ -110,13 +110,21 @@ export default grammar({
       $.block_statement
     ),
 
+    _semicolon_statement: $ => seq(
+      $.statement,
+      ';',
+    ),
+
     block_statement: $ => seq(
       $.kBegin,
-      repeat(seq($.statement, ';')),
+      repeat($._semicolon_statement),
       optional($.statement),
       $.kEnd,
     ),
 
+    expression: $ => choice(
+
+    ),
 
     // uses clause
     uses_clause: $ => seq(
