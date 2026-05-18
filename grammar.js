@@ -23,7 +23,9 @@ export default grammar({
   supertypes: $ => [
     $.comment,
     $.statement,
-    $.type
+    $.type,
+    $.expression,
+    $.literal
   ],
 
   // Case-insensitive keywords are handled via extras/externals later
@@ -90,6 +92,12 @@ export default grammar({
       $.kFinalization,
     ),
 
+    uses_clause: $ => seq(
+      $.kUses,
+      sep1($.unit_reference, ','),
+      ';',
+    ),
+
     type_declaration_section: $ => seq(
       $.kType,
       repeat1($.type_declaration),
@@ -107,7 +115,14 @@ export default grammar({
     ),
 
     statement: $ => choice(
-      $.block_statement
+      $.block_statement,
+      $.assignment_statement
+    ),
+
+    assignment_statement: $ => seq(
+      field('left', $.identifier),
+      ':=',
+      field('right', $.expression)
     ),
 
     _semicolon_statement: $ => seq(
@@ -123,15 +138,48 @@ export default grammar({
     ),
 
     expression: $ => choice(
-
+      $.literal,
     ),
 
-    // uses clause
-    uses_clause: $ => seq(
-      $.kUses,
-      sep1($.unit_reference, ','),
-      ';',
+    //#region literals
+    literal: $ => choice(
+      $.integer_literal,
+      $.float_literal,
+      $.string_literal,
+      $.char_literal,
+      $.boolean_literal,
+      $.nil_literal,
     ),
+
+    integer_literal: _ => token(choice(
+      /[0-9]+/,           // decimal
+      /\$[0-9a-fA-F]+/,  // hex
+      /%[01]+/,           // binary
+    )),
+
+    float_literal: _ => token(choice(
+      /[0-9]+\.[0-9]+([eE][+-]?[0-9]+)?/,  // 3.14, 1.5e10
+      /[0-9]+[eE][+-]?[0-9]+/,             // 1e10
+    )),
+
+    string_literal: _ => token(seq(
+      '\'',
+      repeat(choice(
+        /[^']/,
+        '\'\'',
+      )),
+      '\'',
+    )),
+
+    char_literal: _ => token(choice(
+      /#[0-9]+/,
+      /#\$[0-9a-fA-F]+/,
+    )),
+
+    boolean_literal: _ => token(prec(1, /true|false/i)),
+
+    nil_literal: _ => token(prec(1, /nil/i)),
+    //#endregion
 
     unit_reference: $ => field('name', $._name),
 
@@ -173,6 +221,17 @@ export default grammar({
     kFinalization: _ => token(prec(1, /finalization/i)),
     kUses: _ => token(prec(1, /uses/i)),
     kType: _ => token(prec(1, /type/i)),
+    kNot: _ => token(prec(1, /not/i)),
+    kAnd: _ => token(prec(1, /and/i)),
+    kOr: _ => token(prec(1, /or/i)),
+    kXor: _ => token(prec(1, /xor/i)),
+    kDiv: _ => token(prec(1, /div/i)),
+    kMod: _ => token(prec(1, /mod/i)),
+    kShl: _ => token(prec(1, /shl/i)),
+    kShr: _ => token(prec(1, /shr/i)),
+    kIn: _ => token(prec(1, /in/i)),
+    kIs: _ => token(prec(1, /is/i)),
+    kAs: _ => token(prec(1, /as/i)),
   },
 });
 

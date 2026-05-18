@@ -1,0 +1,70 @@
+================================================================================
+All literal types
+================================================================================
+program Foo;
+begin
+  x := 42;
+  x := $FF;
+  x := %101;
+  x := 3.14;
+  x := 1.5e10;
+  x := 1e10;
+  x := 'hello';
+  x := 'it''s';
+  x := '';
+  x := #65;
+  x := #$41;
+  x := True;
+  x := False;
+  x := nil
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (assignment_statement
+        left: (identifier)
+        right: (integer_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (integer_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (integer_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (float_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (float_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (float_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (string_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (string_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (string_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (char_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (char_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (boolean_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (boolean_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (nil_literal))
+      (kEnd))))

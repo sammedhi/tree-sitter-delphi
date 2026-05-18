@@ -57,3 +57,22 @@ end.
             (kBegin)
             (kEnd))
         (kEnd))))
+
+================================================================================
+Simple assignment
+================================================================================
+program Foo;
+begin
+  x := 42
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (assignment_statement
+        left: (identifier)
+        right: (integer_literal))
+      (kEnd))))
