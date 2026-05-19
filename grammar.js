@@ -68,28 +68,28 @@ export default grammar({
       '.',
     ),
 
-    // Stub — will hold declarations later
     interface_section: $ => seq(
       $.kInterface,
       optional($.uses_clause),
       repeat($.type_declaration_section)
     ),
 
-    // Stub — will hold declarations later
     implementation_section: $ => seq(
       $.kImplementation,
       optional($.uses_clause),
       repeat($.type_declaration_section)
     ),
 
-    // Stub — will hold statements later
     initialization_section: $ => seq(
       $.kInitialization,
+      repeat($._semicolon_statement),
+      optional($.statement)
     ),
 
-    // Stub — will hold statements later
     finalization_section: $ => seq(
       $.kFinalization,
+      repeat($._semicolon_statement),
+      optional($.statement)
     ),
 
     uses_clause: $ => seq(

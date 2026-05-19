@@ -91,3 +91,43 @@ end.
     finalization: (finalization_section
       (kFinalization))
     (kEnd)))
+
+================================================================================
+Initialization with statements
+================================================================================
+unit Foo;
+interface
+implementation
+initialization
+  x := 42;
+  y := 'hello'
+finalization
+  x := 0;
+  y := 0.4
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (unit_file
+    (kUnit)
+    name: (identifier)
+    interface: (interface_section
+      (kInterface))
+    implementation: (implementation_section
+      (kImplementation))
+    initialization: (initialization_section
+      (kInitialization)
+      (assignment_statement
+        left: (identifier)
+        right: (integer_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (string_literal)))
+    finalization: (finalization_section
+      (kFinalization)
+      (assignment_statement
+        left: (identifier)
+        right: (integer_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (float_literal)))
+    (kEnd)))
