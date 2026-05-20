@@ -7,6 +7,12 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+const PREC = {
+  RELATIONAL: 1,
+  ADDITIVE: 2,
+  MULTIPLICATIVE: 3,
+};
+
 export default grammar({
   name: "delphi",
 
@@ -139,6 +145,8 @@ export default grammar({
 
     expression: $ => choice(
       $.literal,
+      $.binary_expression,
+      $.parenthesized_expression
     ),
 
     //#region literals
@@ -150,6 +158,47 @@ export default grammar({
       $.boolean_literal,
       $.nil_literal,
     ),
+
+    binary_expression: $ => {
+      /** @type {Array<[string|Rule, number]>} */
+      const table = [
+        ['*', PREC.MULTIPLICATIVE],
+        ['/', PREC.MULTIPLICATIVE],
+        [$.kDiv, PREC.MULTIPLICATIVE],
+        [$.kMod, PREC.MULTIPLICATIVE],
+        [$.kAnd, PREC.MULTIPLICATIVE],
+        [$.kShl, PREC.MULTIPLICATIVE],
+        [$.kShr, PREC.MULTIPLICATIVE],
+        ['+', PREC.ADDITIVE],
+        ['-', PREC.ADDITIVE],
+        [$.kOr, PREC.ADDITIVE],
+        [$.kXor, PREC.ADDITIVE],
+        ['=', PREC.RELATIONAL],
+        ['<>', PREC.RELATIONAL],
+        ['<', PREC.RELATIONAL],
+        ['>', PREC.RELATIONAL],
+        ['<=', PREC.RELATIONAL],
+        ['>=', PREC.RELATIONAL],
+        [$.kIn, PREC.RELATIONAL],
+        [$.kIs, PREC.RELATIONAL],
+        [$.kAs, PREC.RELATIONAL],
+      ];
+
+      return choice(...table.map(([operator, precedence]) =>
+        prec.left(precedence, seq(
+          field('left', $.expression),
+          field('operator', operator),
+          field('right', $.expression),
+        ))
+      ));
+    },
+
+    parenthesized_expression: $ => seq(
+      '(',
+      $.expression,
+      ')',
+    ),
+
 
     integer_literal: _ => token(choice(
       /[0-9]+/,           // decimal

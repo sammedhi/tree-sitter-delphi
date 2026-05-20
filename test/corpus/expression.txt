@@ -1,0 +1,152 @@
+================================================================================
+Binary expressions
+================================================================================
+program Foo;
+begin
+  x := 1 + 2;
+  x := 1 - 2;
+  x := 1 * 2;
+  x := 1 / 2;
+  x := 1 div 2;
+  x := 1 mod 2;
+  x := 1 and 2;
+  x := 1 or 2;
+  x := 1 xor 2;
+  x := 1 shl 2;
+  x := 1 shr 2;
+  x := 1 = 2;
+  x := 1 <> 2;
+  x := 1 < 2;
+  x := 1 > 2;
+  x := 1 <= 2;
+  x := 1 >= 2
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          operator: (kDiv)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          operator: (kMod)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          operator: (kAnd)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          operator: (kOr)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          operator: (kXor)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          operator: (kShl)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          operator: (kShr)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
+      (kEnd))))
+
+================================================================================
+Complex binary expression
+================================================================================
+program Foo;
+begin
+  x := (1 + 2) * 3 - 4 div 2
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (binary_expression
+            left: (parenthesized_expression
+              (binary_expression
+                left: (integer_literal)
+                right: (integer_literal)))
+            right: (integer_literal))
+          right: (binary_expression
+            left: (integer_literal)
+            operator: (kDiv)
+            right: (integer_literal))))
+      (kEnd))))
