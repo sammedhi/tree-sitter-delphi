@@ -1,4 +1,38 @@
 ================================================================================
+Variable declaration statement
+================================================================================
+program Foo;
+begin
+  var x: Integer;
+  var y: SomeType := 3;
+  var z := 10;
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (variable_declaration_statement
+        (kVar)
+        name: (identifier)
+        type: (identifier)
+      )
+      (variable_declaration_statement
+        (kVar)
+        name: (identifier)
+        type: (identifier)
+        value: (integer_literal)
+      )
+      (variable_declaration_statement
+        (kVar)
+        name: (identifier)
+        value: (integer_literal)
+      )
+      (kEnd))))
+
+================================================================================
 Empty block statement in program
 ================================================================================
 program Foo;

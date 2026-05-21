@@ -16,10 +16,9 @@ end.
       (kInterface)
       (type_declaration_section
         (kType)
-        (type_declaration
+        (type_alias_declaration
           name: (identifier)
-          type: (type_alias
-            (identifier)))))
+          type: (identifier))))
     implementation: (implementation_section
       (kImplementation))
     (kEnd)))
@@ -43,13 +42,12 @@ end.
       (kInterface)
       (type_declaration_section
         (kType)
-        (type_declaration
+        (type_alias_declaration
           name: (identifier)
-          type: (type_alias 
-            (identifier)))
-        (type_declaration
+          type: (identifier))
+        (type_alias_declaration
           name: (identifier)
-          type: (type_alias (identifier)))))
+          type: (identifier))))
     implementation: (implementation_section
       (kImplementation))
     (kEnd)))
@@ -74,16 +72,14 @@ end.
       (kInterface)
       (type_declaration_section
         (kType)
-        (type_declaration
+        (type_alias_declaration
           name: (identifier)
-          type: (type_alias
-                (identifier))))
+          type: (identifier)))
       (type_declaration_section
         (kType)
-        (type_declaration
+        (type_alias_declaration
           name: (identifier)
-          type: (type_alias
-                (identifier)))))
+          type: (identifier))))
     implementation: (implementation_section
       (kImplementation))
     (kEnd)))
@@ -106,13 +102,13 @@ end.
       (kInterface)
       (type_declaration_section
         (kType)
-        (type_declaration
+        (type_alias_declaration
           name: (identifier)
-          type: (type_alias (qualified_name
+          type: (qualified_name
             qualifier: (qualified_name
               qualifier: (identifier)
               name: (identifier))
-            name: (identifier))))))
+            name: (identifier)))))
     implementation: (implementation_section
       (kImplementation))
     (kEnd)))
@@ -137,8 +133,7 @@ end.
       (kImplementation)
       (type_declaration_section
         (kType)
-        (type_declaration
+        (type_alias_declaration
           name: (identifier)
-          type: (type_alias
-                (identifier)))))
+          type: (identifier))))
     (kEnd)))

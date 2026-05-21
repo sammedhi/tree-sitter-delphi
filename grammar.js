@@ -31,7 +31,10 @@ export default grammar({
     $.statement,
     $.type,
     $.expression,
-    $.literal
+    $.literal,
+    $.lvalue_expression,
+    $.not_lvalue_expression,
+    $.type_declaration
   ],
 
   // Case-insensitive keywords are handled via extras/externals later
@@ -109,7 +112,11 @@ export default grammar({
       repeat1($.type_declaration),
     ),
 
-    type_declaration: $ => seq(
+    type_declaration: $ => choice(
+      $.type_alias_declaration,
+    ),
+
+    type_alias_declaration: $ => seq(
       field('name', $.identifier),
       '=',
       field('type', $.type),
@@ -117,18 +124,37 @@ export default grammar({
     ),
 
     type: $ => choice(
-      alias($._name, $.type_alias),  // covers both simple and qualified aliases
+      $._name,  // covers both simple and qualified aliases
     ),
 
     statement: $ => choice(
       $.block_statement,
-      $.assignment_statement
+      $.assignment_statement,
+      $.variable_declaration_statement,
     ),
 
     assignment_statement: $ => seq(
-      field('left', $.identifier),
+      field('left', $.lvalue_expression),
       ':=',
-      field('right', $.expression)
+      field('right', $.not_lvalue_expression)
+    ),
+
+    lvalue_expression: $ => choice(
+      $.identifier,
+      $.qualified_name,
+    ),
+
+    variable_declaration_statement: $ => seq(
+      $.kVar,
+      field('name', $.identifier),
+      optional(seq(":", field('type', $.type))),
+      optional(seq(':=', field('value', $.expression)))
+    ),
+
+    not_lvalue_expression: $ => choice(
+      $.literal,
+      $.binary_expression,
+      $.parenthesized_expression
     ),
 
     _semicolon_statement: $ => seq(
@@ -270,6 +296,7 @@ export default grammar({
     kFinalization: _ => token(prec(1, /finalization/i)),
     kUses: _ => token(prec(1, /uses/i)),
     kType: _ => token(prec(1, /type/i)),
+    kVar: _ => token(prec(1, /var/i)),
     kNot: _ => token(prec(1, /not/i)),
     kAnd: _ => token(prec(1, /and/i)),
     kOr: _ => token(prec(1, /or/i)),
