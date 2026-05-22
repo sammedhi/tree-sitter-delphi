@@ -6,6 +6,7 @@ begin
   var x: Integer;
   var y: SomeType := 3;
   var z := 10;
+  var a, b : Integer
 end.
 --------------------------------------------------------------------------------
 (source_file
@@ -16,19 +17,35 @@ end.
       (kBegin)
       (variable_declaration_statement
         (kVar)
-        name: (identifier)
+        (variable_declarator
+          name: (identifier)
+        )
         type: (identifier)
       )
       (variable_declaration_statement
         (kVar)
-        name: (identifier)
+        (variable_declarator
+          name: (identifier)
+        )
         type: (identifier)
         value: (integer_literal)
       )
       (variable_declaration_statement
         (kVar)
-        name: (identifier)
+        (variable_declarator
+          name: (identifier)
+        )
         value: (integer_literal)
+      )
+      (variable_declaration_statement
+        (kVar)
+        (variable_declarator
+          name: (identifier)
+        )
+        (variable_declarator
+          name: (identifier)
+        )
+        type: (identifier)
       )
       (kEnd))))
 

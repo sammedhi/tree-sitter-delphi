@@ -146,10 +146,26 @@ export default grammar({
 
     variable_declaration_statement: $ => seq(
       $.kVar,
-      field('name', $.identifier),
-      optional(seq(":", field('type', $.type))),
-      optional(seq(':=', field('value', $.expression)))
+      choice(
+        seq(
+          $.variable_declarator,
+          choice(
+            seq($._variable_type_declaration, optional($._variable_initialization)),
+            $._variable_initialization,
+          )
+        ),
+        seq(
+          sep1($.variable_declarator, ','),
+          $._variable_type_declaration
+        )
+      )
     ),
+
+    _variable_type_declaration: $ => seq(":", field('type', $.type)),
+    _variable_initialization: $ => seq(':=', field('value', $.expression)),
+
+    variable_declarator: $ =>
+      field("name", $.identifier),
 
     not_lvalue_expression: $ => choice(
       $.literal,
