@@ -105,7 +105,7 @@ export default grammar({
 
     uses_clause: $ => seq(
       $.kUses,
-      sep1($.unit_reference, ','),
+      commaSep1($.unit_reference),
       ';',
     ),
 
