@@ -131,3 +131,38 @@ end.
         left: (identifier)
         right: (float_literal)))
     (kEnd)))
+
+================================================================================
+Var declaration section
+================================================================================
+program Foo;
+var 
+  x, y, z: Integer;
+  w: Boolean;
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    (var_declaration_section
+      (kVar)
+      (var_declaration
+        (variable_declarator
+          name: (identifier))
+        (variable_declarator
+          name: (identifier))
+        (variable_declarator
+          name: (identifier))
+        type: (identifier)
+      )
+      (var_declaration
+        (variable_declarator
+          name: (identifier))
+        type: (identifier)
+      )
+    )
+    body: (block_statement
+      (kBegin)
+      (kEnd))))

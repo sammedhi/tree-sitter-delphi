@@ -54,6 +54,7 @@ export default grammar({
       field('name', $.identifier),
       ';',
       optional($.uses_clause),
+      repeat($.var_declaration_section),
       field('body', $.block_statement),
       '.',
     ),
@@ -63,6 +64,7 @@ export default grammar({
       field('name', $.identifier),
       ';',
       optional($.uses_clause),
+      repeat($.var_declaration_section),
       field('body', $.block_statement),
       '.',
     ),
@@ -82,13 +84,13 @@ export default grammar({
     interface_section: $ => seq(
       $.kInterface,
       optional($.uses_clause),
-      repeat($.type_declaration_section)
+      repeat(choice($.type_declaration_section, $.var_declaration_section))
     ),
 
     implementation_section: $ => seq(
       $.kImplementation,
       optional($.uses_clause),
-      repeat($.type_declaration_section)
+      repeat(choice($.type_declaration_section, $.var_declaration_section))
     ),
 
     initialization_section: $ => seq(
@@ -112,6 +114,18 @@ export default grammar({
     type_declaration_section: $ => seq(
       $.kType,
       repeat1($.type_declaration),
+    ),
+
+    var_declaration_section: $ => seq(
+      $.kVar,
+      repeat1(seq(
+        $.var_declaration, ';'
+      )),
+    ),
+
+    var_declaration: $ => seq(
+      commaSep1($.variable_declarator),
+      $._variable_type_declaration
     ),
 
     type_declaration: $ => choice(
