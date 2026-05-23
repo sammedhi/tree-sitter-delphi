@@ -127,3 +127,144 @@ end.
         left: (identifier)
         right: (integer_literal))
       (kEnd))))
+
+================================================================================
+For loop
+================================================================================
+program Foo;
+begin
+  for i := 1 to 10 do
+    x := 1;
+  for var i: Integer := 1 downto 10 do
+    x := 1;
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (for_numeric_statement
+        (kFor)
+        variable: (identifier)
+        initial_value: (integer_literal)
+        direction: (kTo)
+        final_value: (integer_literal)
+        (kDo)
+        body: (assignment_statement
+          left: (identifier)
+          right: (integer_literal)))
+      (for_numeric_statement
+        (kFor)
+        variable: (variable_declaration
+          (kVar)
+          (variable_declarator
+            name: (identifier)
+          )
+          type: (identifier)
+        )
+        initial_value: (integer_literal)
+        direction: (kDownto)
+        final_value: (integer_literal)
+        (kDo)
+        body: (assignment_statement
+          left: (identifier)
+          right: (integer_literal)))
+      (kEnd))))
+
+================================================================================
+For each
+================================================================================
+program Foo;
+begin
+  for item in Collection do
+    x := 1;
+  for var item : Integer in Collection do
+    x := 1;
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (for_each_statement
+        (kFor)
+        variable: (identifier)
+        (kIn)
+        collection: (identifier)
+        (kDo)
+        body: (assignment_statement
+          left: (identifier)
+          right: (integer_literal)))
+      (for_each_statement
+        (kFor)
+        variable: (variable_declaration
+          (kVar)
+          (variable_declarator
+            name: (identifier)
+          )
+          type: (identifier))
+        (kIn)
+        collection: (identifier)
+        (kDo)
+        body: (assignment_statement
+          left: (identifier)
+          right: (integer_literal)))
+      (kEnd))))
+
+================================================================================
+While loop
+================================================================================
+program Foo;
+begin
+  while x > 0 do
+    x := 1;
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (while_statement
+        (kWhile)
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        (kDo)
+        body: (assignment_statement
+          left: (identifier)
+          right: (integer_literal)))
+      (kEnd))))
+
+================================================================================
+Repeat until loop
+================================================================================
+
+program Foo;
+begin
+repeat
+  x := 1;
+until x > 0;
+end.
+--------------------------------------------------------------------------------
+(source_file
+(program_file
+  (kProgram)
+  name: (identifier)
+  body: (block_statement
+    (kBegin)
+    (repeat_statement
+      (kRepeat)
+      (assignment_statement
+        left: (identifier)
+        right: (integer_literal))
+      (kUntil)
+      condition: (binary_expression
+        left: (identifier)
+        right: (integer_literal)))
+    (kEnd))))

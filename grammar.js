@@ -34,7 +34,9 @@ export default grammar({
     $.literal,
     $.lvalue_expression,
     $.not_lvalue_expression,
-    $.type_declaration
+    $.type_declaration,
+    $.loop_statement,
+    $.for_statement
   ],
 
   // Case-insensitive keywords are handled via extras/externals later
@@ -131,6 +133,7 @@ export default grammar({
       $.block_statement,
       $.assignment_statement,
       $.variable_declaration_statement,
+      $.loop_statement
     ),
 
     assignment_statement: $ => seq(
@@ -155,7 +158,7 @@ export default grammar({
           )
         ),
         seq(
-          sep1($.variable_declarator, ','),
+          commaSep1($.variable_declarator),
           $._variable_type_declaration
         )
       )
@@ -185,10 +188,69 @@ export default grammar({
       $.kEnd,
     ),
 
+    // in statement: $ => choice(...)
+    loop_statement: $ => choice(
+      $.for_statement,
+      $.while_statement,
+      $.repeat_statement
+    ),
+
+    for_statement: $ => choice(
+      $.for_numeric_statement,
+      $.for_each_statement,
+    ),
+
+    for_numeric_statement: $ => seq(
+      $.kFor,
+      field('variable', $._for_variable),
+      ':=',
+      field('initial_value', $.expression),
+      field('direction', choice($.kTo, $.kDownto)),
+      field('final_value', $.expression),
+      $.kDo,
+      field('body', $.statement),
+    ),
+
+    for_each_statement: $ => seq(
+      $.kFor,
+      field('variable', $._for_variable),
+      $.kIn,
+      field('collection', $.expression),
+      $.kDo,
+      field('body', $.statement),
+    ),
+
+    _for_variable: $ => choice(
+      $.identifier,
+      alias($.for_variable_declaration, $.variable_declaration)
+    ),
+
+    for_variable_declaration: $ => seq(
+      $.kVar,
+      $.variable_declarator,
+      optional($._variable_type_declaration),
+    ),
+
+    while_statement: $ => seq(
+      $.kWhile,
+      field('condition', $.expression),
+      $.kDo,
+      field('body', $.statement),
+    ),
+
+    repeat_statement: $ => seq(
+      $.kRepeat,
+      repeat($._semicolon_statement),
+      optional($.statement),   // last statement before 'until' needs no semicolon
+      $.kUntil,
+      field('condition', $.expression),
+    ),
+
     expression: $ => choice(
       $.literal,
       $.binary_expression,
-      $.parenthesized_expression
+      $.parenthesized_expression,
+      $.identifier
     ),
 
     //#region literals
@@ -324,6 +386,13 @@ export default grammar({
     kIn: _ => token(prec(1, /in/i)),
     kIs: _ => token(prec(1, /is/i)),
     kAs: _ => token(prec(1, /as/i)),
+    kFor: _ => token(prec(1, /for/i)),
+    kWhile: _ => token(prec(1, /while/i)),
+    kTo: _ => token(prec(1, /to/i)),
+    kDownto: _ => token(prec(1, /downto/i)),
+    kDo: _ => token(prec(1, /do/i)),
+    kRepeat: _ => token(prec(1, /repeat/i)),
+    kUntil: _ => token(prec(1, /until/i))
   },
 });
 
