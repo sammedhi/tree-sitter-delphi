@@ -147,7 +147,53 @@ export default grammar({
       $.block_statement,
       $.assignment_statement,
       $.variable_declaration_statement,
-      $.loop_statement
+      $.loop_statement,
+      $.if_statement,
+      $.case_statement
+    ),
+
+    if_statement: $ => prec.right(seq(
+      $.kIf,
+      field('condition', $.expression),
+      $.kThen,
+      field('then', $.statement),
+      optional(seq(
+        $.kElse,
+        field('else', $.statement),
+      )),
+    )),
+
+    case_statement: $ => seq(
+      $.kCase,
+      field('value', $.expression),
+      $.kOf,
+      repeat1($.case_branch),
+      optional(seq(
+        $.kElse,
+        field('else', $.statement),
+        optional(';') // TODO: Check whether ; is really optional
+      )),
+      $.kEnd,
+    ),
+
+    case_branch: $ => seq(
+      field('pattern', commaSep1($.case_pattern)),
+      ':',
+      field('body', $.statement),
+      ';',
+    ),
+
+
+    // A case pattern is either a single literal or a range (1..5)
+    case_pattern: $ => choice(
+      $.literal,
+      $.case_range,
+    ),
+
+    case_range: $ => seq(
+      field('from', $.literal),
+      '..',
+      field('to', $.literal),
     ),
 
     assignment_statement: $ => seq(
@@ -406,7 +452,12 @@ export default grammar({
     kDownto: _ => token(prec(1, /downto/i)),
     kDo: _ => token(prec(1, /do/i)),
     kRepeat: _ => token(prec(1, /repeat/i)),
-    kUntil: _ => token(prec(1, /until/i))
+    kUntil: _ => token(prec(1, /until/i)),
+    kIf: _ => token(prec(1, /if/i)),
+    kThen: _ => token(prec(1, /then/i)),
+    kElse: _ => token(prec(1, /else/i)),
+    kCase: _ => token(prec(1, /case/i)),
+    kOf: _ => token(prec(1, /of/i)),
   },
 });
 

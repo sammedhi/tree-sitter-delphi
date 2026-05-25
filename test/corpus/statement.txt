@@ -268,3 +268,108 @@ end.
         left: (identifier)
         right: (integer_literal)))
     (kEnd))))
+
+================================================================================
+If statement - no else
+================================================================================
+program Foo;
+begin
+  if x > 0 then
+    x := 1;
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (if_statement
+        (kIf)
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        (kThen)
+        then: (assignment_statement
+          left: (identifier)
+          right: (integer_literal)))
+      (kEnd))))
+
+================================================================================
+If else statement
+================================================================================
+program Foo;
+begin
+  if x > 0 then
+    x := 1
+  else
+    x := 0;
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (if_statement
+        (kIf)
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal))
+        (kThen)
+        then: (assignment_statement
+          left: (identifier)
+          right: (integer_literal))
+        (kElse)
+        else: (assignment_statement
+          left: (identifier)
+          right: (integer_literal)))
+      (kEnd))))
+
+================================================================================
+Case statement - literals and range
+================================================================================
+program Foo;
+begin
+  case x of
+    1: x := 1;
+    2, 3: x := 2;
+    4..6: x := 3;
+  end;
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (case_statement
+        (kCase)
+        value: (identifier)
+        (kOf)
+        (case_branch
+          pattern: (case_pattern
+            (integer_literal))
+          body: (assignment_statement
+            left: (identifier)
+            right: (integer_literal)))
+        (case_branch
+          pattern: (case_pattern
+            (integer_literal))
+          pattern: (case_pattern
+            (integer_literal))
+          body: (assignment_statement
+            left: (identifier)
+            right: (integer_literal)))
+        (case_branch
+          pattern: (case_pattern
+            (case_range
+              from: (integer_literal)
+              to: (integer_literal)))
+          body: (assignment_statement
+            left: (identifier)
+            right: (integer_literal)))
+        (kEnd))
+      (kEnd))))
