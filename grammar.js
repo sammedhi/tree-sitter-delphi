@@ -151,7 +151,9 @@ export default grammar({
       $.loop_statement,
       $.if_statement,
       $.case_statement,
-      $.try_statement
+      $.try_statement,
+      $.break_statement,
+      $.continue_statement
     ),
 
     if_statement: $ => prec.right(seq(
@@ -201,6 +203,7 @@ export default grammar({
       ':=',
       field('right', $.expression)
     ),
+
     variable_declaration_statement: $ => seq(
       $.kVar,
       choice(
@@ -338,6 +341,10 @@ export default grammar({
       $.kEnd,
     ),
 
+    continue_statement: _ => token(prec(1, /continue/i)),
+
+    break_statement: _ => token(prec(1, /break/i)),
+
     expression: $ => choice(
       $.lvalue_expression,
       $.not_lvalue_expression
@@ -410,7 +417,6 @@ export default grammar({
       $.expression,
       ')',
     ),
-
 
     integer_literal: _ => token(choice(
       /[0-9]+/,           // decimal

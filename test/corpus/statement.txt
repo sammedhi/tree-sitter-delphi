@@ -492,3 +492,36 @@ end.
           right: (integer_literal))
         (kEnd))
       (kEnd))))
+
+
+================================================================================
+Break and Continuer statement
+================================================================================
+program Foo;
+begin
+  while true do
+  begin
+    break;
+    continue
+  end;
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (while_statement 
+        (kWhile)
+        condition: (boolean_literal)
+        (kDo)
+        body: (block_statement
+          (kBegin)
+            (break_statement)
+            (continue_statement)
+          (kEnd)
+        )
+      )
+      (kEnd))))
+
