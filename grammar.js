@@ -183,10 +183,8 @@ export default grammar({
       ';',
     ),
 
-
-    // A case pattern is either a single literal or a range (1..5)
     case_pattern: $ => choice(
-      $.literal,
+      $.expression,
       $.case_range,
     ),
 
@@ -199,14 +197,8 @@ export default grammar({
     assignment_statement: $ => seq(
       field('left', $.lvalue_expression),
       ':=',
-      field('right', $.not_lvalue_expression)
+      field('right', $.expression)
     ),
-
-    lvalue_expression: $ => choice(
-      $.identifier,
-      $.qualified_name,
-    ),
-
     variable_declaration_statement: $ => seq(
       $.kVar,
       choice(
@@ -229,12 +221,6 @@ export default grammar({
 
     variable_declarator: $ =>
       field("name", $.identifier),
-
-    not_lvalue_expression: $ => choice(
-      $.literal,
-      $.binary_expression,
-      $.parenthesized_expression
-    ),
 
     _semicolon_statement: $ => seq(
       $.statement,
@@ -307,10 +293,20 @@ export default grammar({
     ),
 
     expression: $ => choice(
+      $.lvalue_expression,
+      $.not_lvalue_expression
+    ),
+
+    // expression that can exist both as lvalue and rvalue
+    lvalue_expression: $ => choice(
+      $._name
+    ),
+
+    // expression that can only exist as rvalue
+    not_lvalue_expression: $ => choice(
       $.literal,
       $.binary_expression,
-      $.parenthesized_expression,
-      $.identifier
+      $.parenthesized_expression
     ),
 
     //#region literals
