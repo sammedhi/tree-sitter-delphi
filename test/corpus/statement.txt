@@ -373,3 +373,43 @@ end.
             right: (integer_literal)))
         (kEnd))
       (kEnd))))
+
+================================================================================
+Unary expression
+================================================================================
+program Foo;
+begin
+  x := -1;
+  x := -x;
+  x := not true;
+  x := not (x > 0);
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (assignment_statement
+        left: (identifier)
+        right: (unary_expression
+          operand: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (unary_expression
+          operand: (identifier)))
+      (assignment_statement
+        left: (identifier)
+        right: (unary_expression
+          operator: (kNot)
+          operand: (boolean_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (unary_expression
+          operator: (kNot)
+          operand: (parenthesized_expression
+            (binary_expression
+              left: (identifier)
+              right: (integer_literal)))))
+      (kEnd))))

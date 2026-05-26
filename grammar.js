@@ -305,6 +305,7 @@ export default grammar({
     // expression that can only exist as rvalue
     not_lvalue_expression: $ => choice(
       $.literal,
+      $.unary_expression,
       $.binary_expression,
       $.parenthesized_expression
     ),
@@ -317,6 +318,11 @@ export default grammar({
       $.char_literal,
       $.boolean_literal,
       $.nil_literal,
+    ),
+
+    unary_expression: $ => seq(
+      field('operator', choice('-', $.kNot)),
+      field('operand', $.expression),
     ),
 
     binary_expression: $ => {
