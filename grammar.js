@@ -36,7 +36,8 @@ export default grammar({
     $.not_lvalue_expression,
     $.type_declaration,
     $.loop_statement,
-    $.for_statement
+    $.for_statement,
+    $.try_statement
   ],
 
   // Case-insensitive keywords are handled via extras/externals later
@@ -149,7 +150,8 @@ export default grammar({
       $.variable_declaration_statement,
       $.loop_statement,
       $.if_statement,
-      $.case_statement
+      $.case_statement,
+      $.try_statement
     ),
 
     if_statement: $ => prec.right(seq(
@@ -290,6 +292,50 @@ export default grammar({
       optional($.statement),   // last statement before 'until' needs no semicolon
       $.kUntil,
       field('condition', $.expression),
+    ),
+
+    try_statement: $ => choice(
+      $.try_except_statement,
+      $.try_finally_statement,
+    ),
+
+    try_except_statement: $ => seq(
+      $.kTry,
+      repeat($._semicolon_statement),
+      optional($.statement),
+      $.kExcept,
+      choice(
+        // typed handlers: on E: Exception do ...
+        seq(
+          repeat1($.exception_handler),
+          optional(seq($.kElse, repeat($._semicolon_statement), optional($.statement))),
+        ),
+        // bare except: just statements
+        seq(
+          repeat($._semicolon_statement),
+          optional($.statement),
+        ),
+      ),
+      $.kEnd,
+    ),
+
+    exception_handler: $ => seq(
+      $.kOn,
+      optional(seq(field('variable', $.identifier), ':')),
+      field('type', $._name),
+      $.kDo,
+      field('body', $.statement),
+      ';',
+    ),
+
+    try_finally_statement: $ => seq(
+      $.kTry,
+      repeat($._semicolon_statement),
+      optional($.statement),
+      $.kFinally,
+      repeat($._semicolon_statement),
+      optional($.statement),
+      $.kEnd,
     ),
 
     expression: $ => choice(
@@ -460,6 +506,10 @@ export default grammar({
     kElse: _ => token(prec(1, /else/i)),
     kCase: _ => token(prec(1, /case/i)),
     kOf: _ => token(prec(1, /of/i)),
+    kTry: _ => token(prec(1, /try/i)),
+    kExcept: _ => token(prec(1, /except/i)),
+    kFinally: _ => token(prec(1, /finally/i)),
+    kOn: _ => token(prec(1, /on/i)),
   },
 });
 

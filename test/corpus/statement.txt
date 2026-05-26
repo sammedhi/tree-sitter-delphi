@@ -413,3 +413,82 @@ end.
               left: (identifier)
               right: (integer_literal)))))
       (kEnd))))
+
+================================================================================
+Try finally
+================================================================================
+program Foo;
+begin
+  try
+    x := 1;
+  finally
+    x := 0;
+  end;
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (try_finally_statement
+        (kTry)
+        (assignment_statement
+          left: (identifier)
+          right: (integer_literal))
+        (kFinally)
+        (assignment_statement
+          left: (identifier)
+          right: (integer_literal))
+        (kEnd))
+      (kEnd))))
+
+================================================================================
+Try except - typed handlers with else
+================================================================================
+program Foo;
+begin
+  try
+    x := 1;
+  except
+    on E: EArgumentException do x := 2;
+    on EException do x := 3;
+  else
+    x := 0;
+  end;
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (try_except_statement
+        (kTry)
+        (assignment_statement
+          left: (identifier)
+          right: (integer_literal))
+        (kExcept)
+        (exception_handler
+          (kOn)
+          variable: (identifier)
+          type: (identifier)
+          (kDo)
+          body: (assignment_statement
+            left: (identifier)
+            right: (integer_literal)))
+        (exception_handler
+          (kOn)
+          type: (identifier)
+          (kDo)
+          body: (assignment_statement
+            left: (identifier)
+            right: (integer_literal)))
+        (kElse)
+        (assignment_statement
+          left: (identifier)
+          right: (integer_literal))
+        (kEnd))
+      (kEnd))))
