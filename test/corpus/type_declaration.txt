@@ -247,3 +247,43 @@ end.
     implementation: (implementation_section
       (kImplementation))
     (kEnd)))
+
+================================================================================
+Enum type declaration
+================================================================================
+program Foo;
+type
+  TColor = (Red, Green, Blue);
+  TDirection = (North = 0, South = 1, East, West);
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    (type_declaration_section
+      (kType)
+      (enum_type_declaration
+        name: (identifier)
+        (enum_value
+          name: (identifier))
+        (enum_value
+          name: (identifier))
+        (enum_value
+          name: (identifier)))
+      (enum_type_declaration
+        name: (identifier)
+        (enum_value
+          name: (identifier)
+          value: (integer_literal))
+        (enum_value
+          name: (identifier)
+          value: (integer_literal))
+        (enum_value
+          name: (identifier))
+        (enum_value
+          name: (identifier))))
+    body: (block_statement
+      (kBegin)
+      (kEnd))))

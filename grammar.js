@@ -252,7 +252,8 @@ export default grammar({
 
     type_declaration: $ => choice(
       $.type_alias_declaration,
-      $.class_declaration
+      $.class_declaration,
+      $.enum_type_declaration
     ),
 
     type_alias_declaration: $ => seq(
@@ -262,8 +263,21 @@ export default grammar({
       ';',
     ),
 
+    enum_type_declaration: $ => seq(
+      field('name', $.identifier),
+      '=',
+      '(',
+      sep($.enum_value, ','),
+      ')',
+    ),
+
+    enum_value: $ => seq(
+      field('name', $.identifier),
+      optional(seq('=', field('value', $.expression))),
+    ),
+
     type: $ => choice(
-      $._name,  // covers both simple and qualified aliases
+      $._name,
     ),
 
     statement: $ => choice(
