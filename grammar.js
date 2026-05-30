@@ -97,7 +97,8 @@ export default grammar({
     implementation_section: $ => seq(
       $.kImplementation,
       optional($.uses_clause),
-      repeat($.declaration_section)
+      repeat($.declaration_section),
+      repeat($.function_definition)
     ),
 
     initialization_section: $ => seq(
@@ -278,6 +279,21 @@ export default grammar({
 
     type: $ => choice(
       $._name,
+
+    function_definition: $ => seq(
+      optional($.kClass),
+      field('kind', choice(
+        $.kProcedure,
+        $.kFunction,
+        $.kConstructor,
+        $.kDestructor
+      )),
+      $._name,
+      optional($.parameter_list),
+      ';',
+      repeat(choice($.var_declaration_section)),
+      $.block_statement,
+      ';'
     ),
 
     statement: $ => choice(
