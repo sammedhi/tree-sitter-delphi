@@ -22,6 +22,10 @@ export default grammar({
     $.comment,
   ],
 
+  conflicts: $ => [
+    [$._simple_name, $.generic_name],
+  ],
+
   // Tells tree-sitter that identifiers are the "word" token,
   // so keyword rules that match the same pattern take priority
   word: $ => $.identifier,
@@ -78,7 +82,7 @@ export default grammar({
 
     unit_file: $ => seq(
       $.kUnit,
-      field('name', $.identifier),
+      field('name', $._name),
       ';',
       field('interface', $.interface_section),
       field('implementation', $.implementation_section),
@@ -610,10 +614,25 @@ export default grammar({
 
     unit_reference: $ => field('name', $._name),
 
-    // qualified name, following C# grammar structure
+    _simple_name: $ => choice(
+      $.identifier,
+      $.generic_name
+    ),
+
+    generic_name: $ => seq($.identifier, $.type_argument_list),
+
+    type_argument_list: $ => seq(
+      '<',
+      choice(
+        repeat(','),
+        commaSep1($.type),
+      ),
+      '>',
+    ),
+
     _name: $ => choice(
       $.qualified_name,
-      $.identifier,
+      $._simple_name,
     ),
 
     qualified_name: $ => seq(
