@@ -37,7 +37,12 @@ export default grammar({
     $.type_declaration,
     $.loop_statement,
     $.for_statement,
-    $.try_statement
+    $.try_statement,
+    $.class_member
+  ],
+
+  inline: $ => [
+    $.class_visibility
   ],
 
   // Case-insensitive keywords are handled via extras/externals later
@@ -117,6 +122,103 @@ export default grammar({
       repeat1($.type_declaration),
     ),
 
+    class_declaration: $ => seq(
+      field('name', $.identifier),
+      '=',
+      $.kClass,
+      optional(choice($.kAbstract, $.kSealed)),
+      optional($.class_heritage),
+
+      repeat($.class_member),
+      repeat($.class_section),
+      $.kEnd,
+      ';',
+    ),
+
+    class_heritage: $ => seq(
+      '(',
+      commaSep1(alias($._name, $.ancestor)),
+      ')',
+    ),
+
+    class_section: $ => seq(
+      field('visibility', $.class_visibility),
+      repeat($.class_member),
+    ),
+
+    class_visibility: $ => choice(
+      $.kPrivate,
+      $.kProtected,
+      $.kPublic,
+      $.kPublished,
+    ),
+
+    class_member: $ => choice(
+      $.class_field,
+      $.class_method,
+      $.class_property,
+    ),
+
+    class_field: $ => seq(
+      optional($.kClass),
+      commaSep1(field('name', $.identifier)),
+      $._variable_type_declaration,
+      optional(';')
+    ),
+
+    class_method: $ => seq(
+      optional($.kClass),
+      field('kind', choice(
+        $.kProcedure,
+        $.kFunction,
+        $.kConstructor,
+        $.kDestructor,
+      )),
+      field('name', $.identifier),
+      optional(field('parameters', $.parameter_list)),
+      optional(seq(':', field('return_type', $.type))),
+      repeat(seq(';', $.method_directive)),
+      optional(';'),
+    ),
+
+    class_property: $ => seq(
+      $.kProperty,
+      field('name', $.identifier),
+      optional($._variable_type_declaration),
+      optional(seq($.kRead, field('read', $._name))),
+      optional(seq($.kWrite, field('write', $._name))),
+      optional(';',)
+    ),
+
+    parameter_list: $ => seq(
+      '(',
+      sep($.parameter_declaration, ';'),
+      ')',
+    ),
+
+    parameter_declaration: $ => seq(
+      optional(field('modifier', choice($.kConst, $.kVar, $.kOut))),
+      commaSep1($.argument_name),
+      $._variable_type_declaration,
+      optional(seq('=', field('default_value', $.expression))),
+    ),
+
+    argument_name: $ => $.identifier,
+
+    method_directive: $ => choice(
+      $.kVirtual,
+      $.kAbstract,
+      $.kOverride,
+      $.kOverload,
+      $.kStdcall,
+      $.kCdecl,
+      $.kRegister,
+      $.kPascal,
+      $.kSafecall,
+      $.kInline,
+      $.kReintroduce,
+    ),
+
     var_declaration_section: $ => seq(
       $.kVar,
       repeat1(seq(
@@ -131,6 +233,7 @@ export default grammar({
 
     type_declaration: $ => choice(
       $.type_alias_declaration,
+      $.class_declaration
     ),
 
     type_alias_declaration: $ => seq(
@@ -222,7 +325,7 @@ export default grammar({
     ),
 
     _variable_type_declaration: $ => seq(":", field('type', $.type)),
-    _variable_initialization: $ => seq(':=', field('value', $.expression)),
+    _variable_initialization: $ => seq(':=', field('initial_value', $.expression)),
 
     variable_declarator: $ =>
       field("name", $.identifier),
@@ -489,6 +592,7 @@ export default grammar({
     kUses: _ => token(prec(1, /uses/i)),
     kType: _ => token(prec(1, /type/i)),
     kVar: _ => token(prec(1, /var/i)),
+    kConst: _ => token(prec(1, /const/i)),
     kNot: _ => token(prec(1, /not/i)),
     kAnd: _ => token(prec(1, /and/i)),
     kOr: _ => token(prec(1, /or/i)),
@@ -516,6 +620,31 @@ export default grammar({
     kExcept: _ => token(prec(1, /except/i)),
     kFinally: _ => token(prec(1, /finally/i)),
     kOn: _ => token(prec(1, /on/i)),
+    kClass: _ => token(prec(1, /class/i)),
+    kProcedure: _ => token(prec(1, /procedure/i)),
+    kFunction: _ => token(prec(1, /function/i)),
+    kConstructor: _ => token(prec(1, /constructor/i)),
+    kDestructor: _ => token(prec(1, /destructor/i)),
+    kPrivate: _ => token(prec(1, /private/i)),
+    kProtected: _ => token(prec(1, /protected/i)),
+    kPublic: _ => token(prec(1, /public/i)),
+    kPublished: _ => token(prec(1, /published/i)),
+    kProperty: _ => token(prec(1, /property/i)),
+    kRead: _ => token(prec(1, /read/i)),
+    kWrite: _ => token(prec(1, /write/i)),
+    kVirtual: _ => token(prec(1, /virtual/i)),
+    kAbstract: _ => token(prec(1, /abstract/i)),
+    kSealed: _ => token(prec(1, /sealed/i)),
+    kOverride: _ => token(prec(1, /override/i)),
+    kOverload: _ => token(prec(1, /overload/i)),
+    kReintroduce: _ => token(prec(1, /reintroduce/i)),
+    kStdcall: _ => token(prec(1, /stdcall/i)),
+    kCdecl: _ => token(prec(1, /cdecl/i)),
+    kRegister: _ => token(prec(1, /register/i)),
+    kPascal: _ => token(prec(1, /pascal/i)),
+    kSafecall: _ => token(prec(1, /safecall/i)),
+    kInline: _ => token(prec(1, /inline/i)),
+    kOut: _ => token(prec(1, /out/i)),
   },
 });
 

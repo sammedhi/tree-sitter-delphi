@@ -137,3 +137,113 @@ end.
           name: (identifier)
           type: (identifier))))
     (kEnd)))
+
+================================================================================
+Class declaration
+================================================================================
+unit Foo;
+interface
+type
+  TAnimal = class(TObject, IDisposable)
+    FValue: boolean;
+  private
+    FName: string;
+    FAge: Integer;
+  public
+    constructor Create(Name, Prefix: string; Age: Integer);
+    destructor Destroy;
+    function GetName: string; override;
+    class procedure DoSomething; stdcall;
+    property Name: string read FName write FName;
+    property Age: Integer read FAge
+    procedure SetName(const Name: string); virtual;
+  end;
+implementation
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (unit_file
+    (kUnit)
+    name: (identifier)
+    interface: (interface_section
+      (kInterface)
+      (type_declaration_section
+        (kType)
+        (class_declaration
+          name: (identifier)
+          (kClass)
+          (class_heritage
+            (ancestor
+              (identifier))
+            (ancestor
+              (identifier)))
+          (class_field 
+            name: (identifier)
+            type: (identifier))
+          (class_section
+            visibility: (kPrivate)
+            (class_field
+              name: (identifier)
+              type: (identifier))
+            (class_field
+              name: (identifier)
+              type: (identifier)))
+          (class_section
+            visibility: (kPublic)
+            (class_method
+              kind: (kConstructor)
+              name: (identifier)
+              parameters: (parameter_list
+                (parameter_declaration
+                  (argument_name
+                    (identifier))
+                  (argument_name
+                    (identifier))
+                  type: (identifier))
+                (parameter_declaration
+                  (argument_name
+                    (identifier))
+                  type: (identifier))))
+            (class_method
+              kind: (kDestructor)
+              name: (identifier))
+            (class_method
+              kind: (kFunction)
+              name: (identifier)
+              return_type: (identifier)
+              (method_directive 
+                (kOverride)))
+            (class_method
+              (kClass)
+              kind: (kProcedure)
+              name: (identifier)
+              (method_directive 
+                (kStdcall)))
+            (class_property
+              (kProperty)
+              name: (identifier)
+              type: (identifier)
+              (kRead)
+              read: (identifier)
+              (kWrite)
+              write: (identifier))
+            (class_property
+              (kProperty)
+              name: (identifier)
+              type: (identifier)
+              (kRead)
+              read: (identifier))
+            (class_method
+              kind: (kProcedure)
+              name: (identifier)
+              parameters: (parameter_list
+                (parameter_declaration
+                  modifier: (kConst)
+                  (argument_name
+                    (identifier))
+                  type: (identifier)))
+              (method_directive (kVirtual))))
+          (kEnd))))
+    implementation: (implementation_section
+      (kImplementation))
+    (kEnd)))

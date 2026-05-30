@@ -28,14 +28,14 @@ end.
           name: (identifier)
         )
         type: (identifier)
-        value: (integer_literal)
+        initial_value: (integer_literal)
       )
       (variable_declaration_statement
         (kVar)
         (variable_declarator
           name: (identifier)
         )
-        value: (integer_literal)
+        initial_value: (integer_literal)
       )
       (variable_declaration_statement
         (kVar)
