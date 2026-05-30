@@ -42,7 +42,8 @@ export default grammar({
   ],
 
   inline: $ => [
-    $.class_visibility
+    $.class_visibility,
+    $.declaration_section
   ],
 
   // Case-insensitive keywords are handled via extras/externals later
@@ -60,7 +61,7 @@ export default grammar({
       field('name', $.identifier),
       ';',
       optional($.uses_clause),
-      repeat(choice($.var_declaration_section, $.type_declaration_section)),
+      repeat($.declaration_section),
       field('body', $.block_statement),
       '.',
     ),
@@ -70,7 +71,7 @@ export default grammar({
       field('name', $.identifier),
       ';',
       optional($.uses_clause),
-      repeat(choice($.var_declaration_section, $.type_declaration_section)),
+      repeat($.declaration_section),
       field('body', $.block_statement),
       '.',
     ),
@@ -90,13 +91,13 @@ export default grammar({
     interface_section: $ => seq(
       $.kInterface,
       optional($.uses_clause),
-      repeat(choice($.type_declaration_section, $.var_declaration_section))
+      repeat($.declaration_section)
     ),
 
     implementation_section: $ => seq(
       $.kImplementation,
       optional($.uses_clause),
-      repeat(choice($.type_declaration_section, $.var_declaration_section))
+      repeat($.declaration_section)
     ),
 
     initialization_section: $ => seq(
@@ -115,6 +116,12 @@ export default grammar({
       $.kUses,
       commaSep1($.unit_reference),
       ';',
+    ),
+
+    declaration_section: $ => choice(
+      $.var_declaration_section,
+      $.const_declaration_section,
+      $.type_declaration_section
     ),
 
     type_declaration_section: $ => seq(
@@ -217,6 +224,18 @@ export default grammar({
       $.kSafecall,
       $.kInline,
       $.kReintroduce,
+    ),
+
+    const_declaration_section: $ => seq(
+      $.kConst,
+      repeat1(seq($.const_declaration, ';')),
+    ),
+
+    const_declaration: $ => seq(
+      field('name', $.identifier),
+      optional(seq(':', field('type', $.type))),
+      '=',
+      field('value', $.expression),
     ),
 
     var_declaration_section: $ => seq(

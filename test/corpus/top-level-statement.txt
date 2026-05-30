@@ -166,3 +166,39 @@ end.
     body: (block_statement
       (kBegin)
       (kEnd))))
+
+================================================================================
+Const declaration section
+================================================================================
+program Foo;
+const
+  x = 42;
+  y: Boolean = True;
+  z = 'hello';
+  w: Integer = 7;
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    (const_declaration_section
+      (kConst)
+      (const_declaration
+        name: (identifier)
+        value: (integer_literal))
+      (const_declaration
+        name: (identifier)
+        type: (identifier)
+        value: (boolean_literal))
+      (const_declaration
+        name: (identifier)
+        value: (string_literal))
+      (const_declaration
+        name: (identifier)
+        type: (identifier)
+        value: (integer_literal)))
+    body: (block_statement
+      (kBegin)
+      (kEnd))))
