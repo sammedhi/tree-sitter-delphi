@@ -279,6 +279,14 @@ export default grammar({
 
     type: $ => choice(
       $._name,
+      $.array_type
+    ),
+
+    array_type: $ => seq(
+      $.kArray,
+      $.kOf,
+      $._name
+    ),
 
     function_definition: $ => seq(
       optional($.kClass),
@@ -694,6 +702,7 @@ export default grammar({
     kSafecall: _ => token(prec(1, /safecall/i)),
     kInline: _ => token(prec(1, /inline/i)),
     kOut: _ => token(prec(1, /out/i)),
+    kArray: _ => token(prec(1, /array/i)),
   },
 });
 
