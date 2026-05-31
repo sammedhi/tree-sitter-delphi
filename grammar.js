@@ -317,7 +317,13 @@ export default grammar({
       $.case_statement,
       $.try_statement,
       $.break_statement,
-      $.continue_statement
+      $.continue_statement,
+      $.raise_statement
+    ),
+
+    raise_statement: $ => seq(
+      $.kRaise,
+      $.expression,
     ),
 
     if_statement: $ => prec.right(seq(
@@ -722,6 +728,7 @@ export default grammar({
     kInline: _ => token(prec(1, /inline/i)),
     kOut: _ => token(prec(1, /out/i)),
     kArray: _ => token(prec(1, /array/i)),
+    kRaise: _ => token(prec(1, /raise/i))
   },
 });
 
