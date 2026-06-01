@@ -131,7 +131,7 @@ export default grammar({
 
     type_declaration_section: $ => seq(
       $.kType,
-      repeat1($.type_declaration),
+      repeat1(seq($.type_declaration, ';')),
     ),
 
     class_declaration: $ => seq(
@@ -144,7 +144,6 @@ export default grammar({
       repeat($.class_member),
       repeat($.class_section),
       $.kEnd,
-      ';',
     ),
 
     class_heritage: $ => seq(
@@ -265,7 +264,6 @@ export default grammar({
       field('name', $.identifier),
       '=',
       field('type', $.type),
-      ';',
     ),
 
     enum_type_declaration: $ => seq(
@@ -318,7 +316,8 @@ export default grammar({
       $.try_statement,
       $.break_statement,
       $.continue_statement,
-      $.raise_statement
+      $.raise_statement,
+      $.call_expression
     ),
 
     raise_statement: $ => seq(
@@ -409,7 +408,6 @@ export default grammar({
       $.kEnd,
     ),
 
-    // in statement: $ => choice(...)
     loop_statement: $ => choice(
       $.for_statement,
       $.while_statement,
@@ -521,16 +519,17 @@ export default grammar({
     ),
 
     // expression that can exist both as lvalue and rvalue
-    lvalue_expression: $ => choice(
+    lvalue_expression: $ => prec(1, choice(
       $._name
-    ),
+    )),
 
     // expression that can only exist as rvalue
     not_lvalue_expression: $ => choice(
       $.literal,
       $.unary_expression,
       $.binary_expression,
-      $.parenthesized_expression
+      $.parenthesized_expression,
+      $.call_expression
     ),
 
     //#region literals
@@ -581,6 +580,18 @@ export default grammar({
         ))
       ));
     },
+
+    call_expression: $ => seq(
+      optional($.kInherited),
+      field('name', $._name),
+      optional($.argument_list),
+    ),
+
+    argument_list: $ => seq(
+      '(',
+      sep(alias($.expression, 'argument'), ','),
+      ')'
+    ),
 
     parenthesized_expression: $ => seq(
       '(',
@@ -728,6 +739,7 @@ export default grammar({
     kInline: _ => token(prec(1, /inline/i)),
     kOut: _ => token(prec(1, /out/i)),
     kArray: _ => token(prec(1, /array/i)),
+    kInherited: _ => token(prec(1, /inherited/i)),
     kRaise: _ => token(prec(1, /raise/i))
   },
 });
