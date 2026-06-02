@@ -300,7 +300,9 @@ export default grammar({
         $.kDestructor
       )),
       $._name,
+      optional($.type_argument_list),
       optional($.parameter_list),
+      optional(field('return_type', seq(':', $.type))),
       ';',
       repeat(choice($.var_declaration_section)),
       $.block_statement,
