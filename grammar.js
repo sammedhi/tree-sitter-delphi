@@ -66,6 +66,7 @@ export default grammar({
       ';',
       optional($.uses_clause),
       repeat($.declaration_section),
+      repeat($.function_definition),
       field('body', $.block_statement),
       '.',
     ),
