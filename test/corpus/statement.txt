@@ -525,3 +525,35 @@ end.
       )
       (kEnd))))
 
+================================================================================
+Raise statement
+================================================================================
+program Foo;
+begin
+  raise Exception.Create('error');
+  raise EInvalidOperation.Create('invalid')
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (raise_statement
+        (kRaise)
+        (call_expression
+          name: (qualified_name
+            qualifier: (identifier)
+            name: (identifier))
+          (argument_list
+            (string_literal))))
+      (raise_statement
+        (kRaise)
+        (call_expression
+          name: (qualified_name
+            qualifier: (identifier)
+            name: (identifier))
+          (argument_list
+            (string_literal))))
+      (kEnd))))
