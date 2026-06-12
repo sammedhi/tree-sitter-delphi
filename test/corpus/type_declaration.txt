@@ -5,6 +5,7 @@ unit Foo;
 interface
 type
   TFoo = Integer;
+  PInteger = ^Integer;
 implementation
 end.
 --------------------------------------------------------------------------------
@@ -18,7 +19,12 @@ end.
         (kType)
         (type_alias_declaration
           name: (identifier)
-          type: (identifier))))
+          type: (identifier))
+      (type_alias_declaration
+        name: (identifier)
+        type: (pointer_type
+          type: (identifier)))
+      ))
     implementation: (implementation_section
       (kImplementation))
     (kEnd)))

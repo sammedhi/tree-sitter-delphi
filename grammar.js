@@ -11,6 +11,8 @@ const PREC = {
   RELATIONAL: 1,
   ADDITIVE: 2,
   MULTIPLICATIVE: 3,
+  UNARY: 4,
+  DEREFERENCE: 5,
 };
 
 export default grammar({
@@ -282,8 +284,11 @@ export default grammar({
 
     type: $ => choice(
       $._name,
-      $.array_type
+      $.array_type,
+      $.pointer_type
     ),
+
+    pointer_type: $ => seq('^', field('type', $.type)),
 
     array_type: $ => seq(
       $.kArray,
@@ -523,7 +528,8 @@ export default grammar({
 
     // expression that can exist both as lvalue and rvalue
     lvalue_expression: $ => prec(1, choice(
-      $._name
+      $._name,
+      $.dereference_expression
     )),
 
     // expression that can only exist as rvalue
@@ -531,6 +537,7 @@ export default grammar({
       $.literal,
       $.unary_expression,
       $.binary_expression,
+      $.address_of_expression,
       $.parenthesized_expression,
       $.call_expression
     ),
@@ -545,10 +552,10 @@ export default grammar({
       $.nil_literal,
     ),
 
-    unary_expression: $ => seq(
+    unary_expression: $ => prec(PREC.UNARY, seq(
       field('operator', choice('-', $.kNot)),
       field('operand', $.expression),
-    ),
+    )),
 
     binary_expression: $ => {
       /** @type {Array<[string|Rule, number]>} */
@@ -583,6 +590,16 @@ export default grammar({
         ))
       ));
     },
+
+    dereference_expression: $ => prec(PREC.DEREFERENCE, seq(
+      field('operand', $.expression),
+      '^'
+    )),
+
+    address_of_expression: $ => seq(
+      '@',
+      field('operand', $.expression),
+    ),
 
     call_expression: $ => seq(
       optional($.kInherited),

@@ -189,3 +189,42 @@ end.
         (argument_list
           (identifier)))
       (kEnd))))
+
+================================================================================
+Pointer expressions
+================================================================================
+program Foo;
+begin
+  p := @myVar;
+  p := @myObj.Field;
+  myVar := p^;
+  p^ := 42;
+end.
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (assignment_statement
+        left: (identifier)
+        right: (address_of_expression
+          operand: (identifier)))
+      (assignment_statement
+        left: (identifier)
+        right: (address_of_expression
+          operand: (qualified_name
+            qualifier: (identifier)
+            name: (identifier))))
+      (assignment_statement
+        left: (identifier)
+        right: (dereference_expression
+          operand: (identifier)))
+      (assignment_statement
+        left: (dereference_expression
+          operand: (identifier))
+        right: (integer_literal))
+      (kEnd))))
