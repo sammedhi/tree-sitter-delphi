@@ -151,7 +151,7 @@ export default grammar({
 
     class_heritage: $ => seq(
       '(',
-      commaSep1(alias($._name, $.ancestor)),
+      commaSep($._name),
       ')',
     ),
 
@@ -211,6 +211,7 @@ export default grammar({
     ),
 
     parameter_declaration: $ => seq(
+      // TODO use alias for the modifier instead
       optional(field('modifier', choice($.kConst, $.kVar, $.kOut))),
       commaSep1($.argument_name),
       $._variable_type_declaration,
@@ -539,7 +540,8 @@ export default grammar({
       $.binary_expression,
       $.address_of_expression,
       $.parenthesized_expression,
-      $.call_expression
+      $.call_expression,
+      $.array_constructor_expression
     ),
 
     //#region literals
@@ -609,7 +611,7 @@ export default grammar({
 
     argument_list: $ => seq(
       '(',
-      sep(alias($.expression, 'argument'), ','),
+      commaSep($.expression),
       ')'
     ),
 
@@ -617,6 +619,12 @@ export default grammar({
       '(',
       $.expression,
       ')',
+    ),
+
+    array_constructor_expression: $ => seq(
+      '[',
+      sep($.expression, ','),
+      ']',
     ),
 
     integer_literal: _ => token(choice(
@@ -662,7 +670,7 @@ export default grammar({
       '<',
       choice(
         repeat(','),
-        commaSep1($.type),
+        commaSep($.type),
       ),
       '>',
     ),
@@ -789,6 +797,17 @@ function sep(rule, separator) {
  */
 function sep1(rule, separator) {
   return seq(rule, repeat(seq(separator, rule)));
+}
+
+/**
+ * Creates a rule to match zero or more of the rules separated by a comma
+ *
+ * @param {Rule} rule
+ *
+ * @returns {ChoiceRule}
+ */
+function commaSep(rule) {
+  return optional(commaSep1(rule));
 }
 
 /**

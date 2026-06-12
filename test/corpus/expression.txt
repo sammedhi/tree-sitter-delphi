@@ -228,3 +228,57 @@ end.
           operand: (identifier))
         right: (integer_literal))
       (kEnd))))
+
+================================================================================
+Array constructor expression
+================================================================================
+
+program Test;
+begin
+  a := [];
+  a := [1, 2, 3];
+  a := ['hello', 'world'];
+  a := [1 + 2, myVar, myFunc()];
+  MyFunc([1, 2, 3]);
+end.
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (assignment_statement
+        left: (identifier)
+        right: (array_constructor_expression))
+      (assignment_statement
+        left: (identifier)
+        right: (array_constructor_expression
+          (integer_literal)
+          (integer_literal)
+          (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (array_constructor_expression
+          (string_literal)
+          (string_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (array_constructor_expression
+          (binary_expression
+            left: (integer_literal)
+            right: (integer_literal))
+          (identifier)
+          (call_expression
+            name: (identifier)
+            (argument_list))))
+      (call_expression
+        name: (identifier)
+        (argument_list
+          (array_constructor_expression
+            (integer_literal)
+            (integer_literal)
+            (integer_literal))))
+      (kEnd))))

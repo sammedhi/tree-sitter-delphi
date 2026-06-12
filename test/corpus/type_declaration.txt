@@ -179,10 +179,8 @@ end.
           name: (identifier)
           (kClass)
           (class_heritage
-            (ancestor
-              (identifier))
-            (ancestor
-              (identifier)))
+            (identifier)
+            (identifier))
           (class_field 
             name: (identifier)
             type: (identifier))
