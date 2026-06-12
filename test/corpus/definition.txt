@@ -1,0 +1,109 @@
+================================================================================
+Function definition
+================================================================================
+program Foo;
+
+procedure TFoo.DoSomething(x: Integer; y: String);
+var
+  z: Boolean;
+begin
+  z := True
+end;
+
+function TFoo.Add(a: Integer; b: Integer): Integer;
+begin
+  Result := a + b
+end;
+
+function TFoo.ToList<T>(x: T): TList<T>;
+begin
+  Result := TList<T>.Create(x)
+end;
+
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    (function_definition
+      kind: (kProcedure)
+      (qualified_name
+        qualifier: (identifier)
+        name: (identifier))
+      (parameter_list
+        (parameter_declaration
+          (argument_name
+            (identifier))
+          type: (identifier))
+        (parameter_declaration
+          (argument_name
+            (identifier))
+          type: (identifier)))
+      (var_declaration_section
+        (kVar)
+        (var_declaration
+          (variable_declarator
+            name: (identifier))
+          type: (identifier)))
+      (block_statement
+        (kBegin)
+        (assignment_statement
+          left: (identifier)
+          right: (boolean_literal))
+        (kEnd)))
+    (function_definition
+      kind: (kFunction)
+      (qualified_name
+        qualifier: (identifier)
+        name: (identifier))  
+      (parameter_list
+        (parameter_declaration
+            (argument_name (identifier))
+        type: (identifier))
+        (parameter_declaration
+            (argument_name (identifier))
+        type: (identifier))
+      )
+      return_type: (identifier)
+      (block_statement
+        (kBegin)
+        (assignment_statement
+          left: (identifier)
+          right: (binary_expression
+            left: (identifier)
+            right: (identifier)))
+        (kEnd)))
+    (function_definition
+      kind: (kFunction)
+      (qualified_name
+        qualifier: (identifier)
+        name: (identifier))
+      (type_argument_list
+        (identifier))
+      (parameter_list
+        (parameter_declaration
+          (argument_name
+            (identifier))
+          type: (identifier)))
+      return_type: (generic_name 
+        (identifier)
+        (type_argument_list (identifier)))
+      (block_statement
+        (kBegin)
+        (assignment_statement
+          left: (identifier)
+          right: (call_expression
+            name: (qualified_name
+              qualifier: (generic_name
+                (identifier)
+                (type_argument_list
+                  (identifier)))
+              name: (identifier))
+            (argument_list
+              (identifier))))
+        (kEnd)))
+    body: (block_statement
+      (kBegin)
+      (kEnd))))
