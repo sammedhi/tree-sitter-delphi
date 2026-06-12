@@ -150,3 +150,42 @@ end.
             operator: (kDiv)
             right: (integer_literal))))
       (kEnd))))
+
+================================================================================
+Call expression
+================================================================================
+program Foo;
+begin
+  Bar();
+  Bar(x, 42, 'hello');
+  inherited Bar(x);
+  Foo.Bar(x)
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (call_expression
+        name: (identifier)
+        (argument_list))
+      (call_expression
+        name: (identifier)
+        (argument_list
+          (identifier)
+          (integer_literal)
+          (string_literal)))
+      (call_expression
+        (kInherited)
+        name: (identifier)
+        (argument_list
+          (identifier)))
+      (call_expression
+        name: (qualified_name
+          qualifier: (identifier)
+          name: (identifier))
+        (argument_list
+          (identifier)))
+      (kEnd))))
