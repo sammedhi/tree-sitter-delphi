@@ -287,3 +287,40 @@ end.
     body: (block_statement
       (kBegin)
       (kEnd))))
+
+================================================================================
+Array type
+================================================================================
+program Foo;
+var
+  x: array of Integer;
+  y: array of TList<String>;
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    (var_declaration_section
+      (kVar)
+      (var_declaration
+        (variable_declarator
+          name: (identifier))
+        type: (array_type
+          (kArray)
+          (kOf)
+          (identifier)))
+      (var_declaration
+        (variable_declarator
+          name: (identifier))
+        type: (array_type
+          (kArray)
+          (kOf)
+          (generic_name
+            (identifier)
+            (type_argument_list
+              (identifier))))))
+    body: (block_statement
+      (kBegin)
+      (kEnd))))
