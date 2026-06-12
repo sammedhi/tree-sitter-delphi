@@ -13,6 +13,7 @@ const PREC = {
   MULTIPLICATIVE: 3,
   UNARY: 4,
   DEREFERENCE: 5,
+  POSTFIX: 6
 };
 
 export default grammar({
@@ -530,7 +531,8 @@ export default grammar({
     // expression that can exist both as lvalue and rvalue
     lvalue_expression: $ => prec(1, choice(
       $._name,
-      $.dereference_expression
+      $.dereference_expression,
+      $.element_access_expression
     )),
 
     // expression that can only exist as rvalue
@@ -626,6 +628,15 @@ export default grammar({
       sep($.expression, ','),
       ']',
     ),
+
+    element_access_expression: $ => prec(PREC.POSTFIX, seq(
+      field('expression', $.expression),
+      field('subscript', seq(
+        '[',
+        commaSep1($.expression),
+        ']'
+      ))
+    )),
 
     integer_literal: _ => token(choice(
       /[0-9]+/,           // decimal

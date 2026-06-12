@@ -282,3 +282,70 @@ end.
             (integer_literal)
             (integer_literal))))
       (kEnd))))
+
+================================================================================
+Element access expression
+================================================================================
+
+program Test;
+begin
+  x := a[0];
+  x := a[i];
+  x := a[0, 1];
+  x := a[b[i]];
+  x := myObj.myArray[0];
+  x := MyFunc()[0];
+  a[0] := 42;
+end.
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (assignment_statement
+        left: (identifier)
+        right: (element_access_expression
+          expression: (identifier)
+          subscript: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (element_access_expression
+          expression: (identifier)
+          subscript: (identifier)))
+      (assignment_statement
+        left: (identifier)
+        right: (element_access_expression
+          expression: (identifier)
+          subscript: (integer_literal)
+          subscript: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (element_access_expression
+          expression: (identifier)
+          subscript: (element_access_expression
+            expression: (identifier)
+            subscript: (identifier))))
+      (assignment_statement
+        left: (identifier)
+        right: (element_access_expression
+          expression: (qualified_name
+            qualifier: (identifier)
+            name: (identifier))
+          subscript: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (element_access_expression
+          expression: (call_expression
+            name: (identifier)
+            (argument_list))
+          subscript: (integer_literal)))
+      (assignment_statement
+        left: (element_access_expression
+          expression: (identifier)
+          subscript: (integer_literal))
+        right: (integer_literal))
+      (kEnd))))
