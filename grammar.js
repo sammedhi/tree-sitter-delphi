@@ -13,7 +13,8 @@ const PREC = {
   MULTIPLICATIVE: 3,
   UNARY: 4,
   DEREFERENCE: 5,
-  POSTFIX: 6
+  POSTFIX: 6,
+  CALL: 7
 };
 
 export default grammar({
@@ -27,6 +28,7 @@ export default grammar({
 
   conflicts: $ => [
     [$._simple_name, $.generic_name],
+    [$._inherited_call_expression, $.call_expression]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -327,7 +329,8 @@ export default grammar({
       $.break_statement,
       $.continue_statement,
       $.raise_statement,
-      $.call_expression
+      $.call_expression,
+      alias($._inherited_call_expression, $.call_expression)
     ),
 
     raise_statement: $ => seq(
@@ -542,8 +545,9 @@ export default grammar({
       $.binary_expression,
       $.address_of_expression,
       $.parenthesized_expression,
+      $.array_constructor_expression,
       $.call_expression,
-      $.array_constructor_expression
+      alias($._inherited_call_expression, $.call_expression)
     ),
 
     //#region literals
@@ -605,11 +609,16 @@ export default grammar({
       field('operand', $.expression),
     ),
 
-    call_expression: $ => seq(
-      optional($.kInherited),
-      field('name', $._name),
-      optional($.argument_list),
-    ),
+    _inherited_call_expression: $ => prec(PREC.CALL, seq(
+      $.kInherited,
+      field('name', $.expression),
+      optional($.argument_list)
+    )),
+
+    call_expression: $ => prec(PREC.CALL, seq(
+      field('name', $.expression),
+      $.argument_list,
+    )),
 
     argument_list: $ => seq(
       '(',
