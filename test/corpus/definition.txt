@@ -95,8 +95,8 @@ end.
         (assignment_statement
           left: (identifier)
           right: (call_expression
-            name: (qualified_name
-              qualifier: (generic_name
+            name: (member_access_expression
+              expression: (generic_name
                 (identifier)
                 (type_argument_list
                   (identifier)))

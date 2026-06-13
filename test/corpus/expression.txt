@@ -183,8 +183,8 @@ end.
         (argument_list
           (identifier)))
       (call_expression
-        name: (qualified_name
-          qualifier: (identifier)
+        name: (member_access_expression
+          expression: (identifier)
           name: (identifier))
         (argument_list
           (identifier)))
@@ -216,8 +216,8 @@ end.
       (assignment_statement
         left: (identifier)
         right: (address_of_expression
-          operand: (qualified_name
-            qualifier: (identifier)
+          operand: (member_access_expression
+            expression: (identifier)
             name: (identifier))))
       (assignment_statement
         left: (identifier)
@@ -332,8 +332,8 @@ end.
       (assignment_statement
         left: (identifier)
         right: (element_access_expression
-          expression: (qualified_name
-            qualifier: (identifier)
+          expression: (member_access_expression
+            expression: (identifier)
             name: (identifier))
           subscript: (integer_literal)))
       (assignment_statement

@@ -543,16 +543,16 @@ end.
       (raise_statement
         (kRaise)
         (call_expression
-          name: (qualified_name
-            qualifier: (identifier)
+          name: (member_access_expression
+            expression: (identifier)
             name: (identifier))
           (argument_list
             (string_literal))))
       (raise_statement
         (kRaise)
         (call_expression
-          name: (qualified_name
-            qualifier: (identifier)
+          name: (member_access_expression
+            expression: (identifier)
             name: (identifier))
           (argument_list
             (string_literal))))

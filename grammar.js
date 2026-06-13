@@ -14,7 +14,8 @@ const PREC = {
   UNARY: 4,
   DEREFERENCE: 5,
   POSTFIX: 6,
-  CALL: 7
+  CALL: 7,
+  DOT: 8
 };
 
 export default grammar({
@@ -330,6 +331,7 @@ export default grammar({
       $.continue_statement,
       $.raise_statement,
       $.call_expression,
+      $.member_access_expression,
       alias($._inherited_call_expression, $.call_expression)
     ),
 
@@ -533,7 +535,8 @@ export default grammar({
 
     // expression that can exist both as lvalue and rvalue
     lvalue_expression: $ => prec(1, choice(
-      $._name,
+      $.member_access_expression,
+      $._simple_name,
       $.dereference_expression,
       $.element_access_expression
     )),
@@ -700,11 +703,17 @@ export default grammar({
       $._simple_name,
     ),
 
-    qualified_name: $ => seq(
+    qualified_name: $ => prec(PREC.DOT, seq(
       field('qualifier', $._name),
       '.',
       field('name', $.identifier),
-    ),
+    )),
+
+    member_access_expression: $ => prec(PREC.DOT, seq(
+      field('expression', choice($.expression, $._name)),
+      '.',
+      field('name', $._simple_name),
+    )),
 
     comment: $ => choice(
       $.line_comment,
