@@ -420,8 +420,8 @@ export default grammar({
       field("name", $.identifier),
 
     _semicolon_statement: $ => seq(
-      $.statement,
-      ';',
+      optional($.statement),
+      ';'
     ),
 
     block_statement: $ => seq(
