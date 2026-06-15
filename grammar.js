@@ -558,7 +558,8 @@ export default grammar({
       $.parenthesized_expression,
       $.array_constructor_expression,
       $.call_expression,
-      alias($._inherited_call_expression, $.call_expression)
+      alias($._inherited_call_expression, $.call_expression),
+      $.anonymous_function_expression,
     ),
 
     //#region literals
@@ -657,6 +658,17 @@ export default grammar({
         ']'
       ))
     )),
+
+    anonymous_function_expression: $ => seq(
+      field('kind', choice(
+        $.kFunction,
+        $.kProcedure
+      )),
+      optional($.parameter_list),
+      optional(field('type', $._variable_type_declaration)),
+      repeat($.declaration_section),
+      $.block_statement,
+    ),
 
     integer_literal: _ => token(choice(
       /[0-9]+/,           // decimal
