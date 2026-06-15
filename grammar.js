@@ -374,6 +374,7 @@ export default grammar({
       $.try_statement,
       $.break_statement,
       $.continue_statement,
+      $.exit_statement,
       $.raise_statement,
       $.inherited_statement,
       $.call_expression,
@@ -575,6 +576,8 @@ export default grammar({
     continue_statement: _ => token(prec(1, /continue/i)),
 
     break_statement: _ => token(prec(1, /break/i)),
+
+    exit_statement: _ => token(prec(1, /exit/i)),
 
     expression: $ => choice(
       $.lvalue_expression,
