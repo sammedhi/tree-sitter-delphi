@@ -327,7 +327,8 @@ export default grammar({
     type: $ => choice(
       $._name,
       $.array_type,
-      $.pointer_type
+      $.pointer_type,
+      $.class_of_type
     ),
 
     pointer_type: $ => seq('^', field('type', $.type)),
@@ -336,6 +337,12 @@ export default grammar({
       $.kArray,
       $.kOf,
       $._name
+    ),
+
+    class_of_type: $ => seq(
+      $.kClass,
+      $.kOf,
+      field('type', $._name)
     ),
 
     function_definition: $ => seq(
