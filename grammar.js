@@ -109,8 +109,10 @@ export default grammar({
     implementation_section: $ => seq(
       $.kImplementation,
       optional($.uses_clause),
-      repeat($.declaration_section),
-      repeat($.function_definition)
+      repeat(choice(
+        $.declaration_section,
+        $.function_definition
+      )),
     ),
 
     initialization_section: $ => seq(
