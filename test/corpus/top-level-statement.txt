@@ -202,3 +202,31 @@ end.
     body: (block_statement
       (kBegin)
       (kEnd))))
+
+================================================================================
+Resourcestring declaration section
+================================================================================
+program Foo;
+
+resourcestring
+  RS_String1 = 'Some string with '' in it';
+  RS_String2 = 'Some string with %s in it';
+
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    (resourcestring_declaration_section
+      (kResourcestring)
+      (resourcestring_declaration
+        name: (identifier)
+        (string_literal))
+      (resourcestring_declaration
+        name: (identifier)
+        (string_literal)))
+    body: (block_statement
+      (kBegin)
+      (kEnd))))

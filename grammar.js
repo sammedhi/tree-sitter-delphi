@@ -40,6 +40,7 @@ export default grammar({
   supertypes: $ => [
     $.comment,
     $.statement,
+    $.declaration_section,
     $.type,
     $.expression,
     $.literal,
@@ -54,7 +55,6 @@ export default grammar({
 
   inline: $ => [
     $.class_visibility,
-    $.declaration_section
   ],
 
   // Case-insensitive keywords are handled via extras/externals later
@@ -136,7 +136,8 @@ export default grammar({
     declaration_section: $ => choice(
       $.var_declaration_section,
       $.const_declaration_section,
-      $.type_declaration_section
+      $.type_declaration_section,
+      $.resourcestring_declaration_section
     ),
 
     type_declaration_section: $ => seq(
@@ -241,6 +242,17 @@ export default grammar({
       $.kSafecall,
       $.kInline,
       $.kReintroduce,
+    ),
+
+    resourcestring_declaration_section: $ => seq(
+      $.kResourcestring,
+      repeat1(seq($.resourcestring_declaration, ';'))
+    ),
+
+    resourcestring_declaration: $ => seq(
+      field('name', $.identifier),
+      '=',
+      $.string_literal
     ),
 
     const_declaration_section: $ => seq(
@@ -793,6 +805,7 @@ export default grammar({
     kType: _ => token(prec(1, /type/i)),
     kVar: _ => token(prec(1, /var/i)),
     kConst: _ => token(prec(1, /const/i)),
+    kResourcestring: _ => token(prec(1, /resourcestring/i)),
     kNot: _ => token(prec(1, /not/i)),
     kAnd: _ => token(prec(1, /and/i)),
     kOr: _ => token(prec(1, /or/i)),
