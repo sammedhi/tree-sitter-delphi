@@ -338,6 +338,7 @@ export default grammar({
       $.break_statement,
       $.continue_statement,
       $.raise_statement,
+      $.inherited_statement,
       $.call_expression,
       $.member_access_expression,
       alias($._inherited_call_expression, $.call_expression)
@@ -347,6 +348,8 @@ export default grammar({
       $.kRaise,
       $.expression,
     ),
+
+    inherited_statement: $ => $.kInherited,
 
     if_statement: $ => prec.right(seq(
       $.kIf,

@@ -495,10 +495,11 @@ end.
 
 
 ================================================================================
-Break and Continuer statement
+Break, continue, inherited statements
 ================================================================================
 program Foo;
 begin
+  inherited;
   while true do
   begin
     break;
@@ -512,6 +513,7 @@ end.
     name: (identifier)
     body: (block_statement
       (kBegin)
+      (inherited_statement (kInherited))
       (while_statement 
         (kWhile)
         condition: (boolean_literal)
