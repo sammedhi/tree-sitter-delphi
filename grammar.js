@@ -239,7 +239,7 @@ export default grammar({
       // TODO use alias for the modifier instead
       optional(field('modifier', choice($.kConst, $.kVar, $.kOut))),
       commaSep1($.argument_name),
-      $._variable_type_declaration,
+      optional($._variable_type_declaration),
       optional(seq('=', field('default_value', $.expression))),
     ),
 
