@@ -46,7 +46,6 @@ export default grammar({
     $.literal,
     $.lvalue_expression,
     $.not_lvalue_expression,
-    $.type_declaration,
     $.loop_statement,
     $.for_statement,
     $.try_statement,
@@ -145,10 +144,7 @@ export default grammar({
       repeat1(seq($.type_declaration, ';')),
     ),
 
-    class_declaration: $ => seq(
-      field('name', $.identifier),
-      optional($.type_parameter_list),
-      '=',
+    class_definition: $ => seq(
       $.kClass,
       optional(choice($.kAbstract, $.kSealed)),
       optional($.base_list),
@@ -214,10 +210,7 @@ export default grammar({
       optional(';',)
     ),
 
-    interface_declaration: $ => seq(
-      field('name', $.identifier),
-      optional($.type_parameter_list),
-      '=',
+    interface_definition: $ => seq(
       $.kInterface,
       optional($.base_list),
       optional($.guid_declaration),
@@ -301,22 +294,26 @@ export default grammar({
       $._variable_type_declaration
     ),
 
-    type_declaration: $ => choice(
-      $.type_alias_declaration,
-      $.class_declaration,
-      $.interface_declaration,
-      $.enum_type_declaration
+    type_declaration: $ => seq(
+      field('name', $.identifier),
+      optional($.type_parameter_list),
+      '=',
+      field('type', $._type_definition),
     ),
 
-    type_alias_declaration: $ => seq(
-      field('name', $.identifier),
-      '=',
+    _type_definition: $ => choice(
+      $.type_alias_definition,
+      $.class_definition,
+      $.interface_definition,
+      $.enum_definition,
+    ),
+
+    type_alias_definition: $ => seq(
       field('type', $.type),
     ),
 
-    enum_type_declaration: $ => seq(
-      field('name', $.identifier),
-      '=',
+
+    enum_definition: $ => seq(
       '(',
       sep($.enum_value, ','),
       ')',

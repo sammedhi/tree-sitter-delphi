@@ -1,64 +1,4 @@
 ================================================================================
-Simple type alias
-================================================================================
-unit Foo;
-interface
-type
-  TFoo = Integer;
-  PInteger = ^Integer;
-implementation
-end.
---------------------------------------------------------------------------------
-(source_file
-  (unit_file
-    (kUnit)
-    name: (identifier)
-    interface: (interface_section
-      (kInterface)
-      (type_declaration_section
-        (kType)
-        (type_alias_declaration
-          name: (identifier)
-          type: (identifier))
-      (type_alias_declaration
-        name: (identifier)
-        type: (pointer_type
-          type: (identifier)))
-      ))
-    implementation: (implementation_section
-      (kImplementation))
-    (kEnd)))
-
-================================================================================
-Multiple type aliases in one section
-================================================================================
-unit Foo;
-interface
-type
-  TFoo = Integer;
-  TBar = String;
-implementation
-end.
---------------------------------------------------------------------------------
-(source_file
-  (unit_file
-    (kUnit)
-    name: (identifier)
-    interface: (interface_section
-      (kInterface)
-      (type_declaration_section
-        (kType)
-        (type_alias_declaration
-          name: (identifier)
-          type: (identifier))
-        (type_alias_declaration
-          name: (identifier)
-          type: (identifier))))
-    implementation: (implementation_section
-      (kImplementation))
-    (kEnd)))
-
-================================================================================
 Multiple type declaration sections
 ================================================================================
 unit Foo;
@@ -78,20 +18,23 @@ end.
       (kInterface)
       (type_declaration_section
         (kType)
-        (type_alias_declaration
+        (type_declaration
           name: (identifier)
-          type: (identifier)))
+          type: (type_alias_definition
+            type: (identifier)
+          )))
       (type_declaration_section
         (kType)
-        (type_alias_declaration
+        (type_declaration
           name: (identifier)
-          type: (identifier))))
+          type: (type_alias_definition
+            type: (identifier)))))
     implementation: (implementation_section
       (kImplementation))
     (kEnd)))
 
 ================================================================================
-Qualified name type alias
+Type alias
 ================================================================================
 unit Foo;
 interface
@@ -108,40 +51,16 @@ end.
       (kInterface)
       (type_declaration_section
         (kType)
-        (type_alias_declaration
+        (type_declaration
           name: (identifier)
-          type: (qualified_name
-            qualifier: (qualified_name
-              qualifier: (identifier)
-              name: (identifier))
-            name: (identifier)))))
+          type: (type_alias_definition
+            type: (qualified_name
+              qualifier: (qualified_name
+                qualifier: (identifier)
+                name: (identifier))
+              name: (identifier))))))
     implementation: (implementation_section
       (kImplementation))
-    (kEnd)))
-
-================================================================================
-Type alias in implementation section
-================================================================================
-unit Foo;
-interface
-implementation
-type
-  TFoo = Integer;
-end.
---------------------------------------------------------------------------------
-(source_file
-  (unit_file
-    (kUnit)
-    name: (identifier)
-    interface: (interface_section
-      (kInterface))
-    implementation: (implementation_section
-      (kImplementation)
-      (type_declaration_section
-        (kType)
-        (type_alias_declaration
-          name: (identifier)
-          type: (identifier))))
     (kEnd)))
 
 ================================================================================
@@ -175,8 +94,9 @@ end.
       (kInterface)
       (type_declaration_section
         (kType)
-        (class_declaration
+        (type_declaration
           name: (identifier)
+          type: (class_definition
           (kClass)
           (base_list
             (identifier)
@@ -247,7 +167,7 @@ end.
                     (identifier))
                   type: (identifier)))
               (method_directive (kVirtual))))
-          (kEnd))))
+          (kEnd)))))
     implementation: (implementation_section
       (kImplementation))
     (kEnd)))
@@ -268,26 +188,29 @@ end.
     name: (identifier)
     (type_declaration_section
       (kType)
-      (enum_type_declaration
+      (type_declaration
         name: (identifier)
-        (enum_value
-          name: (identifier))
-        (enum_value
-          name: (identifier))
-        (enum_value
-          name: (identifier)))
-      (enum_type_declaration
+        type: (enum_definition
+          (enum_value
+            name: (identifier))
+          (enum_value
+            name: (identifier))
+          (enum_value
+            name: (identifier))
+        ))
+      (type_declaration
         name: (identifier)
-        (enum_value
-          name: (identifier)
-          value: (integer_literal))
-        (enum_value
-          name: (identifier)
-          value: (integer_literal))
-        (enum_value
-          name: (identifier))
-        (enum_value
-          name: (identifier))))
+        type: (enum_definition
+          (enum_value
+            name: (identifier)
+            value: (integer_literal))
+          (enum_value
+            name: (identifier)
+            value: (integer_literal))
+          (enum_value
+            name: (identifier))
+          (enum_value
+            name: (identifier)))))
     body: (block_statement
       (kBegin)
       (kEnd))))
@@ -352,8 +275,9 @@ end.
       (kInterface)
       (type_declaration_section
         (kType)
-        (interface_declaration
+        (type_declaration
           name: (identifier)
+          type: (interface_definition
           (kInterface)
           (base_list
             (identifier))
@@ -383,7 +307,8 @@ end.
               read: (identifier)
               (kWrite)
               write: (identifier)))
-          (kEnd))))
+          (kEnd)
+          ))))
     implementation: (implementation_section
       (kImplementation))
     (kEnd)))

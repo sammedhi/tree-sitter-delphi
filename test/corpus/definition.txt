@@ -98,7 +98,7 @@ end.
     name: (identifier)
     (type_declaration_section
       (kType)
-      (class_declaration
+      (type_declaration
         name: (identifier)
         (type_parameter_list
           (type_parameter
@@ -111,29 +111,31 @@ end.
             name: (identifier)
             (type_constraints
               (kRecord))))
-        (kClass)
-        (class_method
-          kind: (kFunction)
-          name: (identifier)
-          (type_parameter_list
-            (type_parameter
-              name: (identifier)
-              (type_constraints
-                (identifier)
-                (identifier)
-                (kConstructor)))
-            (type_parameter
-              name: (identifier)
-              (type_constraints
-                (kRecord))))
-          parameters: (parameter_list))
-        (kEnd))
-      (type_alias_declaration
+        type: (class_definition
+          (kClass)
+          (class_method
+            kind: (kFunction)
+            name: (identifier)
+            (type_parameter_list
+              (type_parameter
+                name: (identifier)
+                (type_constraints
+                  (identifier)
+                  (identifier)
+                  (kConstructor)))
+              (type_parameter
+                name: (identifier)
+                (type_constraints
+                  (kRecord))))
+            parameters: (parameter_list))
+          (kEnd)))
+      (type_declaration
         name: (identifier)
-        type: (generic_name
-          (identifier)
-          (type_argument_list
-            (identifier)))))
+        type: (type_alias_definition
+          type: (generic_name
+            (identifier)
+            (type_argument_list
+              (identifier))))))
     (function_definition
       kind: (kFunction)
       name: (function_name
