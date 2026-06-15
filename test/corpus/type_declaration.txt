@@ -178,7 +178,7 @@ end.
         (class_declaration
           name: (identifier)
           (kClass)
-          (class_heritage
+          (base_list
             (identifier)
             (identifier))
           (class_field 
@@ -328,3 +328,62 @@ end.
     body: (block_statement
       (kBegin)
       (kEnd))))
+
+================================================================================
+Interface declaration
+================================================================================
+unit Foo;
+interface
+type
+  IAnimal = interface(IBase)
+    ['{12345678-1234-1234-1234-123456789ABC}']
+    function GetName: string;
+    procedure SetName(const Name: string);
+    property Name: string read GetName write SetName;
+  end;
+implementation
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (unit_file
+    (kUnit)
+    name: (identifier)
+    interface: (interface_section
+      (kInterface)
+      (type_declaration_section
+        (kType)
+        (interface_declaration
+          name: (identifier)
+          (kInterface)
+          (base_list
+            (identifier))
+          (guid_declaration
+            (string_literal))
+          (interface_member
+            (class_method
+              kind: (kFunction)
+              name: (identifier)
+              return_type: (identifier)))
+          (interface_member
+            (class_method
+              kind: (kProcedure)
+              name: (identifier)
+              parameters: (parameter_list
+                (parameter_declaration
+                  modifier: (kConst)
+                  (argument_name
+                    (identifier))
+                  type: (identifier)))))
+          (interface_member
+            (class_property
+              (kProperty)
+              name: (identifier)
+              type: (identifier)
+              (kRead)
+              read: (identifier)
+              (kWrite)
+              write: (identifier)))
+          (kEnd))))
+    implementation: (implementation_section
+      (kImplementation))
+    (kEnd)))

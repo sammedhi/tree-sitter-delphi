@@ -151,14 +151,14 @@ export default grammar({
       '=',
       $.kClass,
       optional(choice($.kAbstract, $.kSealed)),
-      optional($.class_heritage),
+      optional($.base_list),
 
       repeat($.class_member),
       repeat($.class_section),
       $.kEnd,
     ),
 
-    class_heritage: $ => seq(
+    base_list: $ => seq(
       '(',
       commaSep($._name),
       ')',
@@ -212,6 +212,28 @@ export default grammar({
       optional(seq($.kRead, field('read', $._name))),
       optional(seq($.kWrite, field('write', $._name))),
       optional(';',)
+    ),
+
+    interface_declaration: $ => seq(
+      field('name', $.identifier),
+      optional($.type_parameter_list),
+      '=',
+      $.kInterface,
+      optional($.base_list),
+      optional($.guid_declaration),
+      repeat($.interface_member),
+      $.kEnd,
+    ),
+
+    guid_declaration: $ => seq(
+      '[',
+      $.string_literal,
+      ']',
+    ),
+
+    interface_member: $ => choice(
+      $.class_method,
+      $.class_property,
     ),
 
     parameter_list: $ => seq(
@@ -282,6 +304,7 @@ export default grammar({
     type_declaration: $ => choice(
       $.type_alias_declaration,
       $.class_declaration,
+      $.interface_declaration,
       $.enum_type_declaration
     ),
 
