@@ -358,7 +358,7 @@ export default grammar({
       optional($.parameter_list),
       optional(field('return_type', seq(':', $.type))),
       ';',
-      repeat(choice($.var_declaration_section)),
+      repeat(choice($.declaration_section, $.function_definition)),
       $.block_statement,
       ';'
     ),
