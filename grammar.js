@@ -29,7 +29,8 @@ export default grammar({
 
   conflicts: $ => [
     [$._simple_name, $.generic_name],
-    [$._inherited_call_expression, $.call_expression]
+    [$._inherited_call_expression, $.call_expression],
+    [$.function_name, $.generic_name]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -143,6 +144,7 @@ export default grammar({
 
     class_declaration: $ => seq(
       field('name', $.identifier),
+      optional($.type_parameter_list),
       '=',
       $.kClass,
       optional(choice($.kAbstract, $.kSealed)),
@@ -193,6 +195,7 @@ export default grammar({
         $.kDestructor,
       )),
       field('name', $.identifier),
+      optional($.type_parameter_list),
       optional(field('parameters', $.parameter_list)),
       optional(seq(':', field('return_type', $.type))),
       repeat(seq(';', $.method_directive)),
@@ -309,14 +312,19 @@ export default grammar({
         $.kConstructor,
         $.kDestructor
       )),
-      $._name,
-      optional($.type_argument_list),
+      field('name', $.function_name),
+      optional($.type_parameter_list),
       optional($.parameter_list),
       optional(field('return_type', seq(':', $.type))),
       ';',
       repeat(choice($.var_declaration_section)),
       $.block_statement,
       ';'
+    ),
+
+    function_name: $ => seq(
+      optional(field('qualifier', seq($._name, '.'))),
+      field('name', $.identifier)
     ),
 
     statement: $ => choice(
@@ -689,6 +697,31 @@ export default grammar({
 
     generic_name: $ => seq($.identifier, $.type_argument_list),
 
+    type_parameter_list: $ => seq(
+      '<',
+      sep1($.type_parameter, ';'),
+      '>',
+    ),
+
+    type_parameter: $ => seq(
+      commaSep1(field('name', $.identifier)),
+      optional(seq(
+        ':',
+        $.type_constraints,
+      )),
+    ),
+
+    type_constraints: $ => commaSep1($._type_constraint),
+
+    _type_constraint: $ => choice(
+      $.kClass,
+      $.kRecord,
+      $.kInterface,
+      $.kConstructor,
+      $.kUnmanaged,
+      $._name,
+    ),
+
     type_argument_list: $ => seq(
       '<',
       choice(
@@ -771,6 +804,8 @@ export default grammar({
     kFinally: _ => token(prec(1, /finally/i)),
     kOn: _ => token(prec(1, /on/i)),
     kClass: _ => token(prec(1, /class/i)),
+    kRecord: _ => token(prec(1, /record/i)),
+    kUnmanaged: _ => token(prec(1, /unmanaged/i)),
     kProcedure: _ => token(prec(1, /procedure/i)),
     kFunction: _ => token(prec(1, /function/i)),
     kConstructor: _ => token(prec(1, /constructor/i)),
