@@ -547,7 +547,7 @@ end.
       (raise_statement
         (kRaise)
         (call_expression
-          name: (member_access_expression
+          function: (member_access_expression
             expression: (identifier)
             name: (identifier))
           (argument_list
@@ -555,7 +555,7 @@ end.
       (raise_statement
         (kRaise)
         (call_expression
-          name: (member_access_expression
+          function: (member_access_expression
             expression: (identifier)
             name: (identifier))
           (argument_list

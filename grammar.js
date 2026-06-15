@@ -377,9 +377,7 @@ export default grammar({
       $.exit_statement,
       $.raise_statement,
       $.inherited_statement,
-      $.call_expression,
-      $.member_access_expression,
-      alias($._inherited_call_expression, $.call_expression)
+      $._call_statement
     ),
 
     raise_statement: $ => seq(
@@ -666,14 +664,23 @@ export default grammar({
 
     _inherited_call_expression: $ => prec(PREC.CALL, seq(
       $.kInherited,
-      field('name', $.expression),
+      field('function', $.expression),
       optional($.argument_list)
     )),
 
     call_expression: $ => prec(PREC.CALL, seq(
-      field('name', $.expression),
+      field('function', $.expression),
       $.argument_list,
     )),
+
+    _parameterless_call_expression: $ => field('function', $.identifier),
+
+    _call_statement: $ => choice(
+      alias($._parameterless_call_expression, $.call_expression),
+      $.member_access_expression,
+      $.call_expression,
+      alias($._inherited_call_expression, $.call_expression)
+    ),
 
     argument_list: $ => seq(
       '(',

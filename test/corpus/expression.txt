@@ -169,21 +169,21 @@ end.
     body: (block_statement
       (kBegin)
       (call_expression
-        name: (identifier)
+        function: (identifier)
         (argument_list))
       (call_expression
-        name: (identifier)
+        function: (identifier)
         (argument_list
           (identifier)
           (integer_literal)
           (string_literal)))
       (call_expression
         (kInherited)
-        name: (identifier)
+        function: (identifier)
         (argument_list
           (identifier)))
       (call_expression
-        name: (member_access_expression
+        function: (member_access_expression
           expression: (identifier)
           name: (identifier))
         (argument_list
@@ -272,10 +272,10 @@ end.
             right: (integer_literal))
           (identifier)
           (call_expression
-            name: (identifier)
+            function: (identifier)
             (argument_list))))
       (call_expression
-        name: (identifier)
+        function: (identifier)
         (argument_list
           (array_constructor_expression
             (integer_literal)
@@ -340,7 +340,7 @@ end.
         left: (identifier)
         right: (element_access_expression
           expression: (call_expression
-            name: (identifier)
+            function: (identifier)
             (argument_list))
           subscript: (integer_literal)))
       (assignment_statement
