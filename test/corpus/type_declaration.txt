@@ -312,3 +312,112 @@ end.
     implementation: (implementation_section
       (kImplementation))
     (kEnd)))
+
+================================================================================
+Procedural types
+================================================================================
+
+program Test;
+type
+  TProc = procedure();
+  TFunc = function(): Integer;
+  TProcWithParams = procedure(X: Integer; Y: Integer);
+  TFuncWithParams = function(X: Integer; Y: Integer): Boolean;
+  TMethod = procedure() of object;
+  TRefProc = reference to procedure();
+  TRefFunc = reference to function(): Boolean;
+  TRefFuncWithParams = reference to function(X: Integer): Boolean;
+begin
+end.
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    (type_declaration_section
+      (kType)
+      (type_declaration
+        name: (identifier)
+        type: (type_alias_definition
+          type: (function_type
+            kind: (kProcedure)
+            (parameter_list))))
+      (type_declaration
+        name: (identifier)
+        type: (type_alias_definition
+          type: (function_type
+            kind: (kFunction)
+            (parameter_list)
+            type: (identifier))))
+      (type_declaration
+        name: (identifier)
+        type: (type_alias_definition
+          type: (function_type
+            kind: (kProcedure)
+            (parameter_list
+              (parameter_declaration
+                (argument_name
+                  (identifier))
+                type: (identifier))
+              (parameter_declaration
+                (argument_name
+                  (identifier))
+                type: (identifier))))))
+      (type_declaration
+        name: (identifier)
+        type: (type_alias_definition
+          type: (function_type
+            kind: (kFunction)
+            (parameter_list
+              (parameter_declaration
+                (argument_name
+                  (identifier))
+                type: (identifier))
+              (parameter_declaration
+                (argument_name
+                  (identifier))
+                type: (identifier)))
+            type: (identifier))))
+      (type_declaration
+        name: (identifier)
+        type: (type_alias_definition
+          type: (object_of_type
+            (kProcedure)
+            (parameter_list)
+            (kOf)
+            (kObject))))
+      (type_declaration
+        name: (identifier)
+        type: (type_alias_definition
+          type: (reference_to_type
+            (kReference)
+            (kTo)
+            kind: (kProcedure)
+            (parameter_list))))
+      (type_declaration
+        name: (identifier)
+        type: (type_alias_definition
+          type: (reference_to_type
+            (kReference)
+            (kTo)
+            kind: (kFunction)
+            (parameter_list)
+            type: (identifier))))
+      (type_declaration
+        name: (identifier)
+        type: (type_alias_definition
+          type: (reference_to_type
+            (kReference)
+            (kTo)
+            kind: (kFunction)
+            (parameter_list
+              (parameter_declaration
+                (argument_name
+                  (identifier))
+                type: (identifier)))
+            type: (identifier)))))
+    body: (block_statement
+      (kBegin)
+      (kEnd))))

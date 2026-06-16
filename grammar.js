@@ -339,7 +339,10 @@ export default grammar({
       $._name,
       $.array_type,
       $.pointer_type,
-      $.class_of_type
+      $.class_of_type,
+      $.reference_to_type,
+      $.object_of_type,
+      $.function_type
     ),
 
     pointer_type: $ => seq('^', field('type', $.type)),
@@ -354,6 +357,30 @@ export default grammar({
       $.kClass,
       $.kOf,
       field('type', $._name)
+    ),
+
+    reference_to_type: $ => seq(
+      $.kReference,
+      $.kTo,
+      field('kind', choice(
+        $.kFunction,
+        $.kProcedure
+      )),
+      optional($.parameter_list),
+      optional($._variable_type_declaration)
+    ),
+
+    object_of_type: $ => seq(
+      $.kProcedure,
+      optional($.parameter_list),
+      $.kOf,
+      $.kObject
+    ),
+
+    function_type: $ => seq(
+      field('kind', choice($.kFunction, $.kProcedure)),
+      $.parameter_list,
+      optional($._variable_type_declaration)
     ),
 
     function_definition: $ => seq(
@@ -913,7 +940,9 @@ export default grammar({
     kOut: _ => token(prec(1, /out/i)),
     kArray: _ => token(prec(1, /array/i)),
     kInherited: _ => token(prec(1, /inherited/i)),
-    kRaise: _ => token(prec(1, /raise/i))
+    kRaise: _ => token(prec(1, /raise/i)),
+    kReference: _ => token(prec(1, /reference/i)),
+    kObject: _ => token(prec(1, /object/i))
   },
 });
 
