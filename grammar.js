@@ -152,6 +152,7 @@ export default grammar({
       repeat($.class_member),
       repeat($.class_section),
       $.kEnd,
+      optional($.hint_directive)
     ),
 
     base_list: $ => seq(
@@ -207,7 +208,7 @@ export default grammar({
       optional($._variable_type_declaration),
       optional(seq($.kRead, field('read', $._name))),
       optional(seq($.kWrite, field('write', $._name))),
-      optional(';',)
+      optional(';')
     ),
 
     interface_definition: $ => seq(
@@ -216,6 +217,7 @@ export default grammar({
       optional($.guid_declaration),
       repeat($.interface_member),
       $.kEnd,
+      optional($.hint_directive),
     ),
 
     guid_declaration: $ => seq(
@@ -257,6 +259,12 @@ export default grammar({
       $.kSafecall,
       $.kInline,
       $.kReintroduce,
+      $.hint_directive
+    ),
+
+    hint_directive: $ => seq(
+      field('kind', choice($.kDeprecated, $.kPlatform, $.kLibrary)),
+      optional(field('message', $.string_literal))
     ),
 
     resourcestring_declaration_section: $ => seq(
@@ -280,6 +288,7 @@ export default grammar({
       optional(seq(':', field('type', $.type))),
       '=',
       field('value', $.expression),
+      optional($.hint_directive),
     ),
 
     var_declaration_section: $ => seq(
@@ -310,6 +319,7 @@ export default grammar({
 
     type_alias_definition: $ => seq(
       field('type', $.type),
+      optional($.hint_directive)
     ),
 
 
@@ -317,6 +327,7 @@ export default grammar({
       '(',
       sep($.enum_value, ','),
       ')',
+      optional($.hint_directive)
     ),
 
     enum_value: $ => seq(
@@ -358,6 +369,7 @@ export default grammar({
       optional($.parameter_list),
       optional(field('return_type', seq(':', $.type))),
       ';',
+      repeat($.method_directive),
       repeat(choice($.declaration_section, $.function_definition)),
       $.block_statement,
       ';'
@@ -896,6 +908,8 @@ export default grammar({
     kPascal: _ => token(prec(1, /pascal/i)),
     kSafecall: _ => token(prec(1, /safecall/i)),
     kInline: _ => token(prec(1, /inline/i)),
+    kDeprecated: _ => token(prec(1, /deprecated/i)),
+    kPlatform: _ => token(prec(1, /platform/i)),
     kOut: _ => token(prec(1, /out/i)),
     kArray: _ => token(prec(1, /array/i)),
     kInherited: _ => token(prec(1, /inherited/i)),
