@@ -460,7 +460,7 @@ export default grammar({
 
     raise_statement: $ => seq(
       $.kRaise,
-      $.expression,
+      optional($.expression),
     ),
 
     inherited_statement: $ => $.kInherited,
