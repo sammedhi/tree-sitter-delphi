@@ -155,6 +155,14 @@ export default grammar({
       optional($.hint_directive)
     ),
 
+    record_definition: $ => seq(
+      $.kRecord,
+      repeat($.class_member),
+      repeat($.class_section),
+      $.kEnd,
+      optional($.hint_directive)
+    ),
+
     base_list: $ => seq(
       '(',
       commaSep($._name),
@@ -315,6 +323,7 @@ export default grammar({
       $.type_alias_definition,
       $.class_definition,
       $.interface_definition,
+      $.record_definition,
       $.enum_definition,
     ),
 

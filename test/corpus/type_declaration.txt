@@ -421,3 +421,39 @@ end.
     body: (block_statement
       (kBegin)
       (kEnd))))
+
+================================================================================
+Record type
+================================================================================
+program Test;
+type
+  TProc = record
+    Value : integer;
+    public
+      FValue : boolean;
+  end;
+begin
+end.
+--------------------------------------------------------------------------------
+(source_file
+  (program_file
+    (kProgram)
+    name: (identifier)
+    (type_declaration_section
+      (kType)
+      (type_declaration
+        name: (identifier)
+        type: (record_definition
+          (kRecord)
+          (class_field
+            name: (identifier)
+            type: (identifier))
+          (class_section
+            visibility: (kPublic)
+            (class_field
+              name: (identifier)
+              type: (identifier)))
+          (kEnd))))
+    body: (block_statement
+      (kBegin)
+      (kEnd))))
