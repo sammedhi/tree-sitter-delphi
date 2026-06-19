@@ -36,6 +36,8 @@ export default grammar({
     [$.var_declaration_section],
     [$.const_declaration_section],
     [$.resourcestring_declaration_section],
+
+    [$.parenthesized_expression, $.const_array_constructor_expression]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -679,6 +681,7 @@ export default grammar({
       $.address_of_expression,
       $.parenthesized_expression,
       $.array_constructor_expression,
+      $.const_array_constructor_expression,
       $.call_expression,
       alias($._inherited_call_expression, $.call_expression),
       $.anonymous_function_expression,
@@ -779,6 +782,12 @@ export default grammar({
       '[',
       sep($.expression, ','),
       ']',
+    ),
+
+    const_array_constructor_expression: $ => seq(
+      '(',
+      sep($.expression, ','),
+      ')'
     ),
 
     element_access_expression: $ => prec(PREC.POSTFIX, seq(
