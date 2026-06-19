@@ -30,7 +30,12 @@ export default grammar({
   conflicts: $ => [
     [$._simple_name, $.generic_name],
     [$._inherited_call_expression, $.call_expression],
-    [$.function_name, $.generic_name]
+    [$.function_name, $.generic_name],
+
+    [$.type_declaration_section],
+    [$.var_declaration_section],
+    [$.const_declaration_section],
+    [$.resourcestring_declaration_section],
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -170,6 +175,7 @@ export default grammar({
     ),
 
     class_section: $ => seq(
+      optional($.kStrict),
       field('visibility', $.class_visibility),
       repeat($.class_member),
     ),
@@ -185,6 +191,7 @@ export default grammar({
       $.class_field,
       $.class_method,
       $.class_property,
+      $.declaration_section
     ),
 
     class_field: $ => seq(
@@ -206,11 +213,12 @@ export default grammar({
       optional($.type_parameter_list),
       optional(field('parameters', $.parameter_list)),
       optional(seq(':', field('return_type', $.type))),
-      repeat(seq(';', $.method_directive)),
+      repeat(seq(optional(';'), $.method_directive)),
       optional(';'),
     ),
 
     class_property: $ => seq(
+      optional($.kClass),
       $.kProperty,
       field('name', $.identifier),
       optional($._variable_type_declaration),
@@ -301,7 +309,8 @@ export default grammar({
     ),
 
     var_declaration_section: $ => seq(
-      $.kVar,
+      optional($.kClass),
+      choice($.kVar, $.kThreadVar),
       repeat1(seq(
         $.var_declaration, ';'
       )),
@@ -893,6 +902,7 @@ export default grammar({
     kUses: _ => token(prec(1, /uses/i)),
     kType: _ => token(prec(1, /type/i)),
     kVar: _ => token(prec(1, /var/i)),
+    kThreadVar: _ => token(prec(1, /threadvar/i)),
     kConst: _ => token(prec(1, /const/i)),
     kResourcestring: _ => token(prec(1, /resourcestring/i)),
     kNot: _ => token(prec(1, /not/i)),
@@ -957,7 +967,8 @@ export default grammar({
     kRaise: _ => token(prec(1, /raise/i)),
     kExit: _ => token(prec(1, /exit/i)),
     kReference: _ => token(prec(1, /reference/i)),
-    kObject: _ => token(prec(1, /object/i))
+    kObject: _ => token(prec(1, /object/i)),
+    kStrict: _ => token(prec(1, /strict/i))
   },
 });
 
