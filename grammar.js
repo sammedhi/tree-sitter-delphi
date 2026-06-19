@@ -368,8 +368,24 @@ export default grammar({
 
     array_type: $ => seq(
       $.kArray,
+      optional($.index_range),
       $.kOf,
       $._name
+    ),
+
+    index_range: $ => seq(
+      '[',
+      commaSep1(choice(
+        $._name,
+        $.set_range
+      )),
+      ']'
+    ),
+
+    set_range: $ => seq(
+      field('intial', $.expression),
+      '..',
+      field('final', $.expression),
     ),
 
     class_of_type: $ => seq(
