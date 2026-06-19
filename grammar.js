@@ -259,6 +259,7 @@ export default grammar({
       $.kSafecall,
       $.kInline,
       $.kReintroduce,
+      $.kStatic,
       $.hint_directive
     ),
 
@@ -618,7 +619,10 @@ export default grammar({
 
     break_statement: _ => token(prec(1, /break/i)),
 
-    exit_statement: _ => token(prec(1, /exit/i)),
+    exit_statement: $ => seq(
+      $.kExit,
+      optional($.argument_list)
+    ),
 
     expression: $ => choice(
       $.lvalue_expression,
@@ -929,6 +933,7 @@ export default grammar({
     kOverride: _ => token(prec(1, /override/i)),
     kOverload: _ => token(prec(1, /overload/i)),
     kReintroduce: _ => token(prec(1, /reintroduce/i)),
+    kStatic: _ => token(prec(1, /static/i)),
     kStdcall: _ => token(prec(1, /stdcall/i)),
     kCdecl: _ => token(prec(1, /cdecl/i)),
     kRegister: _ => token(prec(1, /register/i)),
@@ -941,6 +946,7 @@ export default grammar({
     kArray: _ => token(prec(1, /array/i)),
     kInherited: _ => token(prec(1, /inherited/i)),
     kRaise: _ => token(prec(1, /raise/i)),
+    kExit: _ => token(prec(1, /exit/i)),
     kReference: _ => token(prec(1, /reference/i)),
     kObject: _ => token(prec(1, /object/i))
   },

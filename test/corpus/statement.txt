@@ -506,6 +506,7 @@ begin
     continue
   end;
   exit;
+  exit(True);
 end.
 --------------------------------------------------------------------------------
 (source_file
@@ -526,7 +527,11 @@ end.
           (kEnd)
         )
       )
-      (exit_statement)
+      (exit_statement
+        (kExit))
+      (exit_statement 
+        (kExit)
+        (argument_list (boolean_literal)))
       (kEnd))))
 
 ================================================================================
