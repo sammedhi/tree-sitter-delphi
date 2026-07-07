@@ -10,6 +10,7 @@ type
 implementation
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (unit_file
     (kUnit)
@@ -21,8 +22,7 @@ end.
         (type_declaration
           name: (identifier)
           type: (type_alias_definition
-            type: (identifier)
-          )))
+            type: (identifier))))
       (type_declaration_section
         (kType)
         (type_declaration
@@ -43,6 +43,7 @@ type
 implementation
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (unit_file
     (kUnit)
@@ -80,12 +81,13 @@ type
     function GetName: string; override;
     class procedure DoSomething; stdcall;
     property Name: string read FName write FName;
-    property Age: Integer read FAge
-    procedure SetName(const Name: string); virtual;
+    property Age: Integer read FAge;
+    procedure SetName(const Name: string); virtual
   end;
 implementation
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (unit_file
     (kUnit)
@@ -97,77 +99,78 @@ end.
         (type_declaration
           name: (identifier)
           type: (class_definition
-          (kClass)
-          (base_list
-            (identifier)
-            (identifier))
-          (class_field 
-            name: (identifier)
-            type: (identifier))
-          (class_section
-            visibility: (kPrivate)
+            (kClass)
+            (base_list
+              (identifier)
+              (identifier))
             (class_field
               name: (identifier)
               type: (identifier))
-            (class_field
-              name: (identifier)
-              type: (identifier)))
-          (class_section
-            visibility: (kPublic)
-            (class_method
-              kind: (kConstructor)
-              name: (identifier)
-              parameters: (parameter_list
-                (parameter_declaration
-                  (argument_name
-                    (identifier))
-                  (argument_name
-                    (identifier))
-                  type: (identifier))
-                (parameter_declaration
-                  (argument_name
-                    (identifier))
-                  type: (identifier))))
-            (class_method
-              kind: (kDestructor)
-              name: (identifier))
-            (class_method
-              kind: (kFunction)
-              name: (identifier)
-              return_type: (identifier)
-              (method_directive 
-                (kOverride)))
-            (class_method
-              (kClass)
-              kind: (kProcedure)
-              name: (identifier)
-              (method_directive 
-                (kStdcall)))
-            (class_property
-              (kProperty)
-              name: (identifier)
-              type: (identifier)
-              (kRead)
-              read: (identifier)
-              (kWrite)
-              write: (identifier))
-            (class_property
-              (kProperty)
-              name: (identifier)
-              type: (identifier)
-              (kRead)
-              read: (identifier))
-            (class_method
-              kind: (kProcedure)
-              name: (identifier)
-              parameters: (parameter_list
-                (parameter_declaration
-                  modifier: (kConst)
-                  (argument_name
-                    (identifier))
-                  type: (identifier)))
-              (method_directive (kVirtual))))
-          (kEnd)))))
+            (class_section
+              visibility: (kPrivate)
+              (class_field
+                name: (identifier)
+                type: (identifier))
+              (class_field
+                name: (identifier)
+                type: (identifier)))
+            (class_section
+              visibility: (kPublic)
+              (class_method
+                kind: (kConstructor)
+                name: (identifier)
+                parameters: (parameter_list
+                  (parameter_declaration
+                    (argument_name
+                      (identifier))
+                    (argument_name
+                      (identifier))
+                    type: (identifier))
+                  (parameter_declaration
+                    (argument_name
+                      (identifier))
+                    type: (identifier))))
+              (class_method
+                kind: (kDestructor)
+                name: (identifier))
+              (class_method
+                kind: (kFunction)
+                name: (identifier)
+                return_type: (identifier)
+                (method_directive
+                  (kOverride)))
+              (class_method
+                (kClass)
+                kind: (kProcedure)
+                name: (identifier)
+                (method_directive
+                  (kStdcall)))
+              (class_property
+                (kProperty)
+                name: (identifier)
+                type: (identifier)
+                (kRead)
+                read: (identifier)
+                (kWrite)
+                write: (identifier))
+              (class_property
+                (kProperty)
+                name: (identifier)
+                type: (identifier)
+                (kRead)
+                read: (identifier))
+              (class_method
+                kind: (kProcedure)
+                name: (identifier)
+                parameters: (parameter_list
+                  (parameter_declaration
+                    modifier: (kConst)
+                    (argument_name
+                      (identifier))
+                    type: (identifier)))
+                (method_directive
+                  (kVirtual))))
+            (kEnd)))))
     implementation: (implementation_section
       (kImplementation))
     (kEnd)))
@@ -182,6 +185,7 @@ type
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
@@ -196,8 +200,7 @@ end.
           (enum_value
             name: (identifier))
           (enum_value
-            name: (identifier))
-        ))
+            name: (identifier))))
       (type_declaration
         name: (identifier)
         type: (enum_definition
@@ -225,6 +228,7 @@ var
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
@@ -267,6 +271,7 @@ type
 implementation
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (unit_file
     (kUnit)
@@ -278,17 +283,15 @@ end.
         (type_declaration
           name: (identifier)
           type: (interface_definition
-          (kInterface)
-          (base_list
-            (identifier))
-          (guid_declaration
-            (string_literal))
-          (interface_member
+            (kInterface)
+            (base_list
+              (identifier))
+            (guid_declaration
+              (string_literal))
             (class_method
               kind: (kFunction)
               name: (identifier)
-              return_type: (identifier)))
-          (interface_member
+              return_type: (identifier))
             (class_method
               kind: (kProcedure)
               name: (identifier)
@@ -297,8 +300,7 @@ end.
                   modifier: (kConst)
                   (argument_name
                     (identifier))
-                  type: (identifier)))))
-          (interface_member
+                  type: (identifier))))
             (class_property
               (kProperty)
               name: (identifier)
@@ -306,9 +308,8 @@ end.
               (kRead)
               read: (identifier)
               (kWrite)
-              write: (identifier)))
-          (kEnd)
-          ))))
+              write: (identifier))
+            (kEnd)))))
     implementation: (implementation_section
       (kImplementation))
     (kEnd)))
@@ -435,6 +436,7 @@ type
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)

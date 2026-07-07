@@ -37,7 +37,8 @@ export default grammar({
     [$.const_declaration_section],
     [$.resourcestring_declaration_section],
 
-    [$.parenthesized_expression, $.const_array_constructor_expression]
+    [$.parenthesized_expression, $.const_array_constructor_expression],
+    [$.class_method]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -78,8 +79,7 @@ export default grammar({
       field('name', $.identifier),
       ';',
       optional($.uses_clause),
-      repeat($.declaration_section),
-      repeat($.function_definition),
+      ...declarations($),
       field('body', $.block_statement),
       '.',
     ),
@@ -89,7 +89,7 @@ export default grammar({
       field('name', $.identifier),
       ';',
       optional($.uses_clause),
-      repeat($.declaration_section),
+      ...declarations($),
       field('body', $.block_statement),
       '.',
     ),
@@ -109,28 +109,23 @@ export default grammar({
     interface_section: $ => seq(
       $.kInterface,
       optional($.uses_clause),
-      repeat($.declaration_section)
+      ...declarations($)
     ),
 
     implementation_section: $ => seq(
       $.kImplementation,
       optional($.uses_clause),
-      repeat(choice(
-        $.declaration_section,
-        $.function_definition
-      )),
+      ...declarations($),
     ),
 
     initialization_section: $ => seq(
       $.kInitialization,
-      repeat($._semicolon_statement),
-      optional($.statement)
+      ...statements($)
     ),
 
     finalization_section: $ => seq(
       $.kFinalization,
-      repeat($._semicolon_statement),
-      optional($.statement)
+      ...statements($)
     ),
 
     uses_clause: $ => seq(
@@ -146,9 +141,12 @@ export default grammar({
       $.resourcestring_declaration_section
     ),
 
+    _declaration: $ => choice($.function_definition, $.declaration_section),
+    _semicolon_declaration: $ => seq(optional($._declaration), ';'),
+
     type_declaration_section: $ => seq(
       $.kType,
-      repeat1(seq($.type_declaration, ';')),
+      sep1($.type_declaration, ';'),
     ),
 
     class_definition: $ => seq(
@@ -156,7 +154,7 @@ export default grammar({
       optional(choice($.kAbstract, $.kSealed)),
       optional($.base_list),
 
-      repeat($.class_member),
+      ...class_members($),
       repeat($.class_section),
       $.kEnd,
       optional($.hint_directive)
@@ -164,7 +162,7 @@ export default grammar({
 
     record_definition: $ => seq(
       $.kRecord,
-      repeat($.class_member),
+      ...class_members($),
       repeat($.class_section),
       $.kEnd,
       optional($.hint_directive)
@@ -179,7 +177,7 @@ export default grammar({
     class_section: $ => seq(
       optional($.kStrict),
       field('visibility', $.class_visibility),
-      repeat($.class_member),
+      ...class_members($),
     ),
 
     class_visibility: $ => choice(
@@ -196,11 +194,12 @@ export default grammar({
       $.declaration_section
     ),
 
+    _semicolon_class_member: $ => seq(optional($.class_member), ';'),
+
     class_field: $ => seq(
       optional($.kClass),
       commaSep1(field('name', $.identifier)),
       $._variable_type_declaration,
-      optional(';')
     ),
 
     class_method: $ => seq(
@@ -216,7 +215,6 @@ export default grammar({
       optional(field('parameters', $.parameter_list)),
       optional(seq(':', field('return_type', $.type))),
       repeat(seq(optional(';'), $.method_directive)),
-      optional(';'),
     ),
 
     class_property: $ => seq(
@@ -226,14 +224,13 @@ export default grammar({
       optional($._variable_type_declaration),
       optional(seq($.kRead, field('read', $._name))),
       optional(seq($.kWrite, field('write', $._name))),
-      optional(';')
     ),
 
     interface_definition: $ => seq(
       $.kInterface,
       optional($.base_list),
       optional($.guid_declaration),
-      repeat($.interface_member),
+      ...class_members($),
       $.kEnd,
       optional($.hint_directive),
     ),
@@ -242,11 +239,6 @@ export default grammar({
       '[',
       $.string_literal,
       ']',
-    ),
-
-    interface_member: $ => choice(
-      $.class_method,
-      $.class_property,
     ),
 
     parameter_list: $ => seq(
@@ -288,7 +280,7 @@ export default grammar({
 
     resourcestring_declaration_section: $ => seq(
       $.kResourcestring,
-      repeat1(seq($.resourcestring_declaration, ';'))
+      sep1($.resourcestring_declaration, ';')
     ),
 
     resourcestring_declaration: $ => seq(
@@ -299,7 +291,7 @@ export default grammar({
 
     const_declaration_section: $ => seq(
       $.kConst,
-      repeat1(seq($.const_declaration, ';')),
+      sep1($.const_declaration, ';'),
     ),
 
     const_declaration: $ => seq(
@@ -313,9 +305,7 @@ export default grammar({
     var_declaration_section: $ => seq(
       optional($.kClass),
       choice($.kVar, $.kThreadVar),
-      repeat1(seq(
-        $.var_declaration, ';'
-      )),
+      sep1($.var_declaration, ';'),
     ),
 
     var_declaration: $ => seq(
@@ -434,9 +424,8 @@ export default grammar({
       optional(field('return_type', seq(':', $.type))),
       ';',
       repeat($.method_directive),
-      repeat(choice($.declaration_section, $.function_definition)),
+      ...declarations($),
       $.block_statement,
-      ';'
     ),
 
     function_name: $ => seq(
@@ -545,8 +534,7 @@ export default grammar({
 
     block_statement: $ => seq(
       $.kBegin,
-      repeat($._semicolon_statement),
-      optional($.statement),
+      ...statements($),
       $.kEnd,
     ),
 
@@ -601,8 +589,7 @@ export default grammar({
 
     repeat_statement: $ => seq(
       $.kRepeat,
-      repeat($._semicolon_statement),
-      optional($.statement),   // last statement before 'until' needs no semicolon
+      ...statements($),  // last statement before 'until' needs no semicolon
       $.kUntil,
       field('condition', $.expression),
     ),
@@ -614,19 +601,17 @@ export default grammar({
 
     try_except_statement: $ => seq(
       $.kTry,
-      repeat($._semicolon_statement),
-      optional($.statement),
+      ...statements($),
       $.kExcept,
       choice(
         // typed handlers: on E: Exception do ...
         seq(
           repeat1($.exception_handler),
-          optional(seq($.kElse, repeat($._semicolon_statement), optional($.statement))),
+          optional(seq($.kElse, ...statements($))),
         ),
         // bare except: just statements
         seq(
-          repeat($._semicolon_statement),
-          optional($.statement),
+          ...statements($)
         ),
       ),
       $.kEnd,
@@ -643,11 +628,9 @@ export default grammar({
 
     try_finally_statement: $ => seq(
       $.kTry,
-      repeat($._semicolon_statement),
-      optional($.statement),
+      ...statements($),
       $.kFinally,
-      repeat($._semicolon_statement),
-      optional($.statement),
+      ...statements($),
       $.kEnd,
     ),
 
@@ -806,7 +789,7 @@ export default grammar({
       )),
       optional($.parameter_list),
       optional(field('type', $._variable_type_declaration)),
-      repeat($.declaration_section),
+      ...declarations($),
       $.block_statement,
     ),
 
@@ -996,6 +979,39 @@ export default grammar({
     kStrict: _ => token(prec(1, /strict/i))
   },
 });
+
+/**
+ * Creates a rule to optionally match one or more of the rules separated by `separator`
+ *
+ * @param {GrammarSymbols<string>} $
+ *
+ * @returns {Array<Rule>}
+ */
+function statements($) {
+  return [repeat($._semicolon_statement), optional($.statement)]
+}
+
+/**
+ * Creates a rule to optionally match one or more of the rules separated by `separator`
+ *
+ * @param {GrammarSymbols<string>} $
+ *
+ * @returns {Array<Rule>}
+ */
+function declarations($) {
+  return [repeat($._semicolon_declaration), optional($._declaration)];
+}
+
+/**
+ * Creates a rule to optionally match one or more of the rules separated by `separator`
+ *
+ * @param {GrammarSymbols<string>} $
+ *
+ * @returns {Array<Rule>}
+ */
+function class_members($) {
+  return [repeat($._semicolon_class_member), optional($.class_member)];
+}
 
 /**
  * Creates a rule to optionally match one or more of the rules separated by `separator`
