@@ -38,7 +38,8 @@ export default grammar({
     [$.resourcestring_declaration_section],
 
     [$.parenthesized_expression, $.const_array_constructor_expression],
-    [$.class_method]
+    [$.class_method],
+    [$.function_definition, $._declaration]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -141,7 +142,7 @@ export default grammar({
       $.resourcestring_declaration_section
     ),
 
-    _declaration: $ => choice($.function_definition, $.declaration_section),
+    _declaration: $ => choice($.function_definition, $.declaration_section, $.function_declaration),
     _semicolon_declaration: $ => seq(optional($._declaration), ';'),
 
     type_declaration_section: $ => seq(
@@ -410,7 +411,7 @@ export default grammar({
       optional($._variable_type_declaration)
     ),
 
-    function_definition: $ => seq(
+    function_declaration: $ => seq(
       optional($.kClass),
       field('kind', choice(
         $.kProcedure,
@@ -424,8 +425,12 @@ export default grammar({
       optional(field('return_type', seq(':', $.type))),
       ';',
       repeat($.method_directive),
+    ),
+
+    function_definition: $ => seq(
+      $.function_declaration,
       ...declarations($),
-      $.block_statement,
+      field('body', $.block_statement),
     ),
 
     function_name: $ => seq(
