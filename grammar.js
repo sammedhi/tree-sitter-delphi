@@ -753,10 +753,8 @@ export default grammar({
       $.argument_list,
     )),
 
-    _parameterless_call_expression: $ => field('function', $.identifier),
-
     _call_statement: $ => choice(
-      alias($._parameterless_call_expression, $.call_expression),
+      alias($._simple_name, $.call_expression),
       $.member_access_expression,
       $.call_expression,
       alias($._inherited_call_expression, $.call_expression)
