@@ -438,6 +438,13 @@ export default grammar({
       field('name', $.identifier)
     ),
 
+    with_statement: $ => seq(
+      $.kWith,
+      $.expression,
+      $.kDo,
+      $.statement
+    ),
+
     statement: $ => choice(
       $.block_statement,
       $.assignment_statement,
@@ -451,7 +458,8 @@ export default grammar({
       $.exit_statement,
       $.raise_statement,
       $.inherited_statement,
-      $._call_statement
+      $._call_statement,
+      $.with_statement,
     ),
 
     raise_statement: $ => seq(
@@ -931,6 +939,7 @@ export default grammar({
     kAs: _ => token(prec(1, /as/i)),
     kFor: _ => token(prec(1, /for/i)),
     kWhile: _ => token(prec(1, /while/i)),
+    kWith: _ => token(prec(1, /with/i)),
     kTo: _ => token(prec(1, /to/i)),
     kDownto: _ => token(prec(1, /downto/i)),
     kDo: _ => token(prec(1, /do/i)),

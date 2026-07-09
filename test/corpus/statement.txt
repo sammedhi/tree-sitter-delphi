@@ -9,6 +9,7 @@ begin
   var a, b : Integer
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
@@ -18,35 +19,26 @@ end.
       (variable_declaration_statement
         (kVar)
         (variable_declarator
-          name: (identifier)
-        )
-        type: (identifier)
-      )
+          name: (identifier))
+        type: (identifier))
       (variable_declaration_statement
         (kVar)
         (variable_declarator
-          name: (identifier)
-        )
+          name: (identifier))
         type: (identifier)
-        initial_value: (integer_literal)
-      )
+        initial_value: (integer_literal))
       (variable_declaration_statement
         (kVar)
         (variable_declarator
-          name: (identifier)
-        )
-        initial_value: (integer_literal)
-      )
+          name: (identifier))
+        initial_value: (integer_literal))
       (variable_declaration_statement
         (kVar)
         (variable_declarator
-          name: (identifier)
-        )
+          name: (identifier))
         (variable_declarator
-          name: (identifier)
-        )
-        type: (identifier)
-      )
+          name: (identifier))
+        type: (identifier))
       (kEnd))))
 
 ================================================================================
@@ -56,13 +48,14 @@ program Foo;
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
     name: (identifier)
     body: (block_statement
-        (kBegin)
-        (kEnd))))
+      (kBegin)
+      (kEnd))))
 
 ================================================================================
 Nested block statement
@@ -73,16 +66,17 @@ begin
   end;
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
     name: (identifier)
     body: (block_statement
+      (kBegin)
+      (block_statement
         (kBegin)
-        (block_statement
-            (kBegin)
-            (kEnd))
-        (kEnd))))
+        (kEnd))
+      (kEnd))))
 
 ================================================================================
 Multiple nested block statements
@@ -95,19 +89,20 @@ begin
   end;
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
     name: (identifier)
     body: (block_statement
+      (kBegin)
+      (block_statement
         (kBegin)
-        (block_statement
-            (kBegin)
-            (kEnd))
-        (block_statement
-            (kBegin)
-            (kEnd))
-        (kEnd))))
+        (kEnd))
+      (block_statement
+        (kBegin)
+        (kEnd))
+      (kEnd))))
 
 ================================================================================
 Simple assignment
@@ -117,6 +112,7 @@ begin
   x := 42
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
@@ -139,6 +135,7 @@ begin
     x := 1;
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
@@ -160,10 +157,8 @@ end.
         variable: (variable_declaration
           (kVar)
           (variable_declarator
-            name: (identifier)
-          )
-          type: (identifier)
-        )
+            name: (identifier))
+          type: (identifier))
         initial_value: (integer_literal)
         direction: (kDownto)
         final_value: (integer_literal)
@@ -184,6 +179,7 @@ begin
     x := 1;
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
@@ -204,8 +200,7 @@ end.
         variable: (variable_declaration
           (kVar)
           (variable_declarator
-            name: (identifier)
-          )
+            name: (identifier))
           type: (identifier))
         (kIn)
         collection: (identifier)
@@ -224,6 +219,7 @@ begin
     x := 1;
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
@@ -252,22 +248,23 @@ repeat
 until x > 0;
 end.
 --------------------------------------------------------------------------------
+
 (source_file
-(program_file
-  (kProgram)
-  name: (identifier)
-  body: (block_statement
-    (kBegin)
-    (repeat_statement
-      (kRepeat)
-      (assignment_statement
-        left: (identifier)
-        right: (integer_literal))
-      (kUntil)
-      condition: (binary_expression
-        left: (identifier)
-        right: (integer_literal)))
-    (kEnd))))
+  (program_file
+    (kProgram)
+    name: (identifier)
+    body: (block_statement
+      (kBegin)
+      (repeat_statement
+        (kRepeat)
+        (assignment_statement
+          left: (identifier)
+          right: (integer_literal))
+        (kUntil)
+        condition: (binary_expression
+          left: (identifier)
+          right: (integer_literal)))
+      (kEnd))))
 
 ================================================================================
 If statement - no else
@@ -278,6 +275,7 @@ begin
     x := 1;
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
@@ -306,6 +304,7 @@ begin
     x := 0;
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
@@ -339,6 +338,7 @@ begin
   end;
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
@@ -385,6 +385,7 @@ begin
   x := not (x > 0);
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
@@ -426,6 +427,7 @@ begin
   end;
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
@@ -459,6 +461,7 @@ begin
   end;
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
@@ -493,7 +496,6 @@ end.
         (kEnd))
       (kEnd))))
 
-
 ================================================================================
 Break, continue, inherited, exit statements
 ================================================================================
@@ -509,29 +511,30 @@ begin
   exit(True);
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
     name: (identifier)
     body: (block_statement
       (kBegin)
-      (inherited_statement (kInherited))
-      (while_statement 
+      (inherited_statement
+        (kInherited))
+      (while_statement
         (kWhile)
         condition: (boolean_literal)
         (kDo)
         body: (block_statement
           (kBegin)
-            (break_statement)
-            (continue_statement)
-          (kEnd)
-        )
-      )
+          (break_statement)
+          (continue_statement)
+          (kEnd)))
       (exit_statement
         (kExit))
-      (exit_statement 
+      (exit_statement
         (kExit)
-        (argument_list (boolean_literal)))
+        (argument_list
+          (boolean_literal)))
       (kEnd))))
 
 ================================================================================
@@ -543,6 +546,7 @@ begin
   raise EInvalidOperation.Create('invalid')
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
     (kProgram)
@@ -565,4 +569,34 @@ end.
             name: (identifier))
           (argument_list
             (string_literal))))
+      (kEnd))))
+
+================================================================================
+With statement
+================================================================================
+program Foo;
+
+begin
+  with SomeValue.A() do
+    a := 4
+end.
+--------------------------------------------------------------------------------
+
+(source_file
+  (program_file
+    (kProgram)
+    (identifier)
+    (block_statement
+      (kBegin)
+      (with_statement
+        (kWith)
+        (call_expression
+          (member_access_expression
+            (identifier)
+            (identifier))
+          (argument_list))
+        (kDo)
+        (assignment_statement
+          (identifier)
+          (integer_literal)))
       (kEnd))))
