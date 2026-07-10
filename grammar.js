@@ -151,6 +151,17 @@ export default grammar({
       sep1($.type_declaration, ';'),
     ),
 
+    helper_definition: $ => seq(
+      choice($.kClass, $.kRecord),
+      $.kHelper,
+      optional($.base_list),
+      $.kFor,
+      $._name,
+      ...class_members($),
+      repeat($.class_section),
+      $.kEnd
+    ),
+
     class_definition: $ => seq(
       $.kClass,
       optional(choice($.kAbstract, $.kSealed)),
@@ -328,6 +339,7 @@ export default grammar({
 
     _type_definition: $ => choice(
       $.type_alias_definition,
+      $.helper_definition,
       $.class_definition,
       $.forward_class_definition,
       $.interface_definition,
@@ -968,6 +980,7 @@ export default grammar({
     kExcept: _ => token(prec(1, /except/i)),
     kFinally: _ => token(prec(1, /finally/i)),
     kOn: _ => token(prec(1, /on/i)),
+    kHelper: _ => token(prec(1, /helper/i)),
     kClass: _ => token(prec(1, /class/i)),
     kRecord: _ => token(prec(1, /record/i)),
     kUnmanaged: _ => token(prec(1, /unmanaged/i)),
