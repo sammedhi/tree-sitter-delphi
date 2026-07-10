@@ -101,7 +101,7 @@ export default grammar({
     file_header: $ => seq(
       field('file_type', choice($.kUnit, $.kProgram, $.kLibrary)),
       field('name', $._name),
-      optional(seq($.kDeprecated, field('message', $.string_literal))),
+      optional(seq($.kDeprecated, field('message', $.compound_string_literal))),
       ';'
     ),
 
@@ -277,7 +277,7 @@ export default grammar({
 
     guid_declaration: $ => seq(
       '[',
-      $.string_literal,
+      $.compound_string_literal,
       ']',
     ),
 
@@ -322,7 +322,7 @@ export default grammar({
 
     hint_directive: $ => seq(
       field('kind', choice($.kDeprecated, $.kPlatform, $.kLibrary)),
-      optional(field('message', $.string_literal))
+      optional(field('message', $.compound_string_literal))
     ),
 
     resourcestring_declaration_section: $ => seq(
@@ -760,8 +760,7 @@ export default grammar({
     literal: $ => choice(
       $.integer_literal,
       $.float_literal,
-      $.string_literal,
-      $.char_literal,
+      $.compound_string_literal,
       $.boolean_literal,
       $.nil_literal,
     ),
@@ -909,6 +908,11 @@ export default grammar({
     char_literal: _ => token(choice(
       /#[0-9]+/,
       /#\$[0-9a-fA-F]+/,
+    )),
+
+    compound_string_literal: $ => repeat1(choice(
+      $.string_literal,
+      $.char_literal,
     )),
 
     boolean_literal: _ => token(prec(1, /true|false/i)),

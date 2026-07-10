@@ -47,19 +47,24 @@ end.
         right: (float_literal))
       (assignment_statement
         left: (identifier)
-        right: (string_literal))
+        right: (compound_string_literal
+          (string_literal)))
       (assignment_statement
         left: (identifier)
-        right: (string_literal))
+        right: (compound_string_literal
+          (string_literal)))
       (assignment_statement
         left: (identifier)
-        right: (string_literal))
+        right: (compound_string_literal
+          (string_literal)))
       (assignment_statement
         left: (identifier)
-        right: (char_literal))
+        right: (compound_string_literal
+          (char_literal)))
       (assignment_statement
         left: (identifier)
-        right: (char_literal))
+        right: (compound_string_literal
+          (char_literal)))
       (assignment_statement
         left: (identifier)
         right: (boolean_literal))

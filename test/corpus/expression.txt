@@ -182,7 +182,8 @@ end.
         (argument_list
           (identifier)
           (integer_literal)
-          (string_literal)))
+          (compound_string_literal
+            (string_literal))))
       (call_expression
         (kInherited)
         function: (identifier)
@@ -270,8 +271,10 @@ end.
       (assignment_statement
         left: (identifier)
         right: (array_constructor_expression
-          (string_literal)
-          (string_literal)))
+          (compound_string_literal
+            (string_literal))
+          (compound_string_literal
+            (string_literal))))
       (assignment_statement
         left: (identifier)
         right: (array_constructor_expression

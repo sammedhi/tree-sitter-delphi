@@ -577,7 +577,8 @@ end.
             expression: (identifier)
             name: (identifier))
           (argument_list
-            (string_literal))))
+            (compound_string_literal
+              (string_literal)))))
       (raise_statement
         (kRaise)
         (call_expression
@@ -585,7 +586,8 @@ end.
             expression: (identifier)
             name: (identifier))
           (argument_list
-            (string_literal))))
+            (compound_string_literal
+              (string_literal)))))
       (kEnd))))
 
 ================================================================================

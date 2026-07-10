@@ -132,7 +132,8 @@ end.
         right: (integer_literal))
       (assignment_statement
         left: (identifier)
-        right: (string_literal)))
+        right: (compound_string_literal
+          (string_literal))))
     finalization: (finalization_section
       (kFinalization)
       (assignment_statement
@@ -206,7 +207,8 @@ end.
         value: (boolean_literal))
       (const_declaration
         name: (identifier)
-        value: (string_literal))
+        value: (compound_string_literal
+          (string_literal)))
       (const_declaration
         name: (identifier)
         type: (identifier)
@@ -237,10 +239,12 @@ end.
       (kResourcestring)
       (resourcestring_declaration
         name: (identifier)
-        (string_literal))
+        (compound_string_literal
+          (string_literal)))
       (resourcestring_declaration
         name: (identifier)
-        (string_literal)))
+        (compound_string_literal
+          (string_literal))))
     body: (block_statement
       (kBegin)
       (kEnd))))

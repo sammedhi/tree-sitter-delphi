@@ -293,7 +293,8 @@ end.
             (base_list
               (identifier))
             (guid_declaration
-              (string_literal))
+              (compound_string_literal
+                (string_literal)))
             (class_method
               kind: (kFunction)
               name: (identifier)
