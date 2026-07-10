@@ -387,7 +387,8 @@ export default grammar({
       $.class_of_type,
       $.reference_to_type,
       $.object_of_type,
-      $.function_type
+      $.function_type,
+      $.set_of_type
     ),
 
     pointer_type: $ => seq('^', field('type', $.type)),
@@ -412,6 +413,12 @@ export default grammar({
       field('intial', $.expression),
       '..',
       field('final', $.expression),
+    ),
+
+    set_of_type: $ => seq(
+      $.kSet,
+      $.kOf,
+      field('type', $.type)
     ),
 
     class_of_type: $ => seq(
@@ -1029,6 +1036,7 @@ export default grammar({
     kPlatform: _ => token(prec(1, /platform/i)),
     kOut: _ => token(prec(1, /out/i)),
     kArray: _ => token(prec(1, /array/i)),
+    kSet: _ => token(prec(1, /set/i)),
     kInherited: _ => token(prec(1, /inherited/i)),
     kRaise: _ => token(prec(1, /raise/i)),
     kExit: _ => token(prec(1, /exit/i)),
