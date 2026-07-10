@@ -95,7 +95,7 @@ export default grammar({
     runnable_file: $ => seq(
       $.file_header,
       ...declarations($),
-      field('body', $.block_statement),
+      field('body', choice($.block_statement, $.asm_statement)),
       '.',
     ),
 
@@ -511,7 +511,7 @@ export default grammar({
       field('header', $.function_declaration),
       ';',
       ...declarations($),
-      field('body', $.block_statement),
+      field('body', choice($.block_statement, $.asm_statement)),
     ),
 
     external_function_definition: $ => seq(
@@ -548,7 +548,8 @@ export default grammar({
       $.inherited_statement,
       $._call_statement,
       $.with_statement,
-      prec(2, $.element_access_expression)
+      prec(2, $.element_access_expression),
+      $.asm_statement
     ),
 
     raise_statement: $ => seq(
@@ -903,7 +904,7 @@ export default grammar({
       optional($.parameter_list),
       optional(field('type', $._variable_type_declaration)),
       ...declarations($),
-      $.block_statement,
+      choice($.block_statement, $.asm_statement),
     ),
 
     integer_literal: _ => token(choice(
@@ -997,6 +998,19 @@ export default grammar({
       field('name', $._simple_name),
     )),
 
+    asm_statement: $ => seq(
+      $.kAsm,
+      optional($.asmBody),
+      $.kEnd
+    ),
+
+    asmBody: $ => repeat1(choice(
+      $.identifier,      // Identifiers
+      /[0-9a-fA-F]/,      // Numbers
+      /[.,:;+\-*\[\]<>&%$]/, // Punctuation
+      /\([^*]|\)/         // Parentheses that are not comments
+    )),
+
     comment: $ => choice(
       $.line_comment,
       $.doc_comment,
@@ -1054,6 +1068,7 @@ export default grammar({
     kTry: _ => token(prec(1, /try/i)),
     kExcept: _ => token(prec(1, /except/i)),
     kFinally: _ => token(prec(1, /finally/i)),
+    kAsm: _ => token(prec(1, /asm/i)),
     kOn: _ => token(prec(1, /on/i)),
     kPacked: _ => token(prec(1, /packed/i)),
     kHelper: _ => token(prec(1, /helper/i)),
