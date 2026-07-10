@@ -194,6 +194,7 @@ export default grammar({
     forward_interface_definition: $ => $.kInterface,
 
     record_definition: $ => seq(
+      optional($.kPacked),
       $.kRecord,
       ...class_members($),
       repeat($.class_section),
@@ -418,10 +419,11 @@ export default grammar({
     pointer_type: $ => seq('^', field('type', $.type)),
 
     array_type: $ => seq(
+      optional($.kPacked),
       $.kArray,
       optional($.index_range),
       $.kOf,
-      $._name
+      $.type
     ),
 
     index_range: $ => seq(
@@ -440,6 +442,7 @@ export default grammar({
     ),
 
     set_of_type: $ => seq(
+      optional($.kPacked),
       $.kSet,
       $.kOf,
       field('type', $.type)
@@ -1037,6 +1040,7 @@ export default grammar({
     kExcept: _ => token(prec(1, /except/i)),
     kFinally: _ => token(prec(1, /finally/i)),
     kOn: _ => token(prec(1, /on/i)),
+    kPacked: _ => token(prec(1, /packed/i)),
     kHelper: _ => token(prec(1, /helper/i)),
     kClass: _ => token(prec(1, /class/i)),
     kRecord: _ => token(prec(1, /record/i)),
