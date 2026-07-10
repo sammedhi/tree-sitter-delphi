@@ -40,7 +40,8 @@ export default grammar({
     [$.parenthesized_expression, $.const_array_constructor_expression],
     [$.class_method],
     [$.function_definition, $._declaration],
-    [$.class_definition, $.forward_class_definition]
+    [$.class_definition, $.forward_class_definition],
+    [$.class_definition, $.fieldless_class_definition]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -170,6 +171,13 @@ export default grammar({
       ...class_members($),
       repeat($.class_section),
       $.kEnd,
+      optional($.hint_directive)
+    ),
+
+    fieldless_class_definition: $ => seq(
+      $.kClass,
+      optional(choice($.kAbstract, $.kSealed)),
+      $.base_list,
       optional($.hint_directive)
     ),
 
@@ -342,6 +350,7 @@ export default grammar({
       $.strong_type_alias_definition,
       $.helper_definition,
       $.class_definition,
+      $.fieldless_class_definition,
       $.forward_class_definition,
       $.interface_definition,
       $.record_definition,
