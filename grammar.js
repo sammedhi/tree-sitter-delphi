@@ -39,7 +39,7 @@ export default grammar({
 
     [$.parenthesized_expression, $.const_array_constructor_expression],
     [$.class_method],
-    [$.function_definition, $._declaration],
+    [$.function_definition, $.external_function_definition, $._declaration],
     [$.class_definition, $.forward_class_definition],
     [$.class_definition, $.fieldless_class_definition],
     [$.function_declaration],
@@ -138,7 +138,7 @@ export default grammar({
       $.resourcestring_declaration_section
     ),
 
-    _declaration: $ => choice($.function_definition, $.declaration_section, $.function_declaration),
+    _declaration: $ => choice($.function_definition, $.external_function_definition, $.declaration_section, $.function_declaration),
     _semicolon_declaration: $ => seq(optional($._declaration), ';'),
 
     type_declaration_section: $ => seq(
@@ -475,6 +475,12 @@ export default grammar({
       ';',
       ...declarations($),
       field('body', $.block_statement),
+    ),
+
+    external_function_definition: $ => seq(
+      $.function_declaration,
+      ';', $.kExternal,
+      optional(field('source', $.expression)),
     ),
 
     function_name: $ => seq(
@@ -1032,6 +1038,7 @@ export default grammar({
     kReintroduce: _ => token(prec(1, /reintroduce/i)),
     kStatic: _ => token(prec(1, /static/i)),
     kStdcall: _ => token(prec(1, /stdcall/i)),
+    kExternal: _ => token(prec(1, /external/i)),
     kCdecl: _ => token(prec(1, /cdecl/i)),
     kRegister: _ => token(prec(1, /register/i)),
     kPascal: _ => token(prec(1, /pascal/i)),
