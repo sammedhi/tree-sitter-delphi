@@ -12,8 +12,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (variable_declaration_statement
@@ -51,8 +52,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (kEnd))))
@@ -69,8 +71,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (block_statement
@@ -92,8 +95,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (block_statement
@@ -115,8 +119,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (assignment_statement
@@ -138,8 +143,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (for_numeric_statement
@@ -182,8 +188,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (for_each_statement
@@ -222,8 +229,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (while_statement
@@ -251,8 +259,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (repeat_statement
@@ -278,8 +287,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (if_statement
@@ -307,8 +317,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (if_statement
@@ -341,8 +352,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (case_statement
@@ -388,8 +400,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (assignment_statement
@@ -430,8 +443,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (try_finally_statement
@@ -464,8 +478,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (try_except_statement
@@ -514,8 +529,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (inherited_statement
@@ -549,8 +565,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (raise_statement
@@ -584,8 +601,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    (identifier)
+    (file_header
+      (kProgram)
+      (identifier))
     (block_statement
       (kBegin)
       (with_statement

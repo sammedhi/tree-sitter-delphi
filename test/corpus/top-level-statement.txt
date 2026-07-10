@@ -5,14 +5,15 @@ program Foo;
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (kEnd))))
-
 
 ================================================================================
 Library
@@ -21,10 +22,12 @@ library Foo;
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
-  (library_file
-    (kLibrary)
-    name: (identifier)
+  (program_file
+    (file_header
+      file_type: (kLibrary)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (kEnd))))
@@ -37,10 +40,12 @@ interface
 implementation
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (unit_file
-    (kUnit)
-    name: (identifier)
+    (file_header
+      file_type: (kUnit)
+      name: (identifier))
     interface: (interface_section
       (kInterface))
     implementation: (implementation_section
@@ -56,10 +61,12 @@ implementation
 initialization
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (unit_file
-    (kUnit)
-    name: (identifier)
+    (file_header
+      file_type: (kUnit)
+      name: (identifier))
     interface: (interface_section
       (kInterface))
     implementation: (implementation_section
@@ -78,10 +85,12 @@ initialization
 finalization
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (unit_file
-    (kUnit)
-    name: (identifier)
+    (file_header
+      file_type: (kUnit)
+      name: (identifier))
     interface: (interface_section
       (kInterface))
     implementation: (implementation_section
@@ -106,10 +115,12 @@ finalization
   y := 0.4
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (unit_file
-    (kUnit)
-    name: (identifier)
+    (file_header
+      file_type: (kUnit)
+      name: (identifier))
     interface: (interface_section
       (kInterface))
     implementation: (implementation_section
@@ -142,10 +153,12 @@ var
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (var_declaration_section
       (kVar)
       (var_declaration
@@ -155,14 +168,11 @@ end.
           name: (identifier))
         (variable_declarator
           name: (identifier))
-        type: (identifier)
-      )
+        type: (identifier))
       (var_declaration
         (variable_declarator
           name: (identifier))
-        type: (identifier)
-      )
-    )
+        type: (identifier)))
     body: (block_statement
       (kBegin)
       (kEnd))))
@@ -179,10 +189,12 @@ const
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (const_declaration_section
       (kConst)
       (const_declaration
@@ -215,10 +227,12 @@ resourcestring
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (resourcestring_declaration_section
       (kResourcestring)
       (resourcestring_declaration

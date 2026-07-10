@@ -73,24 +73,11 @@ export default grammar({
     // TODO: add support for include files (.inc)
     source_file: $ => choice(
       $.program_file,
-      $.library_file,
       $.unit_file,
     ),
 
     program_file: $ => seq(
-      $.kProgram,
-      field('name', $.identifier),
-      ';',
-      optional($.uses_clause),
-      ...declarations($),
-      field('body', $.block_statement),
-      '.',
-    ),
-
-    library_file: $ => seq(
-      $.kLibrary,
-      field('name', $.identifier),
-      ';',
+      $.file_header,
       optional($.uses_clause),
       ...declarations($),
       field('body', $.block_statement),
@@ -98,15 +85,20 @@ export default grammar({
     ),
 
     unit_file: $ => seq(
-      $.kUnit,
-      field('name', $._name),
-      ';',
+      $.file_header,
       field('interface', $.interface_section),
       field('implementation', $.implementation_section),
       optional(field('initialization', $.initialization_section)),
       optional(field('finalization', $.finalization_section)),
       $.kEnd,
       '.',
+    ),
+
+    file_header: $ => seq(
+      field('file_type', choice($.kUnit, $.kProgram, $.kLibrary)),
+      field('name', $._name),
+      optional(seq($.kDeprecated, field('message', $.string_literal))),
+      ';'
     ),
 
     interface_section: $ => seq(

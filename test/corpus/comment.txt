@@ -5,10 +5,12 @@ program Foo; // this is a comment
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (line_comment)
     body: (block_statement
       (kBegin)
@@ -22,11 +24,13 @@ program Foo;
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (doc_comment)
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (kEnd))))
@@ -39,10 +43,12 @@ program Foo;
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (brace_comment)
     body: (block_statement
       (kBegin)
@@ -56,10 +62,12 @@ program Foo;
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (block_comment)
     body: (block_statement
       (kBegin)
@@ -77,11 +85,13 @@ implementation
 (* block comment *)
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (doc_comment)
   (unit_file
-    (kUnit)
-    name: (identifier)
+    (file_header
+      file_type: (kUnit)
+      name: (identifier))
     (line_comment)
     interface: (interface_section
       (kInterface))
@@ -102,10 +112,12 @@ program Foo;
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (brace_comment)
     body: (block_statement
       (kBegin)
@@ -122,10 +134,12 @@ program Foo;
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (block_comment)
     body: (block_statement
       (kBegin)

@@ -9,10 +9,12 @@ uses
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (uses_clause
       (kUses)
       (unit_reference
@@ -38,10 +40,12 @@ uses
 begin
 end.
 --------------------------------------------------------------------------------
+
 (source_file
-  (library_file
-    (kLibrary)
-    name: (identifier)
+  (program_file
+    (file_header
+      file_type: (kLibrary)
+      name: (identifier))
     (uses_clause
       (kUses)
       (unit_reference
@@ -62,10 +66,12 @@ uses
   Classes;
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (unit_file
-    (kUnit)
-    name: (identifier)
+    (file_header
+      file_type: (kUnit)
+      name: (identifier))
     interface: (interface_section
       (kInterface)
       (uses_clause

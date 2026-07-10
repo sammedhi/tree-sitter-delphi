@@ -13,8 +13,9 @@ end.
 
 (source_file
   (unit_file
-    (kUnit)
-    name: (identifier)
+    (file_header
+      file_type: (kUnit)
+      name: (identifier))
     interface: (interface_section
       (kInterface)
       (type_declaration_section
@@ -46,8 +47,9 @@ end.
 
 (source_file
   (unit_file
-    (kUnit)
-    name: (identifier)
+    (file_header
+      file_type: (kUnit)
+      name: (identifier))
     interface: (interface_section
       (kInterface)
       (type_declaration_section
@@ -90,8 +92,9 @@ end.
 
 (source_file
   (unit_file
-    (kUnit)
-    name: (identifier)
+    (file_header
+      file_type: (kUnit)
+      name: (identifier))
     interface: (interface_section
       (kInterface)
       (type_declaration_section
@@ -188,8 +191,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (type_declaration_section
       (kType)
       (type_declaration
@@ -231,8 +235,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (var_declaration_section
       (kVar)
       (var_declaration
@@ -274,8 +279,9 @@ end.
 
 (source_file
   (unit_file
-    (kUnit)
-    name: (identifier)
+    (file_header
+      file_type: (kUnit)
+      name: (identifier))
     interface: (interface_section
       (kInterface)
       (type_declaration_section
@@ -335,8 +341,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (type_declaration_section
       (kType)
       (type_declaration
@@ -439,8 +446,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (type_declaration_section
       (kType)
       (type_declaration

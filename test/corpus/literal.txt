@@ -19,10 +19,12 @@ begin
   x := nil
 end.
 --------------------------------------------------------------------------------
+
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     body: (block_statement
       (kBegin)
       (assignment_statement

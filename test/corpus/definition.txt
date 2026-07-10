@@ -21,8 +21,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (function_definition
       (function_declaration
         kind: (kProcedure)
@@ -99,8 +100,9 @@ end.
 
 (source_file
   (program_file
-    (kProgram)
-    name: (identifier)
+    (file_header
+      file_type: (kProgram)
+      name: (identifier))
     (type_declaration_section
       (kType)
       (type_declaration
