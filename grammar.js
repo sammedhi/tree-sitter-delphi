@@ -502,6 +502,7 @@ export default grammar({
       $.function_declaration,
       ';', $.kExternal,
       optional(field('source', $.expression)),
+      optional(seq($.kName, field('original_name', $.expression)))
     ),
 
     function_name: $ => seq(
@@ -1060,6 +1061,7 @@ export default grammar({
     kStatic: _ => token(prec(1, /static/i)),
     kStdcall: _ => token(prec(1, /stdcall/i)),
     kExternal: _ => token(prec(1, /external/i)),
+    kName: _ => token(prec(1, /name/i)),
     kCdecl: _ => token(prec(1, /cdecl/i)),
     kRegister: _ => token(prec(1, /register/i)),
     kPascal: _ => token(prec(1, /pascal/i)),
