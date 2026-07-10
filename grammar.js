@@ -292,7 +292,7 @@ export default grammar({
     resourcestring_declaration: $ => seq(
       field('name', $.identifier),
       '=',
-      $.string_literal
+      $.expression
     ),
 
     const_declaration_section: $ => seq(
