@@ -42,7 +42,8 @@ export default grammar({
     [$.function_definition, $._declaration],
     [$.class_definition, $.forward_class_definition],
     [$.class_definition, $.fieldless_class_definition],
-    [$.function_declaration]
+    [$.function_declaration],
+    [$.class_property]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -238,10 +239,12 @@ export default grammar({
       optional($.kClass),
       $.kProperty,
       field('name', $.identifier),
+      optional($.array_parameter_list),
       optional($._variable_type_declaration),
       optional(seq($.kIndex, field('index', $.expression))),
       optional(seq($.kRead, field('read', $._name))),
       optional(seq($.kWrite, field('write', $._name))),
+      optional(seq(';', $.kDefault))
     ),
 
     interface_definition: $ => seq(
@@ -263,6 +266,12 @@ export default grammar({
       '(',
       sep($.parameter_declaration, ';'),
       ')',
+    ),
+
+    array_parameter_list: $ => seq(
+      '[',
+      sep($.parameter_declaration, ';'),
+      ']'
     ),
 
     parameter_declaration: $ => seq(
@@ -1013,6 +1022,8 @@ export default grammar({
     kIndex: _ => token(prec(1, /index/i)),
     kRead: _ => token(prec(1, /read/i)),
     kWrite: _ => token(prec(1, /write/i)),
+    kStore: _ => token(prec(1, /stored/i)),
+    kDefault: _ => token(prec(1, /default/i)),
     kVirtual: _ => token(prec(1, /virtual/i)),
     kAbstract: _ => token(prec(1, /abstract/i)),
     kSealed: _ => token(prec(1, /sealed/i)),
