@@ -43,7 +43,8 @@ export default grammar({
     [$.class_definition, $.forward_class_definition],
     [$.class_definition, $.fieldless_class_definition],
     [$.function_declaration],
-    [$.class_property]
+    [$.class_property],
+    [$.type, $.object_of_type]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -442,8 +443,7 @@ export default grammar({
     ),
 
     object_of_type: $ => seq(
-      $.kProcedure,
-      optional($.parameter_list),
+      $.function_type,
       $.kOf,
       $.kObject
     ),

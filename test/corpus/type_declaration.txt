@@ -392,8 +392,9 @@ end.
         name: (identifier)
         type: (type_alias_definition
           type: (object_of_type
-            (kProcedure)
-            (parameter_list)
+            (function_type
+              kind: (kProcedure)
+              (parameter_list))
             (kOf)
             (kObject))))
       (type_declaration
