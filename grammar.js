@@ -44,7 +44,8 @@ export default grammar({
     [$.class_definition, $.fieldless_class_definition],
     [$.function_declaration],
     [$.class_property],
-    [$.type, $.object_of_type]
+    [$.type, $.object_of_type],
+    [$.forward_interface_definition, $.interface_definition]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -190,6 +191,7 @@ export default grammar({
     ),
 
     forward_class_definition: $ => $.kClass,
+    forward_interface_definition: $ => $.kInterface,
 
     record_definition: $ => seq(
       $.kRecord,
@@ -373,6 +375,7 @@ export default grammar({
       $.class_definition,
       $.fieldless_class_definition,
       $.forward_class_definition,
+      $.forward_interface_definition,
       $.interface_definition,
       $.record_definition,
       $.enum_definition,
