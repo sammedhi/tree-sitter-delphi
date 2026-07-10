@@ -339,6 +339,7 @@ export default grammar({
 
     _type_definition: $ => choice(
       $.type_alias_definition,
+      $.strong_type_alias_definition,
       $.helper_definition,
       $.class_definition,
       $.forward_class_definition,
@@ -352,6 +353,11 @@ export default grammar({
       optional($.hint_directive)
     ),
 
+    strong_type_alias_definition: $ => seq(
+      $.kType,
+      field('type', $.type),
+      optional($.hint_directive)
+    ),
 
     enum_definition: $ => seq(
       '(',
