@@ -486,7 +486,7 @@ export default grammar({
       $.kWith,
       $.expression,
       $.kDo,
-      $.statement
+      optional($.statement)
     ),
 
     statement: $ => choice(
@@ -517,10 +517,10 @@ export default grammar({
       $.kIf,
       field('condition', $.expression),
       $.kThen,
-      field('then', $.statement),
+      field('then', optional($.statement)),
       optional(seq(
         $.kElse,
-        field('else', $.statement),
+        optional(field('else', $.statement)),
       )),
     )),
 
@@ -531,7 +531,7 @@ export default grammar({
       repeat1($.case_branch),
       optional(seq(
         $.kElse,
-        field('else', $.statement),
+        field('else', optional($.statement)),
         optional(';') // TODO: Check whether ; is really optional
       )),
       $.kEnd,
@@ -540,7 +540,7 @@ export default grammar({
     case_branch: $ => seq(
       field('pattern', commaSep1($.case_pattern)),
       ':',
-      field('body', $.statement),
+      field('body', optional($.statement)),
       ';',
     ),
 
@@ -614,7 +614,7 @@ export default grammar({
       field('direction', choice($.kTo, $.kDownto)),
       field('final_value', $.expression),
       $.kDo,
-      field('body', $.statement),
+      field('body', optional($.statement)),
     ),
 
     for_each_statement: $ => seq(
@@ -623,7 +623,7 @@ export default grammar({
       $.kIn,
       field('collection', $.expression),
       $.kDo,
-      field('body', $.statement),
+      field('body', optional($.statement)),
     ),
 
     _for_variable: $ => choice(
@@ -641,7 +641,7 @@ export default grammar({
       $.kWhile,
       field('condition', $.expression),
       $.kDo,
-      field('body', $.statement),
+      field('body', optional($.statement)),
     ),
 
     repeat_statement: $ => seq(
@@ -679,7 +679,7 @@ export default grammar({
       optional(seq(field('variable', $.identifier), ':')),
       field('type', $._name),
       $.kDo,
-      field('body', $.statement),
+      field('body', optional($.statement)),
       ';',
     ),
 
