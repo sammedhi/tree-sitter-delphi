@@ -39,7 +39,8 @@ export default grammar({
 
     [$.parenthesized_expression, $.const_array_constructor_expression],
     [$.class_method],
-    [$.function_definition, $._declaration]
+    [$.function_definition, $._declaration],
+    [$.class_definition, $.forward_class_definition]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -161,6 +162,8 @@ export default grammar({
       optional($.hint_directive)
     ),
 
+    forward_class_definition: $ => $.kClass,
+
     record_definition: $ => seq(
       $.kRecord,
       ...class_members($),
@@ -210,6 +213,7 @@ export default grammar({
         $.kFunction,
         $.kConstructor,
         $.kDestructor,
+        $.kOperator
       )),
       field('name', $.identifier),
       optional($.type_parameter_list),
@@ -223,6 +227,7 @@ export default grammar({
       $.kProperty,
       field('name', $.identifier),
       optional($._variable_type_declaration),
+      optional(seq($.kIndex, field('index', $.expression))),
       optional(seq($.kRead, field('read', $._name))),
       optional(seq($.kWrite, field('write', $._name))),
     ),
@@ -324,6 +329,7 @@ export default grammar({
     _type_definition: $ => choice(
       $.type_alias_definition,
       $.class_definition,
+      $.forward_class_definition,
       $.interface_definition,
       $.record_definition,
       $.enum_definition,
@@ -417,7 +423,8 @@ export default grammar({
         $.kProcedure,
         $.kFunction,
         $.kConstructor,
-        $.kDestructor
+        $.kDestructor,
+        $.kOperator
       )),
       field('name', $.function_name),
       optional($.type_parameter_list),
@@ -681,6 +688,7 @@ export default grammar({
       $.call_expression,
       alias($._inherited_call_expression, $.call_expression),
       $.anonymous_function_expression,
+      $.index_range
     ),
 
     //#region literals
@@ -742,6 +750,12 @@ export default grammar({
       field('operand', $.expression),
     ),
 
+    labeled_value: $ => seq(
+      field('label', $.identifier),
+      ':',
+      field('value', $.expression)
+    ),
+
     _inherited_call_expression: $ => prec(PREC.CALL, seq(
       $.kInherited,
       field('function', $.expression),
@@ -780,7 +794,10 @@ export default grammar({
 
     const_array_constructor_expression: $ => seq(
       '(',
-      sep($.expression, ','),
+      choice(
+        sep($.expression, ','),
+        sep1($.labeled_value, ';')
+      ),
       ')'
     ),
 
@@ -843,6 +860,14 @@ export default grammar({
 
     generic_name: $ => seq($.identifier, $.type_argument_list),
 
+    type_argument_list: $ => seq(
+      '<',
+      choice(
+        commaSep(choice($._name, $.array_type)),
+      ),
+      '>',
+    ),
+
     type_parameter_list: $ => seq(
       '<',
       sep1($.type_parameter, ';'),
@@ -866,15 +891,6 @@ export default grammar({
       $.kConstructor,
       $.kUnmanaged,
       $._name,
-    ),
-
-    type_argument_list: $ => seq(
-      '<',
-      choice(
-        repeat(','),
-        commaSep($.type),
-      ),
-      '>',
     ),
 
     _name: $ => choice(
@@ -959,11 +975,13 @@ export default grammar({
     kFunction: _ => token(prec(1, /function/i)),
     kConstructor: _ => token(prec(1, /constructor/i)),
     kDestructor: _ => token(prec(1, /destructor/i)),
+    kOperator: _ => token(prec(1, /operator/i)),
     kPrivate: _ => token(prec(1, /private/i)),
     kProtected: _ => token(prec(1, /protected/i)),
     kPublic: _ => token(prec(1, /public/i)),
     kPublished: _ => token(prec(1, /published/i)),
     kProperty: _ => token(prec(1, /property/i)),
+    kIndex: _ => token(prec(1, /index/i)),
     kRead: _ => token(prec(1, /read/i)),
     kWrite: _ => token(prec(1, /write/i)),
     kVirtual: _ => token(prec(1, /virtual/i)),
