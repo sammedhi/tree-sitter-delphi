@@ -147,6 +147,19 @@ export default grammar({
       sep1($.type_declaration, ';'),
     ),
 
+    attribute_list: $ => seq(
+      '[',
+      sep1($.attribute, ','),
+      ']',
+    ),
+
+    attribute: $ => seq(
+      field('name', $._name),
+      optional($.argument_list),
+    ),
+
+    _attributes: $ => repeat1($.attribute_list),
+
     helper_definition: $ => seq(
       choice($.kClass, $.kRecord),
       $.kHelper,
@@ -215,12 +228,14 @@ export default grammar({
     _semicolon_class_member: $ => seq(optional($.class_member), ';'),
 
     class_field: $ => seq(
+      optional($._attributes),
       optional($.kClass),
       commaSep1(field('name', $.identifier)),
       $._variable_type_declaration,
     ),
 
     class_method: $ => seq(
+      optional($._attributes),
       optional($.kClass),
       field('kind', choice(
         $.kProcedure,
@@ -237,6 +252,7 @@ export default grammar({
     ),
 
     class_property: $ => seq(
+      optional($._attributes),
       optional($.kClass),
       $.kProperty,
       field('name', $.identifier),
@@ -343,6 +359,7 @@ export default grammar({
     ),
 
     type_declaration: $ => seq(
+      optional($._attributes),
       field('name', $.identifier),
       optional($.type_parameter_list),
       '=',
@@ -455,6 +472,7 @@ export default grammar({
     ),
 
     function_declaration: $ => seq(
+      optional($._attributes),
       optional($.kClass),
       field('kind', choice(
         $.kProcedure,
