@@ -41,7 +41,8 @@ export default grammar({
     [$.class_method],
     [$.function_definition, $._declaration],
     [$.class_definition, $.forward_class_definition],
-    [$.class_definition, $.fieldless_class_definition]
+    [$.class_definition, $.fieldless_class_definition],
+    [$.function_declaration]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -274,6 +275,7 @@ export default grammar({
 
     argument_name: $ => $.identifier,
 
+    _method_directive: $ => seq(';', $.method_directive),
     method_directive: $ => choice(
       $.kVirtual,
       $.kAbstract,
@@ -456,12 +458,12 @@ export default grammar({
       optional($.type_parameter_list),
       optional($.parameter_list),
       optional(field('return_type', seq(':', $.type))),
-      ';',
-      repeat($.method_directive),
+      repeat($._method_directive),
     ),
 
     function_definition: $ => seq(
       $.function_declaration,
+      ';',
       ...declarations($),
       field('body', $.block_statement),
     ),
