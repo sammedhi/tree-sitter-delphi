@@ -237,10 +237,19 @@ export default grammar({
       field('name', $.identifier),
       optional($.array_parameter_list),
       optional($._variable_type_declaration),
-      optional(seq($.kIndex, field('index', $.expression))),
-      optional(seq($.kRead, field('read', $._name))),
-      optional(seq($.kWrite, field('write', $._name))),
+      repeat($.property_attribute),
       optional(seq(';', $.kDefault))
+    ),
+
+    property_attribute: $ => seq(
+      field('kind', choice(
+        $.kRead,
+        $.kWrite,
+        $.kIndex,
+        $.kStored,
+        $.kDefault
+      )),
+      field('value', choice($.expression))
     ),
 
     interface_definition: $ => seq(
@@ -1052,7 +1061,7 @@ export default grammar({
     kIndex: _ => token(prec(1, /index/i)),
     kRead: _ => token(prec(1, /read/i)),
     kWrite: _ => token(prec(1, /write/i)),
-    kStore: _ => token(prec(1, /stored/i)),
+    kStored: _ => token(prec(1, /stored/i)),
     kDefault: _ => token(prec(1, /default/i)),
     kVirtual: _ => token(prec(1, /virtual/i)),
     kAbstract: _ => token(prec(1, /abstract/i)),

@@ -156,16 +156,19 @@ end.
                 (kProperty)
                 name: (identifier)
                 type: (identifier)
-                (kRead)
-                read: (identifier)
-                (kWrite)
-                write: (identifier))
+                (property_attribute
+                  kind: (kRead)
+                  source: (identifier))
+                (property_attribute
+                  kind: (kWrite)
+                  source: (identifier)))
               (class_property
                 (kProperty)
                 name: (identifier)
                 type: (identifier)
-                (kRead)
-                read: (identifier))
+                (property_attribute
+                  kind: (kRead)
+                  source: (identifier)))
               (function_declaration
                 kind: (kProcedure)
                 name: (function_name
@@ -317,10 +320,12 @@ end.
               (kProperty)
               name: (identifier)
               type: (identifier)
-              (kRead)
-              read: (identifier)
-              (kWrite)
-              write: (identifier))
+              (property_attribute
+                kind: (kRead)
+                source: (identifier))
+              (property_attribute
+                kind: (kWrite)
+                source: (identifier)))
             (kEnd))))
       (section
         kind: (kImplementation)))
