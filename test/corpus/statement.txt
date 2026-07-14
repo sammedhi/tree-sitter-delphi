@@ -11,7 +11,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -51,7 +51,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -70,7 +70,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -94,7 +94,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -118,7 +118,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -142,7 +142,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -187,7 +187,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -228,7 +228,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -258,7 +258,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -286,7 +286,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -316,7 +316,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -351,7 +351,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -399,7 +399,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -442,7 +442,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -477,7 +477,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -528,7 +528,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -564,7 +564,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -602,7 +602,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       (kProgram)
       (identifier))

@@ -7,7 +7,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -27,7 +27,7 @@ end.
 
 (source_file
   (doc_comment)
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -45,7 +45,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -64,7 +64,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -93,11 +93,11 @@ end.
       file_type: (kUnit)
       name: (identifier))
     (line_comment)
-    interface: (interface_section
-      (kInterface))
-    (brace_comment)
-    implementation: (implementation_section
-      (kImplementation))
+    (section
+      kind: (kInterface)
+      (brace_comment)
+      (section
+        kind: (kImplementation)))
     (block_comment)
     (kEnd)))
 
@@ -114,7 +114,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -136,7 +136,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))

@@ -20,12 +20,12 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
     (function_definition
-      (function_declaration
+      header: (function_declaration
         kind: (kProcedure)
         name: (function_name
           qualifier: (identifier)
@@ -39,11 +39,10 @@ end.
             (argument_name
               (identifier))
             type: (identifier))))
-      (var_declaration_section
-        (kVar)
-        (var_declaration
-          (variable_declarator
-            name: (identifier))
+      (declaration_section
+        kind: (kVar)
+        (global_declaration
+          (identifier)
           type: (identifier)))
       body: (block_statement
         (kBegin)
@@ -52,7 +51,7 @@ end.
           right: (boolean_literal))
         (kEnd)))
     (function_definition
-      (function_declaration
+      header: (function_declaration
         kind: (kFunction)
         name: (function_name
           qualifier: (identifier)
@@ -99,12 +98,12 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
-    (type_declaration_section
-      (kType)
+    (declaration_section
+      kind: (kType)
       (type_declaration
         name: (identifier)
         (type_parameter_list
@@ -118,11 +117,12 @@ end.
             name: (identifier)
             (type_constraints
               (kRecord))))
-        type: (class_definition
+        (class_definition
           (kClass)
-          (class_method
+          (function_declaration
             kind: (kFunction)
-            name: (identifier)
+            name: (function_name
+              name: (identifier))
             (type_parameter_list
               (type_parameter
                 name: (identifier)
@@ -134,17 +134,17 @@ end.
                 name: (identifier)
                 (type_constraints
                   (kRecord))))
-            parameters: (parameter_list))
+            (parameter_list))
           (kEnd)))
       (type_declaration
         name: (identifier)
-        type: (type_alias_definition
+        (type_alias_definition
           type: (generic_name
             (identifier)
             (type_argument_list
               (identifier))))))
     (function_definition
-      (function_declaration
+      header: (function_declaration
         kind: (kFunction)
         name: (function_name
           name: (identifier))

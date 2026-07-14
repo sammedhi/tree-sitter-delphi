@@ -31,21 +31,34 @@ export default grammar({
     [$._simple_name, $.generic_name],
     [$._inherited_call_expression, $.call_expression],
     [$.function_name, $.generic_name],
+    [$.enum_value, $._simple_name],
 
-    [$.type_declaration_section],
-    [$.var_declaration_section],
-    [$.const_declaration_section],
-    [$.resourcestring_declaration_section],
+    [$.variable_declarator, $._section_set],
+    [$.global_declaration, $.variable_declarator],
+    [$._type_declaration_section],
+    [$._value_declaration_section],
 
     [$.parenthesized_expression, $.const_array_constructor_expression],
-    [$.class_method],
     [$.function_definition, $.external_function_definition, $._declaration],
     [$.class_definition, $.forward_class_definition],
     [$.class_definition, $.fieldless_class_definition],
     [$.function_declaration],
     [$.class_property],
     [$.type, $.object_of_type],
-    [$.forward_interface_definition, $.interface_definition]
+    [$.forward_interface_definition, $.interface_definition],
+    [$._semicolon_declaration, $._semicolon_statement],
+    [$.attribute, $.index_range],
+    [$.lvalue_expression, $._call_statement],
+    [$.section],
+    [$.raise_statement],
+    [$.section, $._semicolon_declaration],
+    [$.section, $._semicolon_statement],
+    [$.external_function_definition],
+    [$.while_statement],
+    [$.with_statement],
+    [$.for_each_statement],
+    [$.for_numeric_statement],
+    [$.qualified_name, $.member_access_expression],
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -55,7 +68,6 @@ export default grammar({
   supertypes: $ => [
     $.comment,
     $.statement,
-    $.declaration_section,
     $.type,
     $.expression,
     $.literal,
@@ -76,13 +88,14 @@ export default grammar({
     // TODO: add support for package files (.dpk)
     // TODO: add support for include files (.inc)
     source_file: $ => choice(
-      $.program_file,
+      $.runnable_file,
       $.unit_file,
+      seq(...statements($)),
+      seq(...declarations($))
     ),
 
-    program_file: $ => seq(
+    runnable_file: $ => seq(
       $.file_header,
-      optional($.uses_clause),
       ...declarations($),
       field('body', $.block_statement),
       '.',
@@ -90,10 +103,7 @@ export default grammar({
 
     unit_file: $ => seq(
       $.file_header,
-      field('interface', $.interface_section),
-      field('implementation', $.implementation_section),
-      optional(field('initialization', $.initialization_section)),
-      optional(field('finalization', $.finalization_section)),
+      ...declarations($),
       $.kEnd,
       '.',
     ),
@@ -105,48 +115,34 @@ export default grammar({
       ';'
     ),
 
-    interface_section: $ => seq(
-      $.kInterface,
-      optional($.uses_clause),
-      ...declarations($)
-    ),
-
-    implementation_section: $ => seq(
-      $.kImplementation,
-      optional($.uses_clause),
-      ...declarations($),
-    ),
-
-    initialization_section: $ => seq(
-      $.kInitialization,
-      ...statements($)
-    ),
-
-    finalization_section: $ => seq(
-      $.kFinalization,
-      ...statements($)
+    section: $ => seq(
+      field('kind', choice(
+        $.kInterface,
+        $.kImplementation,
+        $.kInitialization,
+        $.kFinalization
+      )),
+      choice(seq(...declarations($)), seq(...statements($))),
     ),
 
     uses_clause: $ => seq(
       $.kUses,
-      commaSep1($.unit_reference),
-      ';',
+      repeat($.import),
+    ),
+    import: $ => seq(
+      $._name,
+      optional(',')
     ),
 
-    declaration_section: $ => choice(
-      $.var_declaration_section,
-      $.const_declaration_section,
-      $.type_declaration_section,
-      $.resourcestring_declaration_section
+    _declaration: $ => choice(
+      $.function_definition,
+      $.external_function_definition,
+      $.declaration_section,
+      $.function_declaration,
+      $.uses_clause
     ),
 
-    _declaration: $ => choice($.function_definition, $.external_function_definition, $.declaration_section, $.function_declaration),
     _semicolon_declaration: $ => seq(optional($._declaration), ';'),
-
-    type_declaration_section: $ => seq(
-      $.kType,
-      sep1($.type_declaration, ';'),
-    ),
 
     attribute_list: $ => seq(
       '[',
@@ -180,14 +176,12 @@ export default grammar({
       ...class_members($),
       repeat($.class_section),
       $.kEnd,
-      optional($.hint_directive)
     ),
 
     fieldless_class_definition: $ => seq(
       $.kClass,
       optional(choice($.kAbstract, $.kSealed)),
       $.base_list,
-      optional($.hint_directive)
     ),
 
     forward_class_definition: $ => $.kClass,
@@ -199,7 +193,6 @@ export default grammar({
       ...class_members($),
       repeat($.class_section),
       $.kEnd,
-      optional($.hint_directive)
     ),
 
     base_list: $ => seq(
@@ -223,7 +216,7 @@ export default grammar({
 
     class_member: $ => choice(
       $.class_field,
-      $.class_method,
+      $.function_declaration,
       $.class_property,
       $.declaration_section
     ),
@@ -235,23 +228,6 @@ export default grammar({
       optional($.kClass),
       commaSep1(field('name', $.identifier)),
       $._variable_type_declaration,
-    ),
-
-    class_method: $ => seq(
-      optional($._attributes),
-      optional($.kClass),
-      field('kind', choice(
-        $.kProcedure,
-        $.kFunction,
-        $.kConstructor,
-        $.kDestructor,
-        $.kOperator
-      )),
-      field('name', $.identifier),
-      optional($.type_parameter_list),
-      optional(field('parameters', $.parameter_list)),
-      optional(seq(':', field('return_type', $.type))),
-      repeat(seq(optional(';'), $.method_directive)),
     ),
 
     class_property: $ => seq(
@@ -273,7 +249,6 @@ export default grammar({
       optional($.guid_declaration),
       ...class_members($),
       $.kEnd,
-      optional($.hint_directive),
     ),
 
     guid_declaration: $ => seq(
@@ -296,6 +271,7 @@ export default grammar({
 
     parameter_declaration: $ => seq(
       // TODO use alias for the modifier instead
+      optional($._attributes),
       optional(field('modifier', choice($.kConst, $.kVar, $.kOut))),
       commaSep1($.argument_name),
       optional($._variable_type_declaration),
@@ -304,7 +280,7 @@ export default grammar({
 
     argument_name: $ => $.identifier,
 
-    _method_directive: $ => seq(';', $.method_directive),
+    _method_directive: $ => seq(optional(';'), $.method_directive),
     method_directive: $ => choice(
       $.kVirtual,
       $.kAbstract,
@@ -326,39 +302,30 @@ export default grammar({
       optional(field('message', $.compound_string_literal))
     ),
 
-    resourcestring_declaration_section: $ => seq(
-      $.kResourcestring,
-      sep1($.resourcestring_declaration, ';')
+    declaration_section: $ => choice(
+      $._type_declaration_section,
+      $._value_declaration_section
     ),
 
-    resourcestring_declaration: $ => seq(
-      field('name', $.identifier),
-      '=',
-      $.expression
+    _type_declaration_section: $ => seq(
+      field('kind', $.kType),
+      sep(optional($.type_declaration), ';')
     ),
 
-    const_declaration_section: $ => seq(
-      $.kConst,
-      sep1($.const_declaration, ';'),
-    ),
-
-    const_declaration: $ => seq(
-      field('name', $.identifier),
-      optional(seq(':', field('type', $.type))),
-      '=',
-      field('value', $.expression),
-      optional($.hint_directive),
-    ),
-
-    var_declaration_section: $ => seq(
+    _value_declaration_section: $ => seq(
       optional($.kClass),
-      choice($.kVar, $.kThreadVar),
-      sep1($.var_declaration, ';'),
+      field('kind', choice(
+        $.kVar,
+        $.kThreadVar,
+        $.kConst,
+        $.kResourcestring
+      )),
+      sep(optional($.global_declaration), ';')
     ),
 
-    var_declaration: $ => seq(
-      commaSep1($.variable_declarator),
-      $._variable_type_declaration
+    _section_set: $ => choice(
+      $.type_declaration,
+      $.global_declaration
     ),
 
     type_declaration: $ => seq(
@@ -366,8 +333,31 @@ export default grammar({
       field('name', $.identifier),
       optional($.type_parameter_list),
       '=',
-      field('type', $._type_definition),
+      $._type_definition,
+      optional($.hint_directive)
     ),
+
+    global_declaration: $ => seq(
+      optional($._attributes),
+      commaSep1($.identifier),
+      optional($._variable_type_declaration),
+      optional(seq(
+        '=',
+        $._section_value,
+      )),
+      optional($.absolute_declaration),
+      optional($.hint_directive)
+    ),
+
+    absolute_declaration: $ => seq(
+      $.kAbsolute,
+      field('name', $._name)
+    ),
+
+    _section_value: $ => prec(1, choice(
+      $._type_definition,
+      $.expression
+    )),
 
     _type_definition: $ => choice(
       $.type_alias_definition,
@@ -384,20 +374,17 @@ export default grammar({
 
     type_alias_definition: $ => seq(
       field('type', $.type),
-      optional($.hint_directive)
     ),
 
     strong_type_alias_definition: $ => seq(
       $.kType,
       field('type', $.type),
-      optional($.hint_directive)
     ),
 
     enum_definition: $ => seq(
       '(',
-      sep($.enum_value, ','),
+      sep1($.enum_value, ','),
       ')',
-      optional($.hint_directive)
     ),
 
     enum_value: $ => seq(
@@ -471,11 +458,11 @@ export default grammar({
       $.kObject
     ),
 
-    function_type: $ => seq(
+    function_type: $ => prec(1, seq(
       field('kind', choice($.kFunction, $.kProcedure)),
       $.parameter_list,
       optional($._variable_type_declaration)
-    ),
+    )),
 
     function_declaration: $ => seq(
       optional($._attributes),
@@ -495,7 +482,7 @@ export default grammar({
     ),
 
     function_definition: $ => seq(
-      $.function_declaration,
+      field('header', $.function_declaration),
       ';',
       ...declarations($),
       field('body', $.block_statement),
@@ -503,7 +490,7 @@ export default grammar({
 
     external_function_definition: $ => seq(
       $.function_declaration,
-      ';', $.kExternal,
+      optional(';'), $.kExternal,
       optional(field('source', $.expression)),
       optional(seq($.kName, field('original_name', $.expression)))
     ),
@@ -593,7 +580,7 @@ export default grammar({
     ),
 
     variable_declaration_statement: $ => seq(
-      $.kVar,
+      choice($.kVar, $.kConst),
       choice(
         seq(
           $.variable_declarator,
@@ -610,7 +597,7 @@ export default grammar({
     ),
 
     _variable_type_declaration: $ => seq(":", field('type', $.type)),
-    _variable_initialization: $ => seq(':=', field('initial_value', $.expression)),
+    _variable_initialization: $ => seq(choice(':=', '='), field('initial_value', $.expression)),
 
     variable_declarator: $ =>
       field("name", $.identifier),
@@ -756,7 +743,8 @@ export default grammar({
       $.call_expression,
       alias($._inherited_call_expression, $.call_expression),
       $.anonymous_function_expression,
-      $.index_range
+      $.index_range,
+      $.ternary_expression
     ),
 
     //#region literals
@@ -807,6 +795,15 @@ export default grammar({
       ));
     },
 
+    ternary_expression: $ => seq(
+      $.kIf,
+      field('condition', $.expression),
+      $.kThen,
+      field('then', $.expression),
+      $.kElse,
+      field('else', $.expression)
+    ),
+
     dereference_expression: $ => prec(PREC.DEREFERENCE, seq(
       field('operand', $.expression),
       '^'
@@ -834,12 +831,12 @@ export default grammar({
       $.argument_list,
     )),
 
-    _call_statement: $ => choice(
+    _call_statement: $ => prec(1, choice(
       alias($._simple_name, $.call_expression),
       $.member_access_expression,
       $.call_expression,
       alias($._inherited_call_expression, $.call_expression)
-    ),
+    )),
 
     argument_list: $ => seq(
       '(',
@@ -922,9 +919,6 @@ export default grammar({
 
     nil_literal: _ => token(prec(1, /nil/i)),
     //#endregion
-
-    unit_reference: $ => field('name', $._name),
-
     _simple_name: $ => choice(
       $.identifier,
       $.generic_name
@@ -973,7 +967,7 @@ export default grammar({
     qualified_name: $ => prec(PREC.DOT, seq(
       field('qualifier', $._name),
       '.',
-      field('name', $.identifier),
+      field('name', $._simple_name),
     )),
 
     member_access_expression: $ => prec(PREC.DOT, seq(
@@ -1085,7 +1079,8 @@ export default grammar({
     kExit: _ => token(prec(1, /exit/i)),
     kReference: _ => token(prec(1, /reference/i)),
     kObject: _ => token(prec(1, /object/i)),
-    kStrict: _ => token(prec(1, /strict/i))
+    kStrict: _ => token(prec(1, /strict/i)),
+    kAbsolute: _ => token(prec(1, /absolute/i))
   },
 });
 
@@ -1108,7 +1103,7 @@ function statements($) {
  * @returns {Array<Rule>}
  */
 function declarations($) {
-  return [repeat($._semicolon_declaration), optional($._declaration)];
+  return [repeat(choice($._semicolon_declaration, $.section)), optional($._declaration)];
 }
 
 /**

@@ -7,7 +7,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
@@ -24,7 +24,7 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kLibrary)
       name: (identifier))
@@ -46,10 +46,10 @@ end.
     (file_header
       file_type: (kUnit)
       name: (identifier))
-    interface: (interface_section
-      (kInterface))
-    implementation: (implementation_section
-      (kImplementation))
+    (section
+      kind: (kInterface)
+      (section
+        kind: (kImplementation)))
     (kEnd)))
 
 ================================================================================
@@ -67,12 +67,12 @@ end.
     (file_header
       file_type: (kUnit)
       name: (identifier))
-    interface: (interface_section
-      (kInterface))
-    implementation: (implementation_section
-      (kImplementation))
-    initialization: (initialization_section
-      (kInitialization))
+    (section
+      kind: (kInterface)
+      (section
+        kind: (kImplementation)
+        (section
+          kind: (kInitialization))))
     (kEnd)))
 
 ================================================================================
@@ -91,14 +91,14 @@ end.
     (file_header
       file_type: (kUnit)
       name: (identifier))
-    interface: (interface_section
-      (kInterface))
-    implementation: (implementation_section
-      (kImplementation))
-    initialization: (initialization_section
-      (kInitialization))
-    finalization: (finalization_section
-      (kFinalization))
+    (section
+      kind: (kInterface)
+      (section
+        kind: (kImplementation)
+        (section
+          kind: (kInitialization)
+          (section
+            kind: (kFinalization)))))
     (kEnd)))
 
 ================================================================================
@@ -121,27 +121,27 @@ end.
     (file_header
       file_type: (kUnit)
       name: (identifier))
-    interface: (interface_section
-      (kInterface))
-    implementation: (implementation_section
-      (kImplementation))
-    initialization: (initialization_section
-      (kInitialization)
-      (assignment_statement
-        left: (identifier)
-        right: (integer_literal))
-      (assignment_statement
-        left: (identifier)
-        right: (compound_string_literal
-          (string_literal))))
-    finalization: (finalization_section
-      (kFinalization)
-      (assignment_statement
-        left: (identifier)
-        right: (integer_literal))
-      (assignment_statement
-        left: (identifier)
-        right: (float_literal)))
+    (section
+      kind: (kInterface)
+      (section
+        kind: (kImplementation)
+        (section
+          kind: (kInitialization)
+          (assignment_statement
+            left: (identifier)
+            right: (integer_literal))
+          (assignment_statement
+            left: (identifier)
+            right: (compound_string_literal
+              (string_literal)))))
+      (section
+        kind: (kFinalization)
+        (assignment_statement
+          left: (identifier)
+          right: (integer_literal))
+        (assignment_statement
+          left: (identifier)
+          right: (float_literal))))
     (kEnd)))
 
 ================================================================================
@@ -156,23 +156,19 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
-    (var_declaration_section
-      (kVar)
-      (var_declaration
-        (variable_declarator
-          name: (identifier))
-        (variable_declarator
-          name: (identifier))
-        (variable_declarator
-          name: (identifier))
+    (declaration_section
+      kind: (kVar)
+      (global_declaration
+        (identifier)
+        (identifier)
+        (identifier)
         type: (identifier))
-      (var_declaration
-        (variable_declarator
-          name: (identifier))
+      (global_declaration
+        (identifier)
         type: (identifier)))
     body: (block_statement
       (kBegin)
@@ -192,27 +188,27 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
-    (const_declaration_section
-      (kConst)
-      (const_declaration
-        name: (identifier)
-        value: (integer_literal))
-      (const_declaration
-        name: (identifier)
+    (declaration_section
+      kind: (kConst)
+      (global_declaration
+        (identifier)
+        (integer_literal))
+      (global_declaration
+        (identifier)
         type: (identifier)
-        value: (boolean_literal))
-      (const_declaration
-        name: (identifier)
-        value: (compound_string_literal
+        (boolean_literal))
+      (global_declaration
+        (identifier)
+        (compound_string_literal
           (string_literal)))
-      (const_declaration
-        name: (identifier)
+      (global_declaration
+        (identifier)
         type: (identifier)
-        value: (integer_literal)))
+        (integer_literal)))
     body: (block_statement
       (kBegin)
       (kEnd))))
@@ -231,18 +227,18 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
-    (resourcestring_declaration_section
-      (kResourcestring)
-      (resourcestring_declaration
-        name: (identifier)
+    (declaration_section
+      kind: (kResourcestring)
+      (global_declaration
+        (identifier)
         (compound_string_literal
           (string_literal)))
-      (resourcestring_declaration
-        name: (identifier)
+      (global_declaration
+        (identifier)
         (compound_string_literal
           (string_literal))))
     body: (block_statement

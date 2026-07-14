@@ -11,22 +11,22 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
     (uses_clause
       (kUses)
-      (unit_reference
-        name: (identifier))
-      (unit_reference
-        name: (qualified_name
+      (import
+        (identifier))
+      (import
+        (qualified_name
           qualifier: (qualified_name
             qualifier: (identifier)
             name: (identifier))
           name: (identifier)))
-      (unit_reference
-        name: (identifier)))
+      (import
+        (identifier)))
     body: (block_statement
       (kBegin)
       (kEnd))))
@@ -42,14 +42,14 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kLibrary)
       name: (identifier))
     (uses_clause
       (kUses)
-      (unit_reference
-        name: (identifier)))
+      (import
+        (identifier)))
     body: (block_statement
       (kBegin)
       (kEnd))))
@@ -72,16 +72,16 @@ end.
     (file_header
       file_type: (kUnit)
       name: (identifier))
-    interface: (interface_section
-      (kInterface)
+    (section
+      kind: (kInterface)
       (uses_clause
         (kUses)
-        (unit_reference
-          name: (identifier))))
-    implementation: (implementation_section
-      (kImplementation)
-      (uses_clause
-        (kUses)
-        (unit_reference
-          name: (identifier))))
+        (import
+          (identifier)))
+      (section
+        kind: (kImplementation)
+        (uses_clause
+          (kUses)
+          (import
+            (identifier)))))
     (kEnd)))

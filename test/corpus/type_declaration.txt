@@ -16,22 +16,22 @@ end.
     (file_header
       file_type: (kUnit)
       name: (identifier))
-    interface: (interface_section
-      (kInterface)
-      (type_declaration_section
-        (kType)
+    (section
+      kind: (kInterface)
+      (declaration_section
+        kind: (kType)
         (type_declaration
           name: (identifier)
-          type: (type_alias_definition
+          (type_alias_definition
             type: (identifier))))
-      (type_declaration_section
-        (kType)
+      (declaration_section
+        kind: (kType)
         (type_declaration
           name: (identifier)
-          type: (type_alias_definition
-            type: (identifier)))))
-    implementation: (implementation_section
-      (kImplementation))
+          (type_alias_definition
+            type: (identifier))))
+      (section
+        kind: (kImplementation)))
     (kEnd)))
 
 ================================================================================
@@ -50,20 +50,20 @@ end.
     (file_header
       file_type: (kUnit)
       name: (identifier))
-    interface: (interface_section
-      (kInterface)
-      (type_declaration_section
-        (kType)
+    (section
+      kind: (kInterface)
+      (declaration_section
+        kind: (kType)
         (type_declaration
           name: (identifier)
-          type: (type_alias_definition
+          (type_alias_definition
             type: (qualified_name
               qualifier: (qualified_name
                 qualifier: (identifier)
                 name: (identifier))
-              name: (identifier))))))
-    implementation: (implementation_section
-      (kImplementation))
+              name: (identifier)))))
+      (section
+        kind: (kImplementation)))
     (kEnd)))
 
 ================================================================================
@@ -95,13 +95,13 @@ end.
     (file_header
       file_type: (kUnit)
       name: (identifier))
-    interface: (interface_section
-      (kInterface)
-      (type_declaration_section
-        (kType)
+    (section
+      kind: (kInterface)
+      (declaration_section
+        kind: (kType)
         (type_declaration
           name: (identifier)
-          type: (class_definition
+          (class_definition
             (kClass)
             (base_list
               (identifier)
@@ -119,10 +119,11 @@ end.
                 type: (identifier)))
             (class_section
               visibility: (kPublic)
-              (class_method
+              (function_declaration
                 kind: (kConstructor)
-                name: (identifier)
-                parameters: (parameter_list
+                name: (function_name
+                  name: (identifier))
+                (parameter_list
                   (parameter_declaration
                     (argument_name
                       (identifier))
@@ -133,19 +134,22 @@ end.
                     (argument_name
                       (identifier))
                     type: (identifier))))
-              (class_method
+              (function_declaration
                 kind: (kDestructor)
-                name: (identifier))
-              (class_method
+                name: (function_name
+                  name: (identifier)))
+              (function_declaration
                 kind: (kFunction)
-                name: (identifier)
+                name: (function_name
+                  name: (identifier))
                 return_type: (identifier)
                 (method_directive
                   (kOverride)))
-              (class_method
+              (function_declaration
                 (kClass)
                 kind: (kProcedure)
-                name: (identifier)
+                name: (function_name
+                  name: (identifier))
                 (method_directive
                   (kStdcall)))
               (class_property
@@ -162,10 +166,11 @@ end.
                 type: (identifier)
                 (kRead)
                 read: (identifier))
-              (class_method
+              (function_declaration
                 kind: (kProcedure)
-                name: (identifier)
-                parameters: (parameter_list
+                name: (function_name
+                  name: (identifier))
+                (parameter_list
                   (parameter_declaration
                     modifier: (kConst)
                     (argument_name
@@ -173,9 +178,9 @@ end.
                     type: (identifier)))
                 (method_directive
                   (kVirtual))))
-            (kEnd)))))
-    implementation: (implementation_section
-      (kImplementation))
+            (kEnd))))
+      (section
+        kind: (kImplementation)))
     (kEnd)))
 
 ================================================================================
@@ -190,15 +195,15 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
-    (type_declaration_section
-      (kType)
+    (declaration_section
+      kind: (kType)
       (type_declaration
         name: (identifier)
-        type: (enum_definition
+        (enum_definition
           (enum_value
             name: (identifier))
           (enum_value
@@ -207,7 +212,7 @@ end.
             name: (identifier))))
       (type_declaration
         name: (identifier)
-        type: (enum_definition
+        (enum_definition
           (enum_value
             name: (identifier)
             value: (integer_literal))
@@ -234,22 +239,20 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
-    (var_declaration_section
-      (kVar)
-      (var_declaration
-        (variable_declarator
-          name: (identifier))
+    (declaration_section
+      kind: (kVar)
+      (global_declaration
+        (identifier)
         type: (array_type
           (kArray)
           (kOf)
           (identifier)))
-      (var_declaration
-        (variable_declarator
-          name: (identifier))
+      (global_declaration
+        (identifier)
         type: (array_type
           (kArray)
           (kOf)
@@ -282,27 +285,29 @@ end.
     (file_header
       file_type: (kUnit)
       name: (identifier))
-    interface: (interface_section
-      (kInterface)
-      (type_declaration_section
-        (kType)
+    (section
+      kind: (kInterface)
+      (declaration_section
+        kind: (kType)
         (type_declaration
           name: (identifier)
-          type: (interface_definition
+          (interface_definition
             (kInterface)
             (base_list
               (identifier))
             (guid_declaration
               (compound_string_literal
                 (string_literal)))
-            (class_method
+            (function_declaration
               kind: (kFunction)
-              name: (identifier)
+              name: (function_name
+                name: (identifier))
               return_type: (identifier))
-            (class_method
+            (function_declaration
               kind: (kProcedure)
-              name: (identifier)
-              parameters: (parameter_list
+              name: (function_name
+                name: (identifier))
+              (parameter_list
                 (parameter_declaration
                   modifier: (kConst)
                   (argument_name
@@ -316,9 +321,9 @@ end.
               read: (identifier)
               (kWrite)
               write: (identifier))
-            (kEnd)))))
-    implementation: (implementation_section
-      (kImplementation))
+            (kEnd))))
+      (section
+        kind: (kImplementation)))
     (kEnd)))
 
 ================================================================================
@@ -341,28 +346,28 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
-    (type_declaration_section
-      (kType)
+    (declaration_section
+      kind: (kType)
       (type_declaration
         name: (identifier)
-        type: (type_alias_definition
+        (type_alias_definition
           type: (function_type
             kind: (kProcedure)
             (parameter_list))))
       (type_declaration
         name: (identifier)
-        type: (type_alias_definition
+        (type_alias_definition
           type: (function_type
             kind: (kFunction)
             (parameter_list)
             type: (identifier))))
       (type_declaration
         name: (identifier)
-        type: (type_alias_definition
+        (type_alias_definition
           type: (function_type
             kind: (kProcedure)
             (parameter_list
@@ -376,7 +381,7 @@ end.
                 type: (identifier))))))
       (type_declaration
         name: (identifier)
-        type: (type_alias_definition
+        (type_alias_definition
           type: (function_type
             kind: (kFunction)
             (parameter_list
@@ -391,7 +396,7 @@ end.
             type: (identifier))))
       (type_declaration
         name: (identifier)
-        type: (type_alias_definition
+        (type_alias_definition
           type: (object_of_type
             (function_type
               kind: (kProcedure)
@@ -400,7 +405,7 @@ end.
             (kObject))))
       (type_declaration
         name: (identifier)
-        type: (type_alias_definition
+        (type_alias_definition
           type: (reference_to_type
             (kReference)
             (kTo)
@@ -408,7 +413,7 @@ end.
             (parameter_list))))
       (type_declaration
         name: (identifier)
-        type: (type_alias_definition
+        (type_alias_definition
           type: (reference_to_type
             (kReference)
             (kTo)
@@ -417,7 +422,7 @@ end.
             type: (identifier))))
       (type_declaration
         name: (identifier)
-        type: (type_alias_definition
+        (type_alias_definition
           type: (reference_to_type
             (kReference)
             (kTo)
@@ -447,15 +452,15 @@ end.
 --------------------------------------------------------------------------------
 
 (source_file
-  (program_file
+  (runnable_file
     (file_header
       file_type: (kProgram)
       name: (identifier))
-    (type_declaration_section
-      (kType)
+    (declaration_section
+      kind: (kType)
       (type_declaration
         name: (identifier)
-        type: (record_definition
+        (record_definition
           (kRecord)
           (class_field
             name: (identifier)
