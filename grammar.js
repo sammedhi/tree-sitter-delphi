@@ -25,6 +25,9 @@ export default grammar({
   extras: $ => [
     /\s/,
     $.comment,
+    $.preproc_switch,
+    $.preproc_long_switch,
+    $.preproc_parameter_directive
   ],
 
   conflicts: $ => [
@@ -49,6 +52,12 @@ export default grammar({
     [$._semicolon_declaration, $._semicolon_statement],
     [$.attribute, $.index_range],
     [$.lvalue_expression, $._call_statement],
+    [$.preproc_else, $.preproc_else_in_header],
+    [$.preproc_elseif, $.preproc_elseif_in_header],
+    [$.preproc_if, $.preproc_if_in_statement],
+    [$.preproc_if, $.preproc_if_in_statement, $.preproc_if_in_expression],
+    [$.preproc_else, $.preproc_else_in_statement, $.preproc_else_in_expression],
+    [$.preproc_elseif, $.preproc_elseif_in_statement, $.preproc_elseif_in_expression],
     [$.section],
     [$.raise_statement],
     [$.section, $._semicolon_declaration],
@@ -129,6 +138,9 @@ export default grammar({
       $.kUses,
       repeat($.import),
     ),
+
+    _import: $ => choice($.import, alias($.preproc_if_in_uses, $.preproc_if)),
+
     import: $ => seq(
       $._name,
       optional(',')
@@ -737,7 +749,8 @@ export default grammar({
       $.member_access_expression,
       $._simple_name,
       $.dereference_expression,
-      $.element_access_expression
+      $.element_access_expression,
+      alias($.preproc_if_in_expression, $.preproc_if)
     )),
 
     // expression that can only exist as rvalue
@@ -985,6 +998,57 @@ export default grammar({
       field('name', $._simple_name),
     )),
 
+    // ...preprocIf('', $ => seq(...declarations($))),
+    ...preprocIf('', $ => seq(...declarations($))),
+    ...preprocIf('_in_statement', $ => seq(...statements($))),
+    ...preprocIf('_in_expression', $ => optional($.expression), -2),
+    ...preprocIf('_in_header', $ => optional(alias($.preproc_if_in_header, $.preproc_if))),
+    ...preprocIf('_in_uses', $ => repeat($._import)),
+
+    preproc_parameter_directive: $ => seq(
+      '{$',
+      field('name', $.identifier),
+      field('args', $.preproc_parameter),
+      '}'
+    ),
+
+    preproc_parameter: $ => token(/[^}]*/),
+
+    preproc_long_switch: $ => seq(
+      '{$',
+      alias($.preproc_long_switch_pair, $.preproc_flag_pair),
+      '}'
+    ),
+
+    preproc_long_switch_pair: $ => seq(
+      $.identifier,
+      $.preproc_long_flag
+    ),
+
+    preproc_long_flag: _ => token(prec(1, /on|off/i)),
+
+    preproc_switch: $ => seq(
+      '{$',
+      commaSep1($.preproc_flag_pair),
+      '}'
+    ),
+
+    preproc_flag_pair: $ => seq(
+      field('name', $.identifier),
+      field('switch', $.preproc_short_flag),
+    ),
+
+    preproc_short_flag: $ => token.immediate(prec(1, /[+-]/)),
+
+    _preproc_ifdef: _ => token(prec(2, /\{\$ifdef/i)),
+    _preproc_ifndef: _ => token(prec(2, /\{\$ifndef/i)),
+    _preproc_if: _ => token(prec(2, /\{\$if /i)),
+    _preproc_endif: _ => token(prec(2, /\{\$endif[^\}]*\}/i)),
+    _preproc_else: _ => token(prec(2, /\{\$else[^\}]*\}/i)),
+    _preproc_elseif: _ => token(prec(2, /\{\$elseif[^\}]*/i)),
+    _preproc_ifend: _ => token(prec(2, /\{\$ifend[^\}]*\}/i)),
+
+
     comment: $ => choice(
       $.line_comment,
       $.doc_comment,
@@ -994,7 +1058,7 @@ export default grammar({
 
     doc_comment: _ => token(prec(1, seq('///', /.*/))),
     line_comment: _ => token(seq('//', /.*/)),
-    brace_comment: _ => token(seq('{', /[^}]*/, '}')),
+    brace_comment: _ => token(seq('{', /[^$][^}]*/, '}')),
     block_comment: _ => token(seq('(*', /[^*]*\*+([^*)][^*]*\*+)*/, ')')),
 
     identifier: _ => /&?[a-zA-Z_][a-zA-Z0-9_]*/,
@@ -1094,6 +1158,64 @@ export default grammar({
 });
 
 /**
+ *
+ * @param {string} suffix
+ *
+ * @param {RuleBuilder<string>} content
+ *
+ * @param {number} precedence
+ *
+ *
+ * @returns {RuleBuilders<string, string>}
+ */
+function preprocIf(suffix, content, precedence = 0) {
+
+  /**
+   *
+   * @param {GrammarSymbols<string>} $
+   *
+   * @returns {ChoiceRule}
+   */
+  function alternativeBlock($) {
+    return choice(
+      suffix ? alias($['preproc_else' + suffix], $.preproc_else) : $.preproc_else,
+      suffix ? alias($['preproc_elseif' + suffix], $.preproc_elseif) : $.preproc_elseif,
+    );
+  }
+
+  return {
+    ['preproc_if' + suffix]: $ => prec(precedence, seq(
+      choice($._preproc_ifdef, $._preproc_if),
+      field('condition', $.expression),
+      '}',
+      content($),
+      field('alternative', optional(alternativeBlock($))),
+      choice($._preproc_endif, $._preproc_ifend)
+    )),
+    ['preproc_else' + suffix]: $ => prec(precedence, seq(
+      $._preproc_else,
+      content($),
+    )),
+    ['preproc_elseif' + suffix]: $ => prec(precedence, seq(
+      $._preproc_elseif,
+      field('condition', $.expression),
+      '}',
+      content($),
+      field('alternative', optional(alternativeBlock($))),
+    )),
+    ['preproc_ifn' + suffix]: $ => prec(precedence, seq(
+      $._preproc_ifndef,
+      field('condition', $.identifier),
+      '}',
+      content($),
+      field('alternative', optional(alternativeBlock($))),
+      choice($._preproc_endif, $._preproc_ifend)
+    )),
+
+  }
+}
+
+/**
  * Creates a rule to optionally match one or more of the rules separated by `separator`
  *
  * @param {GrammarSymbols<string>} $
@@ -1101,7 +1223,7 @@ export default grammar({
  * @returns {Array<Rule>}
  */
 function statements($) {
-  return [repeat($._semicolon_statement), optional($.statement)]
+  return [repeat(choice($._semicolon_statement, alias($.preproc_if_in_statement, $.preproc_if))), optional($.statement)]
 }
 
 /**
@@ -1112,7 +1234,7 @@ function statements($) {
  * @returns {Array<Rule>}
  */
 function declarations($) {
-  return [repeat(choice($._semicolon_declaration, $.section)), optional($._declaration)];
+  return [repeat(choice($._semicolon_declaration, $.preproc_if, $.section)), optional($._declaration)];
 }
 
 /**
