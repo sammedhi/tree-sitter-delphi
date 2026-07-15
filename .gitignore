@@ -20,10 +20,6 @@ src/parser.c
 src/grammar.json
 src/node-types.json
 
-# Optional generated scanner artifacts
-src/scanner.cc
-src/scanner.c
-
 # Prebuilds / compiled addons
 prebuilds/
 *.node

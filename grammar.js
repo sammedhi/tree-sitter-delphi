@@ -83,6 +83,9 @@ export default grammar({
     $.class_visibility,
   ],
 
+  externals: $ => [
+    $.multiline_string,
+  ],
   // Case-insensitive keywords are handled via extras/externals later
   rules: {
     // TODO: add support for package files (.dpk)
@@ -763,6 +766,7 @@ export default grammar({
       $.compound_string_literal,
       $.boolean_literal,
       $.nil_literal,
+      $.multiline_string
     ),
 
     unary_expression: $ => prec(PREC.UNARY, seq(
@@ -908,7 +912,7 @@ export default grammar({
     string_literal: _ => token(seq(
       '\'',
       repeat(choice(
-        /[^']/,
+        /[^'\r\n]/,
         '\'\'',
       )),
       '\'',

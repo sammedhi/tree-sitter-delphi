@@ -16,7 +16,10 @@ begin
   x := #$41;
   x := True;
   x := False;
-  x := nil
+  x := nil;
+  x := '''' 
+    hello 
+  ''''
 end.
 --------------------------------------------------------------------------------
 
@@ -74,4 +77,7 @@ end.
       (assignment_statement
         left: (identifier)
         right: (nil_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (multiline_string))
       (kEnd))))
