@@ -77,11 +77,11 @@ end.
       (uses_clause
         (kUses)
         (import
-          (identifier)))
-      (section
-        kind: (kImplementation)
-        (uses_clause
-          (kUses)
-          (import
-            (identifier)))))
+          (identifier))))
+    (section
+      kind: (kImplementation)
+      (uses_clause
+        (kUses)
+        (import
+          (identifier))))
     (kEnd)))

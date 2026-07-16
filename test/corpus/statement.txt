@@ -377,9 +377,9 @@ end.
             right: (integer_literal)))
         (case_branch
           pattern: (case_pattern
-            (case_range
-              from: (integer_literal)
-              to: (integer_literal)))
+            (set_range
+              intial: (integer_literal)
+              final: (integer_literal)))
           body: (assignment_statement
             left: (identifier)
             right: (integer_literal)))

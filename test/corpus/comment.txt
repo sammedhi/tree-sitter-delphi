@@ -94,10 +94,10 @@ end.
       name: (identifier))
     (line_comment)
     (section
-      kind: (kInterface)
-      (brace_comment)
-      (section
-        kind: (kImplementation)))
+      kind: (kInterface))
+    (brace_comment)
+    (section
+      kind: (kImplementation))
     (block_comment)
     (kEnd)))
 

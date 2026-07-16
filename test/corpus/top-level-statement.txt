@@ -47,9 +47,9 @@ end.
       file_type: (kUnit)
       name: (identifier))
     (section
-      kind: (kInterface)
-      (section
-        kind: (kImplementation)))
+      kind: (kInterface))
+    (section
+      kind: (kImplementation))
     (kEnd)))
 
 ================================================================================
@@ -68,11 +68,11 @@ end.
       file_type: (kUnit)
       name: (identifier))
     (section
-      kind: (kInterface)
-      (section
-        kind: (kImplementation)
-        (section
-          kind: (kInitialization))))
+      kind: (kInterface))
+    (section
+      kind: (kImplementation))
+    (section
+      kind: (kInitialization))
     (kEnd)))
 
 ================================================================================
@@ -92,13 +92,13 @@ end.
       file_type: (kUnit)
       name: (identifier))
     (section
-      kind: (kInterface)
-      (section
-        kind: (kImplementation)
-        (section
-          kind: (kInitialization)
-          (section
-            kind: (kFinalization)))))
+      kind: (kInterface))
+    (section
+      kind: (kImplementation))
+    (section
+      kind: (kInitialization))
+    (section
+      kind: (kFinalization))
     (kEnd)))
 
 ================================================================================
@@ -122,26 +122,26 @@ end.
       file_type: (kUnit)
       name: (identifier))
     (section
-      kind: (kInterface)
-      (section
-        kind: (kImplementation)
-        (section
-          kind: (kInitialization)
-          (assignment_statement
-            left: (identifier)
-            right: (integer_literal))
-          (assignment_statement
-            left: (identifier)
-            right: (compound_string_literal
-              (string_literal)))))
-      (section
-        kind: (kFinalization)
-        (assignment_statement
-          left: (identifier)
-          right: (integer_literal))
-        (assignment_statement
-          left: (identifier)
-          right: (float_literal))))
+      kind: (kInterface))
+    (section
+      kind: (kImplementation))
+    (section
+      kind: (kInitialization)
+      (assignment_statement
+        left: (identifier)
+        right: (integer_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (compound_string_literal
+          (string_literal))))
+    (section
+      kind: (kFinalization)
+      (assignment_statement
+        left: (identifier)
+        right: (integer_literal))
+      (assignment_statement
+        left: (identifier)
+        right: (float_literal)))
     (kEnd)))
 
 ================================================================================

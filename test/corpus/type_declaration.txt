@@ -29,9 +29,9 @@ end.
         (type_declaration
           name: (identifier)
           (type_alias_definition
-            type: (identifier))))
-      (section
-        kind: (kImplementation)))
+            type: (identifier)))))
+    (section
+      kind: (kImplementation))
     (kEnd)))
 
 ================================================================================
@@ -61,9 +61,9 @@ end.
               qualifier: (qualified_name
                 qualifier: (identifier)
                 name: (identifier))
-              name: (identifier)))))
-      (section
-        kind: (kImplementation)))
+              name: (identifier))))))
+    (section
+      kind: (kImplementation))
     (kEnd)))
 
 ================================================================================
@@ -158,17 +158,17 @@ end.
                 type: (identifier)
                 (property_attribute
                   kind: (kRead)
-                  source: (identifier))
+                  value: (identifier))
                 (property_attribute
                   kind: (kWrite)
-                  source: (identifier)))
+                  value: (identifier)))
               (class_property
                 (kProperty)
                 name: (identifier)
                 type: (identifier)
                 (property_attribute
                   kind: (kRead)
-                  source: (identifier)))
+                  value: (identifier)))
               (function_declaration
                 kind: (kProcedure)
                 name: (function_name
@@ -181,9 +181,9 @@ end.
                     type: (identifier)))
                 (method_directive
                   (kVirtual))))
-            (kEnd))))
-      (section
-        kind: (kImplementation)))
+            (kEnd)))))
+    (section
+      kind: (kImplementation))
     (kEnd)))
 
 ================================================================================
@@ -253,13 +253,13 @@ end.
         type: (array_type
           (kArray)
           (kOf)
-          (identifier)))
+          type: (identifier)))
       (global_declaration
         (identifier)
         type: (array_type
           (kArray)
           (kOf)
-          (generic_name
+          type: (generic_name
             (identifier)
             (type_argument_list
               (identifier))))))
@@ -322,13 +322,13 @@ end.
               type: (identifier)
               (property_attribute
                 kind: (kRead)
-                source: (identifier))
+                value: (identifier))
               (property_attribute
                 kind: (kWrite)
-                source: (identifier)))
-            (kEnd))))
-      (section
-        kind: (kImplementation)))
+                value: (identifier)))
+            (kEnd)))))
+    (section
+      kind: (kImplementation))
     (kEnd)))
 
 ================================================================================
