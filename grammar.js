@@ -49,15 +49,6 @@ export default grammar({
     [$._semicolon_declaration, $._semicolon_statement],
     [$.attribute, $.index_range],
     [$.lvalue_expression, $._call_statement],
-    [$.section],
-    [$.raise_statement],
-    [$.section, $._semicolon_declaration],
-    [$.section, $._semicolon_statement],
-    [$.external_function_definition],
-    [$.while_statement],
-    [$.with_statement],
-    [$.for_each_statement],
-    [$.for_numeric_statement],
     [$.qualified_name, $.member_access_expression],
   ],
 
@@ -107,6 +98,7 @@ export default grammar({
     unit_file: $ => seq(
       $.file_header,
       ...declarations($),
+      repeat($.section),
       $.kEnd,
       '.',
     ),
@@ -1116,7 +1108,7 @@ function statements($) {
  * @returns {Array<Rule>}
  */
 function declarations($) {
-  return [repeat(choice($._semicolon_declaration, $.section)), optional($._declaration)];
+  return [repeat(choice($._semicolon_declaration)), optional($._declaration)];
 }
 
 /**
