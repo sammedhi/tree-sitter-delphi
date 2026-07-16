@@ -9,13 +9,14 @@
 
 const PREC = {
   RELATIONAL: 1,
-  ADDITIVE: 2,
-  MULTIPLICATIVE: 3,
-  UNARY: 4,
-  DEREFERENCE: 5,
-  POSTFIX: 6,
-  CALL: 7,
-  DOT: 8
+  RANGE: 2,
+  ADDITIVE: 3,
+  MULTIPLICATIVE: 4,
+  UNARY: 5,
+  DEREFERENCE: 6,
+  POSTFIX: 7,
+  CALL: 8,
+  DOT: 9
 };
 
 export default grammar({
@@ -51,6 +52,7 @@ export default grammar({
     [$.lvalue_expression, $._call_statement],
     [$.qualified_name, $.member_access_expression],
     [$._type_definition, $.type],
+    [$.index_range, $.not_lvalue_expression],
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -428,11 +430,11 @@ export default grammar({
       ']'
     ),
 
-    set_range: $ => seq(
+    set_range: $ => prec.left(PREC.RANGE, seq(
       field('intial', $.expression),
       '..',
       field('final', $.expression),
-    ),
+    )),
 
     set_of_type: $ => seq(
       optional($.kPacked),
@@ -569,13 +571,6 @@ export default grammar({
 
     case_pattern: $ => choice(
       $.expression,
-      $.case_range,
-    ),
-
-    case_range: $ => seq(
-      field('from', $.literal),
-      '..',
-      field('to', $.literal),
     ),
 
     assignment_statement: $ => seq(
@@ -749,7 +744,8 @@ export default grammar({
       alias($._inherited_call_expression, $.call_expression),
       $.anonymous_function_expression,
       $.index_range,
-      $.ternary_expression
+      $.ternary_expression,
+      $.set_range
     ),
 
     //#region literals
@@ -815,10 +811,10 @@ export default grammar({
       '^'
     )),
 
-    address_of_expression: $ => seq(
+    address_of_expression: $ => prec(PREC.UNARY, seq(
       '@',
       field('operand', $.expression),
-    ),
+    )),
 
     labeled_value: $ => seq(
       field('label', $.identifier),
