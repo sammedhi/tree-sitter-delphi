@@ -50,6 +50,7 @@ export default grammar({
     [$.attribute, $.index_range],
     [$.lvalue_expression, $._call_statement],
     [$.qualified_name, $.member_access_expression],
+    [$._type_definition, $.type],
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -404,7 +405,8 @@ export default grammar({
       $.reference_to_type,
       $.object_of_type,
       $.function_type,
-      $.set_of_type
+      $.set_of_type,
+      $.record_definition
     ),
 
     pointer_type: $ => seq('^', field('type', $.type)),
@@ -414,7 +416,7 @@ export default grammar({
       $.kArray,
       optional($.index_range),
       $.kOf,
-      $.type
+      field('type', $.type)
     ),
 
     index_range: $ => seq(
