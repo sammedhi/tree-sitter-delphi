@@ -748,7 +748,8 @@ export default grammar({
       $.member_access_expression,
       $._simple_name,
       $.dereference_expression,
-      $.element_access_expression
+      $.element_access_expression,
+      $.call_expression,
     )),
 
     // expression that can only exist as rvalue
@@ -760,12 +761,11 @@ export default grammar({
       $.parenthesized_expression,
       $.array_constructor_expression,
       $.const_array_constructor_expression,
-      $.call_expression,
       alias($._inherited_call_expression, $.call_expression),
       $.anonymous_function_expression,
       $.index_range,
       $.ternary_expression,
-      $.set_range
+      $.set_range,
     ),
 
     //#region literals
