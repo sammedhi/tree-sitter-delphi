@@ -550,11 +550,11 @@ export default grammar({
       $.kCase,
       field('value', $.expression),
       $.kOf,
-      repeat1($.case_branch),
+      repeat(seq($.case_branch, ';')),
+      optional($.case_branch),
       optional(seq(
         $.kElse,
-        field('else', optional($.statement)),
-        optional(';') // TODO: Check whether ; is really optional
+        ...statements($),
       )),
       $.kEnd,
     ),
@@ -563,7 +563,6 @@ export default grammar({
       field('pattern', commaSep1($.case_pattern)),
       ':',
       field('body', optional($.statement)),
-      ';',
     ),
 
     case_pattern: $ => choice(
