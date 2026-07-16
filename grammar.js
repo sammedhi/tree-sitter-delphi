@@ -530,6 +530,7 @@ export default grammar({
       $.inherited_statement,
       $._call_statement,
       $.with_statement,
+      prec(2, $.element_access_expression)
     ),
 
     raise_statement: $ => seq(
