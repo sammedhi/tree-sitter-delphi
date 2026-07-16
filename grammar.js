@@ -53,6 +53,7 @@ export default grammar({
     [$.qualified_name, $.member_access_expression],
     [$._type_definition, $.type],
     [$.index_range, $.not_lvalue_expression],
+    [$.record_variant_part]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -193,6 +194,22 @@ export default grammar({
       $.kEnd,
     ),
 
+    record_variant_part: $ => seq(
+      $.kCase,
+      optional(
+        seq(field('tag', $.identifier), ':'),
+      ),
+      field('type', $._name),
+      $.kOf,
+      sep($.labeled_constant_list, ';')
+    ),
+
+    labeled_constant_list: $ => seq(
+      field('case', $.expression),
+      ':',
+      $.parameter_list,
+    ),
+
     base_list: $ => seq(
       '(',
       commaSep($._name),
@@ -216,7 +233,8 @@ export default grammar({
       $.class_field,
       $.function_declaration,
       $.class_property,
-      $.declaration_section
+      $.declaration_section,
+      $.record_variant_part
     ),
 
     _semicolon_class_member: $ => seq(optional($.class_member), ';'),
@@ -266,7 +284,7 @@ export default grammar({
 
     parameter_list: $ => seq(
       '(',
-      sep($.parameter_declaration, ';'),
+      sep(choice($.parameter_declaration, $.record_variant_part), ';'),
       ')',
     ),
 
