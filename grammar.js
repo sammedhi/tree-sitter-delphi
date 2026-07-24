@@ -312,7 +312,15 @@ export default grammar({
       $.kInline,
       $.kReintroduce,
       $.kStatic,
+      $.kDynamic,
+      $.kFinal,
+      $.message_directive,
       $.hint_directive
+    ),
+
+    message_directive: $ => seq(
+      $.kMessage,
+      field('id', $.identifier)
     ),
 
     hint_directive: $ => seq(
@@ -1109,7 +1117,10 @@ export default grammar({
     kReference: _ => token(prec(1, /reference/i)),
     kObject: _ => token(prec(1, /object/i)),
     kStrict: _ => token(prec(1, /strict/i)),
-    kAbsolute: _ => token(prec(1, /absolute/i))
+    kAbsolute: _ => token(prec(1, /absolute/i)),
+    kDynamic: _ => token(prec(1, /dynamic/i)),
+    kFinal: _ => token(prec(1, /final/i)),
+    kMessage: _ => token(prec(1, /message/i)),
   },
 });
 
