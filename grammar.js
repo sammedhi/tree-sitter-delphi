@@ -1020,7 +1020,7 @@ export default grammar({
     brace_comment: _ => token(seq('{', /[^}]*/, '}')),
     block_comment: _ => token(seq('(*', /[^*]*\*+([^*)][^*]*\*+)*/, ')')),
 
-    identifier: _ => /&?[\p{L}_][\p{L}0-9_]*/u,
+    identifier: _ => /[&\p{L}_][&\p{L}0-9_]*/u,
 
     // Keywords — case insensitive
     kBegin: _ => token(prec(1, /begin/i)),
