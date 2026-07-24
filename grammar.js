@@ -74,17 +74,11 @@ export default grammar({
     $.class_member
   ],
 
-  inline: $ => [
-    $.class_visibility,
-  ],
-
   externals: $ => [
     $.multiline_string,
   ],
-  // Case-insensitive keywords are handled via extras/externals later
+
   rules: {
-    // TODO: add support for package files (.dpk)
-    // TODO: add support for include files (.inc)
     source_file: $ => choice(
       $.runnable_file,
       $.unit_file,
@@ -128,8 +122,9 @@ export default grammar({
       $.kUses,
       repeat($.import),
     ),
+
     import: $ => seq(
-      $._name,
+      field('name', $._name),
       optional(',')
     ),
 
@@ -143,25 +138,25 @@ export default grammar({
 
     _semicolon_declaration: $ => seq(optional($._declaration), ';'),
 
+    attribute: $ => seq(
+      field('name', $._name),
+      optional($.argument_list),
+    ),
+
     attribute_list: $ => seq(
       '[',
       sep1($.attribute, ','),
       ']',
     ),
 
-    attribute: $ => seq(
-      field('name', $._name),
-      optional($.argument_list),
-    ),
-
     _attributes: $ => repeat1($.attribute_list),
 
     helper_definition: $ => seq(
-      choice($.kClass, $.kRecord),
+      field('kind', choice($.kClass, $.kRecord)),
       $.kHelper,
       optional($.base_list),
       $.kFor,
-      $._name,
+      field('name', $._name),
       ...class_members($),
       repeat($.class_section),
       $.kEnd
@@ -169,7 +164,7 @@ export default grammar({
 
     class_definition: $ => seq(
       $.kClass,
-      optional(choice($.kAbstract, $.kSealed)),
+      optional(field('inheritance_modifier', choice($.kAbstract, $.kSealed))),
       optional($.base_list),
 
       ...class_members($),
@@ -179,7 +174,7 @@ export default grammar({
 
     fieldless_class_definition: $ => seq(
       $.kClass,
-      optional(choice($.kAbstract, $.kSealed)),
+      optional(field('inheritance_modifier', choice($.kAbstract, $.kSealed))),
       $.base_list,
     ),
 
@@ -218,15 +213,13 @@ export default grammar({
 
     class_section: $ => seq(
       optional($.kStrict),
-      field('visibility', $.class_visibility),
+      field('visibility', choice(
+        $.kPublished,
+        $.kPublic,
+        $.kProtected,
+        $.kPrivate
+      )),
       ...class_members($),
-    ),
-
-    class_visibility: $ => choice(
-      $.kPrivate,
-      $.kProtected,
-      $.kPublic,
-      $.kPublished,
     ),
 
     class_member: $ => choice(
@@ -243,7 +236,7 @@ export default grammar({
       optional($._attributes),
       optional($.kClass),
       commaSep1(field('name', $.identifier)),
-      $._variable_type_declaration,
+      $._type_declaration,
     ),
 
     class_property: $ => seq(
@@ -252,7 +245,7 @@ export default grammar({
       $.kProperty,
       field('name', $.identifier),
       optional($.array_parameter_list),
-      optional($._variable_type_declaration),
+      optional($._type_declaration),
       repeat($.property_attribute),
       optional(seq(';', $.kDefault))
     ),
@@ -299,7 +292,7 @@ export default grammar({
       optional($._attributes),
       optional(field('modifier', choice($.kConst, $.kVar, $.kOut))),
       commaSep1($.argument_name),
-      optional($._variable_type_declaration),
+      optional($._type_declaration),
       optional(seq('=', field('default_value', $.expression))),
     ),
 
@@ -365,7 +358,7 @@ export default grammar({
     global_declaration: $ => seq(
       optional($._attributes),
       commaSep1($.identifier),
-      optional($._variable_type_declaration),
+      optional($._type_declaration),
       optional(seq(
         '=',
         $._section_value,
@@ -389,7 +382,7 @@ export default grammar({
       $.strong_type_alias_definition,
       $.helper_definition,
       $.class_definition,
-      $.fieldless_class_definition,
+      alias($.fieldless_class_definition, $.class_definition),
       $.forward_class_definition,
       $.forward_interface_definition,
       $.interface_definition,
@@ -475,7 +468,7 @@ export default grammar({
         $.kProcedure
       )),
       optional($.parameter_list),
-      optional($._variable_type_declaration)
+      optional($._type_declaration)
     ),
 
     object_of_type: $ => seq(
@@ -487,7 +480,7 @@ export default grammar({
     function_type: $ => prec(1, seq(
       field('kind', choice($.kFunction, $.kProcedure)),
       $.parameter_list,
-      optional($._variable_type_declaration)
+      optional($._type_declaration)
     )),
 
     function_declaration: $ => seq(
@@ -528,7 +521,7 @@ export default grammar({
 
     with_statement: $ => seq(
       $.kWith,
-      $.expression,
+      commaSep1($.expression),
       $.kDo,
       optional($.statement)
     ),
@@ -605,18 +598,18 @@ export default grammar({
         seq(
           $.variable_declarator,
           choice(
-            seq($._variable_type_declaration, optional($._variable_initialization)),
+            seq($._type_declaration, optional($._variable_initialization)),
             $._variable_initialization,
           )
         ),
         seq(
           commaSep1($.variable_declarator),
-          $._variable_type_declaration
+          $._type_declaration
         )
       )
     ),
 
-    _variable_type_declaration: $ => seq(":", field('type', $.type)),
+    _type_declaration: $ => seq(":", field('type', $.type)),
     _variable_initialization: $ => seq(choice(':=', '='), field('initial_value', $.expression)),
 
     variable_declarator: $ =>
@@ -672,7 +665,7 @@ export default grammar({
     for_variable_declaration: $ => seq(
       $.kVar,
       $.variable_declarator,
-      optional($._variable_type_declaration),
+      optional($._type_declaration),
     ),
 
     while_statement: $ => seq(
@@ -902,7 +895,7 @@ export default grammar({
         $.kProcedure
       )),
       optional($.parameter_list),
-      optional(field('type', $._variable_type_declaration)),
+      optional(field('type', $._type_declaration)),
       ...declarations($),
       choice($.block_statement, $.asm_statement),
     ),
