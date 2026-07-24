@@ -9,7 +9,8 @@
 enum TokenType
 {
   MULTILINE_STRING,
-  FLOAT_NO_DECIMAL
+  FLOAT_NO_DECIMAL,
+  ASM_BLOCK
 };
 
 void *tree_sitter_delphi_external_scanner_create(void)
@@ -34,7 +35,8 @@ void tree_sitter_delphi_external_scanner_deserialize(void *payload, const char *
 
 bool tree_sitter_delphi_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)
 {
-  if (!valid_symbols[MULTILINE_STRING] && !valid_symbols[FLOAT_NO_DECIMAL])
+  if (!valid_symbols[MULTILINE_STRING] && !valid_symbols[FLOAT_NO_DECIMAL] &&
+      !valid_symbols[ASM_BLOCK])
   {
     return false;
   }
@@ -68,6 +70,63 @@ bool tree_sitter_delphi_external_scanner_scan(void *payload, TSLexer *lexer, con
     lexer->mark_end(lexer);
     lexer->result_symbol = FLOAT_NO_DECIMAL;
     return true;
+  }
+
+  if (valid_symbols[ASM_BLOCK])
+  {
+    bool advanced_any = false;
+
+    for (;;)
+    {
+      if (lexer->eof(lexer))
+      {
+        return false; // unterminated asm block
+      }
+
+      // Check for a whole-word "end" (case-insensitive) at this position.
+      if (lexer->lookahead == 'e' || lexer->lookahead == 'E')
+      {
+        lexer->mark_end(lexer); // tentative end, right before "end"
+
+        lexer->advance(lexer, false);
+        int32_t c2 = lexer->lookahead;
+
+        if (c2 == 'n' || c2 == 'N')
+        {
+          lexer->advance(lexer, false);
+          int32_t c3 = lexer->lookahead;
+
+          if (c3 == 'd' || c3 == 'D')
+          {
+            lexer->advance(lexer, false);
+            int32_t after = lexer->lookahead;
+
+            // Must not be followed by another identifier char (word boundary),
+            // e.g. reject "ending" / "endian".
+            bool is_ident_char = iswalnum(after) || after == '_';
+
+            if (!is_ident_char)
+            {
+              if (!advanced_any)
+              {
+                // No real asm content consumed yet -> empty asm block,
+                // let the normal "end" token handle it instead.
+                return false;
+              }
+              lexer->result_symbol = ASM_BLOCK;
+              return true; // mark_end was already set right before "end"
+            }
+          }
+        }
+
+        // Not a whole-word "end": just regular asm content, keep going.
+        advanced_any = true;
+        continue;
+      }
+
+      lexer->advance(lexer, false);
+      advanced_any = true;
+    }
   }
 
   if (valid_symbols[MULTILINE_STRING])

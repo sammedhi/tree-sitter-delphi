@@ -76,7 +76,8 @@ export default grammar({
 
   externals: $ => [
     $.multiline_string,
-    $.float_no_decimal
+    $.float_no_decimal,
+    $.asm_block
   ],
 
   rules: {
@@ -1003,16 +1004,9 @@ export default grammar({
 
     asm_statement: $ => seq(
       $.kAsm,
-      optional($.asmBody),
+      optional($.asm_block),
       $.kEnd
     ),
-
-    asmBody: $ => repeat1(choice(
-      $.identifier,      // Identifiers
-      /[0-9a-fA-F]/,      // Numbers
-      /[.,:;+\-*\[\]<>&%$]/, // Punctuation
-      /\([^*]|\)/         // Parentheses that are not comments
-    )),
 
     comment: $ => choice(
       $.line_comment,
