@@ -794,6 +794,7 @@ export default grammar({
         [$.kAnd, PREC.MULTIPLICATIVE],
         [$.kShl, PREC.MULTIPLICATIVE],
         [$.kShr, PREC.MULTIPLICATIVE],
+        [$.kAs, PREC.MULTIPLICATIVE],
         ['+', PREC.ADDITIVE],
         ['-', PREC.ADDITIVE],
         [$.kOr, PREC.ADDITIVE],
@@ -806,7 +807,6 @@ export default grammar({
         ['>=', PREC.RELATIONAL],
         [$.kIn, PREC.RELATIONAL],
         [$.kIs, PREC.RELATIONAL],
-        [$.kAs, PREC.RELATIONAL],
       ];
 
       return choice(...table.map(([operator, precedence]) =>
