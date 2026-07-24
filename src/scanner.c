@@ -1,6 +1,7 @@
 #include "tree_sitter/parser.h"
 #include "tree_sitter/alloc.h"
 #include "tree_sitter/array.h"
+#include <wctype.h>
 
 // Rename `delphi` below to match your grammar's `name` field in grammar.js
 // (tree-sitter generates these symbol names as tree_sitter_<name>_external_scanner_*).
@@ -8,6 +9,7 @@
 enum TokenType
 {
   MULTILINE_STRING,
+  FLOAT_NO_DECIMAL
 };
 
 void *tree_sitter_delphi_external_scanner_create(void)
@@ -32,7 +34,7 @@ void tree_sitter_delphi_external_scanner_deserialize(void *payload, const char *
 
 bool tree_sitter_delphi_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)
 {
-  if (!valid_symbols[MULTILINE_STRING])
+  if (!valid_symbols[MULTILINE_STRING] && !valid_symbols[FLOAT_NO_DECIMAL])
   {
     return false;
   }
@@ -44,87 +46,116 @@ bool tree_sitter_delphi_external_scanner_scan(void *payload, TSLexer *lexer, con
     lexer->advance(lexer, true);
   }
 
-  if (lexer->lookahead != '\'')
+  if (valid_symbols[FLOAT_NO_DECIMAL] && iswdigit(lexer->lookahead))
   {
-    return false;
-  }
-
-  // Count the opening run of apostrophes. Delphi requires at least three.
-  uint32_t open_quotes = 0;
-  while (lexer->lookahead == '\'')
-  {
-    lexer->advance(lexer, false);
-    open_quotes++;
-  }
-  if (open_quotes < 3)
-  {
-    return false; // this is a normal '...' string, not a multiline one
-  }
-
-  // Only whitespace is allowed between the opening quotes and the line break.
-  while (lexer->lookahead == ' ' || lexer->lookahead == '\t')
-  {
-    lexer->advance(lexer, false);
-  }
-  if (lexer->lookahead == '\r')
-  {
-    lexer->advance(lexer, false);
-  }
-  if (lexer->lookahead != '\n')
-  {
-    return false; // stray text after the opener -> not a valid multiline string
-  }
-  lexer->advance(lexer, false); // consume the newline that starts the body
-
-  bool at_line_start = true;
-
-  for (;;)
-  {
-    if (lexer->eof(lexer))
+    do
     {
-      return false; // unterminated multiline string
+      lexer->advance(lexer, false);
+    } while (iswdigit(lexer->lookahead));
+
+    if (lexer->lookahead != '.')
+      return false;
+
+    lexer->advance(lexer, false);
+
+    // If there is a second dot it's a range operator
+    // If there is a digit it's a normal float
+    if (lexer->lookahead == '.' || iswdigit(lexer->lookahead))
+    {
+      return false;
     }
 
-    if (at_line_start)
+    lexer->mark_end(lexer);
+    lexer->result_symbol = FLOAT_NO_DECIMAL;
+    return true;
+  }
+
+  if (valid_symbols[MULTILINE_STRING])
+  {
+    if (lexer->lookahead != '\'')
     {
-      // Leading indentation before a possible closing sequence.
-      while (lexer->lookahead == ' ' || lexer->lookahead == '\t')
+      return false;
+    }
+
+    // Count the opening run of apostrophes. Delphi requires at least three.
+    uint32_t open_quotes = 0;
+    while (lexer->lookahead == '\'')
+    {
+      lexer->advance(lexer, false);
+      open_quotes++;
+    }
+    if (open_quotes < 3)
+    {
+      return false; // this is a normal '...' string, not a multiline one
+    }
+
+    // Only whitespace is allowed between the opening quotes and the line break.
+    while (lexer->lookahead == ' ' || lexer->lookahead == '\t')
+    {
+      lexer->advance(lexer, false);
+    }
+    if (lexer->lookahead == '\r')
+    {
+      lexer->advance(lexer, false);
+    }
+    if (lexer->lookahead != '\n')
+    {
+      return false; // stray text after the opener -> not a valid multiline string
+    }
+    lexer->advance(lexer, false); // consume the newline that starts the body
+
+    bool at_line_start = true;
+
+    for (;;)
+    {
+      if (lexer->eof(lexer))
       {
-        lexer->advance(lexer, false);
+        return false; // unterminated multiline string
       }
 
-      if (lexer->lookahead == '\'')
+      if (at_line_start)
       {
-        uint32_t close_quotes = 0;
-        while (lexer->lookahead == '\'')
+        // Leading indentation before a possible closing sequence.
+        while (lexer->lookahead == ' ' || lexer->lookahead == '\t')
         {
           lexer->advance(lexer, false);
-          close_quotes++;
         }
 
-        if (close_quotes >= open_quotes)
+        if (lexer->lookahead == '\'')
         {
-          // Found the closer: end the token right here.
-          lexer->mark_end(lexer);
-          lexer->result_symbol = MULTILINE_STRING;
-          return true;
+          uint32_t close_quotes = 0;
+          while (lexer->lookahead == '\'')
+          {
+            lexer->advance(lexer, false);
+            close_quotes++;
+          }
+
+          if (close_quotes >= open_quotes)
+          {
+            // Found the closer: end the token right here.
+            lexer->mark_end(lexer);
+            lexer->result_symbol = MULTILINE_STRING;
+            return true;
+          }
+
+          // Not enough quotes to close -> they're literal content, keep going.
+          at_line_start = false;
+          continue;
         }
 
-        // Not enough quotes to close -> they're literal content, keep going.
         at_line_start = false;
+      }
+
+      if (lexer->lookahead == '\n')
+      {
+        lexer->advance(lexer, false);
+        at_line_start = true;
         continue;
       }
 
-      at_line_start = false;
-    }
-
-    if (lexer->lookahead == '\n')
-    {
       lexer->advance(lexer, false);
-      at_line_start = true;
-      continue;
     }
 
-    lexer->advance(lexer, false);
+    return false;
   }
 }

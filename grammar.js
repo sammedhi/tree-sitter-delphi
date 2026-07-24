@@ -76,6 +76,7 @@ export default grammar({
 
   externals: $ => [
     $.multiline_string,
+    $.float_no_decimal
   ],
 
   rules: {
@@ -773,6 +774,7 @@ export default grammar({
     literal: $ => choice(
       $.integer_literal,
       $.float_literal,
+      alias($.float_no_decimal, $.float_literal),
       $.compound_string_literal,
       $.boolean_literal,
       $.nil_literal,
@@ -914,7 +916,7 @@ export default grammar({
       /%[01]+/,           // binary
     )),
 
-    float_literal: _ => token(choice(
+    float_literal: $ => token(choice(
       /[0-9]+\.[0-9]+([eE][+-]?[0-9]+)?/,  // 3.14, 1.5e10
       /[0-9]+[eE][+-]?[0-9]+/,             // 1e10
     )),
