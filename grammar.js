@@ -557,7 +557,7 @@ export default grammar({
       $.continue_statement,
       $.exit_statement,
       $.raise_statement,
-      $.inherited_statement,
+      prec(1, alias($.inherited_expression, $.inherited_statement)),
       $._call_statement,
       $.with_statement,
       prec(2, $.element_access_expression),
@@ -569,7 +569,7 @@ export default grammar({
       optional($.expression),
     ),
 
-    inherited_statement: $ => $.kInherited,
+    inherited_expression: $ => $.kInherited,
 
     if_statement: $ => prec.right(seq(
       $.kIf,
@@ -778,6 +778,7 @@ export default grammar({
       $.index_range,
       $.ternary_expression,
       $.set_range,
+      $.inherited_expression
     ),
 
     //#region literals
