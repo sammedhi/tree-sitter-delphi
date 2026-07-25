@@ -730,7 +730,7 @@ export default grammar({
       field('type', $._name),
       $.kDo,
       field('body', optional($.statement)),
-      ';',
+      optional(';'),
     ),
 
     try_finally_statement: $ => seq(
