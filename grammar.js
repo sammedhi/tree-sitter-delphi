@@ -229,10 +229,18 @@ export default grammar({
       $.function_declaration,
       $.class_property,
       $.declaration_section,
-      $.record_variant_part
+      $.record_variant_part,
+      $.method_resolution_clause
     ),
 
     _semicolon_class_member: $ => seq(optional($.class_member), ';'),
+
+    method_resolution_clause: $ => seq(
+      field('kind', choice($.kFunction, $.kProcedure)),
+      field('interface_method', $._name),
+      '=',
+      field('implementing_method', $._simple_name)
+    ),
 
     class_field: $ => seq(
       optional($._attributes),
