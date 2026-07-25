@@ -741,9 +741,9 @@ export default grammar({
       $.kEnd,
     ),
 
-    continue_statement: _ => token(prec(1, /continue/i)),
+    continue_statement: $ => $.kContinue,
 
-    break_statement: _ => token(prec(1, /break/i)),
+    break_statement: $ => $.kBreak,
 
     exit_statement: $ => seq(
       $.kExit,
@@ -1119,6 +1119,8 @@ export default grammar({
     kInherited: _ => token(prec(1, /inherited/i)),
     kRaise: _ => token(prec(1, /raise/i)),
     kExit: _ => token(prec(1, /exit/i)),
+    kBreak: _ => token(prec(1, /break/i)),
+    kContinue: _ => token(prec(1, /continue/i)),
     kReference: _ => token(prec(1, /reference/i)),
     kObject: _ => token(prec(1, /object/i)),
     kStrict: _ => token(prec(1, /strict/i)),
