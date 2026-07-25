@@ -324,6 +324,7 @@ export default grammar({
       $.kStatic,
       $.kDynamic,
       $.kFinal,
+      $.kExperimental,
       $.message_directive,
       $.hint_directive
     ),
@@ -1125,6 +1126,7 @@ export default grammar({
     kDynamic: _ => token(prec(1, /dynamic/i)),
     kFinal: _ => token(prec(1, /final/i)),
     kMessage: _ => token(prec(1, /message/i)),
+    kExperimental: _ => token(prec(1, /experimental/i))
   },
 });
 
