@@ -52,6 +52,28 @@ export default grammar({
     [$._type_definition, $.type],
     [$.index_range, $.not_lvalue_expression],
     [$.record_variant_part],
+
+    [$.raise_statement],
+    [$.exit_statement],
+    [$.inherited_expression],
+    [$.compound_string_literal],
+    [$.while_statement],
+    [$.with_statement],
+    [$.break_statement],
+    [$.continue_statement],
+    [$.call_statement],
+    [$.block_statement],
+    [$.asm_statement],
+    [$.for_each_statement],
+    [$.reference_to_type],
+    [$.variable_declaration_statement],
+    [$.repeat_statement],
+    [$.try_except_statement],
+    [$.try_finally_statement],
+    [$.assignment_statement],
+    [$.for_numeric_statement],
+    [$.case_statement],
+    [$.case_branch]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -83,7 +105,7 @@ export default grammar({
     source_file: $ => choice(
       $.runnable_file,
       $.unit_file,
-      seq(...statements($)),
+      repeat($.statement),
       repeat($.declaration)
     ),
 
@@ -116,7 +138,7 @@ export default grammar({
         $.kInitialization,
         $.kFinalization
       )),
-      choice(repeat($.declaration), seq(...statements($))),
+      choice(repeat($.declaration), repeat($.statement)),
     ),
 
     uses_clause: $ => seq(
@@ -547,7 +569,8 @@ export default grammar({
       $.kWith,
       commaSep1($.expression),
       $.kDo,
-      optional($.statement)
+      optional($.statement),
+      optional(';')
     ),
 
     statement: $ => choice(
@@ -563,18 +586,25 @@ export default grammar({
       $.exit_statement,
       $.raise_statement,
       prec(1, alias($.inherited_expression, $.inherited_statement)),
-      $._call_statement,
+      $.call_statement,
       $.with_statement,
       prec(2, $.element_access_expression),
-      $.asm_statement
+      $.asm_statement,
+      $._empty_statement
     ),
+
+    _empty_statement: _ => prec(-1, ';'),
 
     raise_statement: $ => seq(
       $.kRaise,
       optional($.expression),
+      optional(';')
     ),
 
-    inherited_expression: $ => $.kInherited,
+    inherited_expression: $ => seq(
+      $.kInherited,
+      optional(';')
+    ),
 
     if_statement: $ => prec.right(seq(
       $.kIf,
@@ -585,19 +615,20 @@ export default grammar({
         $.kElse,
         optional(field('else', $.statement)),
       )),
+      optional(';')
     )),
 
     case_statement: $ => seq(
       $.kCase,
       field('value', $.expression),
       $.kOf,
-      repeat(seq($.case_branch, ';')),
-      optional($.case_branch),
+      repeat($.case_branch),
       optional(seq(
         $.kElse,
-        ...statements($),
+        repeat($.statement),
       )),
       $.kEnd,
+      optional(';')
     ),
 
     case_branch: $ => seq(
@@ -613,7 +644,8 @@ export default grammar({
     assignment_statement: $ => seq(
       field('left', $.lvalue_expression),
       ':=',
-      field('right', $.expression)
+      field('right', $.expression),
+      optional(';')
     ),
 
     variable_declaration_statement: $ => seq(
@@ -630,7 +662,8 @@ export default grammar({
           commaSep1($.variable_declarator),
           $._type_declaration
         )
-      )
+      ),
+      optional(';')
     ),
 
     _type_declaration: $ => seq(":", field('type', $.type)),
@@ -639,15 +672,11 @@ export default grammar({
     variable_declarator: $ =>
       field("name", $.identifier),
 
-    _semicolon_statement: $ => seq(
-      optional($.statement),
-      ';'
-    ),
-
     block_statement: $ => seq(
       $.kBegin,
-      ...statements($),
+      repeat($.statement),
       $.kEnd,
+      optional(';')
     ),
 
     loop_statement: $ => choice(
@@ -670,6 +699,7 @@ export default grammar({
       field('final_value', $.expression),
       $.kDo,
       field('body', optional($.statement)),
+      optional(';')
     ),
 
     for_each_statement: $ => seq(
@@ -679,6 +709,7 @@ export default grammar({
       field('collection', $.expression),
       $.kDo,
       field('body', optional($.statement)),
+      optional(';')
     ),
 
     _for_variable: $ => choice(
@@ -697,13 +728,15 @@ export default grammar({
       field('condition', $.expression),
       $.kDo,
       field('body', optional($.statement)),
+      optional(';')
     ),
 
     repeat_statement: $ => seq(
       $.kRepeat,
-      ...statements($),  // last statement before 'until' needs no semicolon
+      repeat($.statement),  // last statement before 'until' needs no semicolon
       $.kUntil,
       field('condition', $.expression),
+      optional(';')
     ),
 
     try_statement: $ => choice(
@@ -713,20 +746,21 @@ export default grammar({
 
     try_except_statement: $ => seq(
       $.kTry,
-      ...statements($),
+      repeat($.statement),
       $.kExcept,
       choice(
         // typed handlers: on E: Exception do ...
         seq(
           repeat1($.exception_handler),
-          optional(seq($.kElse, ...statements($))),
+          optional(seq($.kElse, repeat($.statement))),
         ),
         // bare except: just statements
         seq(
-          ...statements($)
+          repeat($.statement)
         ),
       ),
       $.kEnd,
+      optional(';')
     ),
 
     exception_handler: $ => seq(
@@ -735,24 +769,32 @@ export default grammar({
       field('type', $._name),
       $.kDo,
       field('body', optional($.statement)),
-      optional(';'),
+      optional(';')
     ),
 
     try_finally_statement: $ => seq(
       $.kTry,
-      ...statements($),
+      repeat($.statement),
       $.kFinally,
-      ...statements($),
+      repeat($.statement),
       $.kEnd,
+      optional(';')
     ),
 
-    continue_statement: $ => $.kContinue,
+    continue_statement: $ => seq(
+      $.kContinue,
+      optional(';')
+    ),
 
-    break_statement: $ => $.kBreak,
+    break_statement: $ => seq(
+      $.kBreak,
+      optional(';')
+    ),
 
     exit_statement: $ => seq(
       $.kExit,
-      optional($.argument_list)
+      optional($.argument_list),
+      optional(';')
     ),
 
     expression: $ => choice(
@@ -872,11 +914,15 @@ export default grammar({
       $.argument_list,
     )),
 
+    call_statement: $ => seq(
+      $._call_statement,
+      optional(';')
+    ),
     _call_statement: $ => prec(1, choice(
       alias($._simple_name, $.call_expression),
       $.member_access_expression,
       $.call_expression,
-      alias($._inherited_call_expression, $.call_expression)
+      alias($._inherited_call_expression, $.call_expression),
     )),
 
     argument_list: $ => seq(
@@ -1020,7 +1066,8 @@ export default grammar({
     asm_statement: $ => seq(
       $.kAsm,
       optional($.asm_block),
-      $.kEnd
+      $.kEnd,
+      optional(';')
     ),
 
     comment: $ => choice(
@@ -1138,16 +1185,6 @@ export default grammar({
   },
 });
 
-/**
- * Creates a rule to optionally match one or more of the rules separated by `separator`
- *
- * @param {GrammarSymbols<string>} $
- *
- * @returns {Array<Rule>}
- */
-function statements($) {
-  return [repeat($._semicolon_statement), optional($.statement)]
-}
 
 /**
  * Creates a rule to optionally match one or more of the rules separated by `separator`
