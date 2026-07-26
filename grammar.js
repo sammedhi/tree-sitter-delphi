@@ -143,12 +143,11 @@ export default grammar({
     uses_clause: $ => seq(
       $.kUses,
       repeat($.import),
-      optional(';')
     ),
 
     import: $ => seq(
       field('name', $._name),
-      optional(',')
+      optional(choice(',', ';'))
     ),
 
     declaration: $ => choice(
