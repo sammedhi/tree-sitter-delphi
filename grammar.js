@@ -40,20 +40,19 @@ export default grammar({
     [$._value_declaration_section],
 
     [$.parenthesized_expression, $.const_array_constructor_expression],
-    [$.function_definition, $.external_function_definition, $._declaration],
     [$.class_definition, $.forward_class_definition],
     [$.class_definition, $.fieldless_class_definition],
     [$.function_declaration],
     [$.class_property],
     [$.type, $.object_of_type],
     [$.forward_interface_definition, $.interface_definition],
-    [$._semicolon_declaration, $._semicolon_statement],
     [$.attribute, $.index_range],
     [$.lvalue_expression, $._call_statement],
     [$.qualified_name, $.member_access_expression],
     [$._type_definition, $.type],
     [$.index_range, $.not_lvalue_expression],
-    [$.record_variant_part]
+    [$.record_variant_part],
+    [$.type_declaration]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -71,7 +70,8 @@ export default grammar({
     $.loop_statement,
     $.for_statement,
     $.try_statement,
-    $.class_member
+    $.class_member,
+    $.declaration
   ],
 
   externals: $ => [
@@ -85,19 +85,19 @@ export default grammar({
       $.runnable_file,
       $.unit_file,
       seq(...statements($)),
-      seq(...declarations($))
+      repeat($.declaration)
     ),
 
     runnable_file: $ => seq(
       $.file_header,
-      ...declarations($),
+      repeat($.declaration),
       field('body', choice($.block_statement, $.asm_statement)),
       '.',
     ),
 
     unit_file: $ => seq(
       $.file_header,
-      ...declarations($),
+      repeat($.declaration),
       repeat($.section),
       $.kEnd,
       '.',
@@ -117,12 +117,13 @@ export default grammar({
         $.kInitialization,
         $.kFinalization
       )),
-      choice(seq(...declarations($)), seq(...statements($))),
+      choice(repeat($.declaration), seq(...statements($))),
     ),
 
     uses_clause: $ => seq(
       $.kUses,
       repeat($.import),
+      optional(';')
     ),
 
     import: $ => seq(
@@ -130,15 +131,13 @@ export default grammar({
       optional(',')
     ),
 
-    _declaration: $ => choice(
+    declaration: $ => choice(
       $.function_definition,
       $.external_function_definition,
       $.declaration_section,
       $.function_declaration,
       $.uses_clause
     ),
-
-    _semicolon_declaration: $ => seq(optional($._declaration), ';'),
 
     attribute: $ => seq(
       field('name', $._name),
@@ -346,7 +345,7 @@ export default grammar({
 
     _type_declaration_section: $ => seq(
       field('kind', $.kType),
-      sep(optional($.type_declaration), ';')
+      repeat($.type_declaration)
     ),
 
     _value_declaration_section: $ => seq(
@@ -357,7 +356,8 @@ export default grammar({
         $.kConst,
         $.kResourcestring
       )),
-      sep(optional($.global_declaration), ';')
+      sep(optional($.global_declaration), ';'),
+      optional(';')
     ),
 
     _section_set: $ => choice(
@@ -371,7 +371,8 @@ export default grammar({
       optional($.type_parameter_list),
       '=',
       $._type_definition,
-      optional($.hint_directive)
+      optional($.hint_directive),
+      optional(';')
     ),
 
     global_declaration: $ => seq(
@@ -517,20 +518,23 @@ export default grammar({
       optional($.parameter_list),
       optional(field('return_type', seq(':', $.type))),
       repeat($._method_directive),
+      optional(';')
     ),
 
     function_definition: $ => seq(
       field('header', $.function_declaration),
       ';',
-      ...declarations($),
+      repeat($.declaration),
       field('body', choice($.block_statement, $.asm_statement)),
+      optional(';')
     ),
 
     external_function_definition: $ => seq(
       $.function_declaration,
       optional(';'), $.kExternal,
-      optional(field('source', $.expression)),
-      optional(seq($.kName, field('original_name', $.expression)))
+      optional(field('source', choice($.literal, $._name))),
+      optional(seq($.kName, field('original_name', $.expression))),
+      optional(';')
     ),
 
     function_name: $ => seq(
@@ -917,7 +921,7 @@ export default grammar({
       )),
       optional($.parameter_list),
       optional(field('type', $._type_declaration)),
-      ...declarations($),
+      repeat($.declaration),
       choice($.block_statement, $.asm_statement),
     ),
 
@@ -1142,17 +1146,6 @@ export default grammar({
  */
 function statements($) {
   return [repeat($._semicolon_statement), optional($.statement)]
-}
-
-/**
- * Creates a rule to optionally match one or more of the rules separated by `separator`
- *
- * @param {GrammarSymbols<string>} $
- *
- * @returns {Array<Rule>}
- */
-function declarations($) {
-  return [repeat(choice($._semicolon_declaration)), optional($._declaration)];
 }
 
 /**
