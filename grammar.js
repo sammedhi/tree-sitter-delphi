@@ -34,7 +34,6 @@ export default grammar({
     [$.function_name, $.generic_name],
     [$.enum_value, $._simple_name],
 
-    [$.variable_declarator, $._section_set],
     [$.global_declaration, $.variable_declarator],
     [$._type_declaration_section],
     [$._value_declaration_section],
@@ -379,13 +378,7 @@ export default grammar({
         $.kConst,
         $.kResourcestring
       )),
-      sep(optional($.global_declaration), ';'),
-      optional(';')
-    ),
-
-    _section_set: $ => choice(
-      $.type_declaration,
-      $.global_declaration
+      repeat($.global_declaration),
     ),
 
     type_declaration: $ => seq(
@@ -407,7 +400,8 @@ export default grammar({
         $._section_value,
       )),
       optional($.absolute_declaration),
-      optional($.hint_directive)
+      optional($.hint_directive),
+      optional(';')
     ),
 
     absolute_declaration: $ => seq(
