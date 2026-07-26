@@ -52,7 +52,6 @@ export default grammar({
     [$._type_definition, $.type],
     [$.index_range, $.not_lvalue_expression],
     [$.record_variant_part],
-    [$.type_declaration]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -158,7 +157,7 @@ export default grammar({
       optional($.base_list),
       $.kFor,
       field('name', $._name),
-      ...class_members($),
+      repeat($.class_member),
       repeat($.class_section),
       $.kEnd
     ),
@@ -168,7 +167,7 @@ export default grammar({
       optional(field('inheritance_modifier', choice($.kAbstract, $.kSealed))),
       optional($.base_list),
 
-      ...class_members($),
+      repeat($.class_member),
       repeat($.class_section),
       $.kEnd,
     ),
@@ -185,7 +184,7 @@ export default grammar({
     record_definition: $ => seq(
       optional($.kPacked),
       $.kRecord,
-      ...class_members($),
+      repeat($.class_member),
       repeat($.class_section),
       $.kEnd,
     ),
@@ -197,7 +196,8 @@ export default grammar({
       ),
       field('type', $._name),
       $.kOf,
-      sep($.labeled_constant_list, ';')
+      sep($.labeled_constant_list, ';'),
+      optional(';')
     ),
 
     labeled_constant_list: $ => seq(
@@ -220,7 +220,7 @@ export default grammar({
         $.kProtected,
         $.kPrivate
       )),
-      ...class_members($),
+      repeat($.class_member),
     ),
 
     class_member: $ => choice(
@@ -232,13 +232,12 @@ export default grammar({
       $.method_resolution_clause
     ),
 
-    _semicolon_class_member: $ => seq(optional($.class_member), ';'),
-
     method_resolution_clause: $ => seq(
       field('kind', choice($.kFunction, $.kProcedure)),
       field('interface_method', $._name),
       '=',
-      field('implementing_method', $._simple_name)
+      field('implementing_method', $._simple_name),
+      optional(';')
     ),
 
     class_field: $ => seq(
@@ -246,6 +245,7 @@ export default grammar({
       optional($.kClass),
       commaSep1(field('name', $.identifier)),
       $._type_declaration,
+      optional(';')
     ),
 
     class_property: $ => seq(
@@ -256,7 +256,8 @@ export default grammar({
       optional($.array_parameter_list),
       optional($._type_declaration),
       repeat($.property_attribute),
-      optional(seq(';', $.kDefault))
+      optional(seq(';', $.kDefault)),
+      optional(';')
     ),
 
     property_attribute: $ => seq(
@@ -274,7 +275,7 @@ export default grammar({
       $.kInterface,
       optional($.base_list),
       optional($.guid_declaration),
-      ...class_members($),
+      repeat($.class_member),
       $.kEnd,
     ),
 
@@ -1146,17 +1147,6 @@ export default grammar({
  */
 function statements($) {
   return [repeat($._semicolon_statement), optional($.statement)]
-}
-
-/**
- * Creates a rule to optionally match one or more of the rules separated by `separator`
- *
- * @param {GrammarSymbols<string>} $
- *
- * @returns {Array<Rule>}
- */
-function class_members($) {
-  return [repeat($._semicolon_class_member), optional($.class_member)];
 }
 
 /**
