@@ -6,6 +6,17 @@
 // Rename `delphi` below to match your grammar's `name` field in grammar.js
 // (tree-sitter generates these symbol names as tree_sitter_<name>_external_scanner_*).
 
+// iswpunct is not exported to the Wasm tree-sitter,
+// so we implement an equivalent using only allowed symbols.
+static bool custom_iswpunct(int32_t ch)
+{
+  if (ch < 0x21 || ch == 0x7F)
+    return false; // control chars / DEL
+  if (iswalnum(ch) || iswspace(ch))
+    return false;
+  return true;
+}
+
 enum TokenType
 {
   MULTILINE_STRING,
@@ -61,8 +72,8 @@ bool tree_sitter_delphi_external_scanner_scan(void *payload, TSLexer *lexer, con
     lexer->advance(lexer, false);
 
     // If there is a second dot it's a range operator
-    // If there is a digit it's a normal float
-    if (lexer->lookahead == '.' || iswdigit(lexer->lookahead))
+    // If there is something else that a space or a
+    if (!(custom_iswpunct(lexer->lookahead) || iswspace(lexer->lookahead)) || lexer->lookahead == '.')
     {
       return false;
     }
