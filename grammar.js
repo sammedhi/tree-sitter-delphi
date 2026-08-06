@@ -619,7 +619,7 @@ export default grammar({
       repeat($.case_branch),
       optional(seq(
         $._kElse,
-        repeat($.statement),
+        optional(alias(repeat($.statement), $.else_statements)),
       )),
       $._kEnd,
       optional(';')
@@ -740,17 +740,17 @@ export default grammar({
 
     try_except_statement: $ => seq(
       $._kTry,
-      repeat($.statement),
+      alias(repeat($.statement), $.try_statements),
       $._kExcept,
       choice(
         // typed handlers: on E: Exception do ...
         seq(
           repeat1($.exception_handler),
-          optional(seq($._kElse, repeat($.statement))),
+          optional(seq($._kElse, alias(repeat($.statement), $.except_else_statements))),
         ),
         // bare except: just statements
         seq(
-          repeat($.statement)
+          alias(repeat($.statement), $.except_statements)
         ),
       ),
       $._kEnd,
@@ -763,14 +763,13 @@ export default grammar({
       field('type', $._name),
       $._kDo,
       field('body', optional($.statement)),
-      optional(';')
     ),
 
     try_finally_statement: $ => seq(
       $._kTry,
-      repeat($.statement),
+      alias(repeat($.statement), $.try_statements),
       $._kFinally,
-      repeat($.statement),
+      alias(repeat($.statement), $.finally_statements),
       $._kEnd,
       optional(';')
     ),

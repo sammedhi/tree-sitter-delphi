@@ -7,7 +7,8 @@
       "title": "Delphi",
       "scope": "source.delphi",
       "file-types": [
-        "delphi"
+        "pas",
+        "dpr"
       ],
       "injection-regex": "^delphi$",
       "class-name": "TreeSitterDelphi"
