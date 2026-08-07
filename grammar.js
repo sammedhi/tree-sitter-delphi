@@ -145,6 +145,18 @@ export default grammar({
       repeat($.import),
     ),
 
+    exports_clause: $ => seq(
+      $._kExports,
+      repeat($.export)
+    ),
+
+    export: $ => seq(
+      field('name', $.identifier),
+      optional($.argument_list),
+      optional(seq($._kName, $.compound_string_literal)),
+      optional(choice(',', ';'))
+    ),
+
     import: $ => seq(
       field('name', $._name),
       optional(choice(',', ';'))
@@ -155,7 +167,8 @@ export default grammar({
       $.external_function_definition,
       $.declaration_section,
       $.function_declaration,
-      $.uses_clause
+      $.uses_clause,
+      $.exports_clause
     ),
 
     attribute: $ => seq(
@@ -1088,6 +1101,7 @@ export default grammar({
     _kInitialization: _ => token(prec(1, /initialization/i)),
     _kFinalization: _ => token(prec(1, /finalization/i)),
     _kUses: _ => token(prec(1, /uses/i)),
+    _kExports: _ => token(prec(1, /exports/i)),
     _kType: _ => token(prec(1, /type/i)),
     _kVar: _ => token(prec(1, /var/i)),
     _kThreadVar: _ => token(prec(1, /threadvar/i)),
