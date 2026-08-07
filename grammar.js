@@ -446,7 +446,6 @@ export default grammar({
       $.forward_interface_definition,
       $.interface_definition,
       $.record_definition,
-      $.enum_definition,
     ),
 
     type_alias_definition: $ => seq(
@@ -458,7 +457,7 @@ export default grammar({
       field('type', $.type),
     ),
 
-    enum_definition: $ => seq(
+    enum_type: $ => seq(
       '(',
       sep1($.enum_value, ','),
       ')',
@@ -478,7 +477,8 @@ export default grammar({
       $.object_of_type,
       $.function_type,
       $.set_of_type,
-      $.record_definition
+      $.record_definition,
+      $.enum_type
     ),
 
     pointer_type: $ => seq('^', field('type', $.type)),
