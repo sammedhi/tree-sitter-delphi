@@ -212,7 +212,7 @@ export default grammar({
     ),
 
     forward_class_definition: $ => $._kClass,
-    forward_interface_definition: $ => $._kInterface,
+    forward_interface_definition: $ => choice($._kInterface, $._kDispinterface),
 
     record_definition: $ => seq(
       optional($._kPacked),
@@ -299,13 +299,14 @@ export default grammar({
         $._kWrite,
         $._kIndex,
         $._kStored,
+        seq(optional(field('specifier', choice($._kReadonly, $._kWriteonly))), $._kDispid),
         $._kDefault
       )),
-      field('value', choice($.expression))
+      field('value', commaSep1($.expression))
     ),
 
     interface_definition: $ => seq(
-      $._kInterface,
+      field('kind', choice($._kInterface, $._kDispinterface)),
       optional($.base_list),
       optional($.guid_declaration),
       repeat($.class_member),
@@ -360,7 +361,13 @@ export default grammar({
       $._kFinal,
       $._kExperimental,
       $.message_directive,
-      $.hint_directive
+      $.hint_directive,
+      $.dispid_directive
+    ),
+
+    dispid_directive: $ => seq(
+      $._kDispid,
+      field('id', $.expression)
     ),
 
     message_directive: $ => seq(
@@ -1139,6 +1146,7 @@ export default grammar({
     _kPacked: _ => token(prec(1, /packed/i)),
     _kHelper: _ => token(prec(1, /helper/i)),
     _kClass: _ => token(prec(1, /class/i)),
+    _kDispinterface: _ => token(prec(1, /dispinterface/i)),
     _kRecord: _ => token(prec(1, /record/i)),
     _kUnmanaged: _ => token(prec(1, /unmanaged/i)),
     _kProcedure: _ => token(prec(1, /procedure/i)),
@@ -1156,6 +1164,9 @@ export default grammar({
     _kWrite: _ => token(prec(1, /write/i)),
     _kStored: _ => token(prec(1, /stored/i)),
     _kDefault: _ => token(prec(1, /default/i)),
+    _kDispid: _ => token(prec(1, /dispid/i)),
+    _kReadonly: _ => token(prec(1, /readonly/i)),
+    _kWriteonly: _ => token(prec(1, /writeonly/i)),
     _kVirtual: _ => token(prec(1, /virtual/i)),
     _kAbstract: _ => token(prec(1, /abstract/i)),
     _kSealed: _ => token(prec(1, /sealed/i)),
