@@ -300,6 +300,7 @@ export default grammar({
         $._kIndex,
         $._kStored,
         seq(optional(field('specifier', choice($._kReadonly, $._kWriteonly))), $._kDispid),
+        $._kImplements,
         $._kDefault
       )),
       field('value', commaSep1($.expression))
@@ -1165,6 +1166,7 @@ export default grammar({
     _kStored: _ => token(prec(1, /stored/i)),
     _kDefault: _ => token(prec(1, /default/i)),
     _kDispid: _ => token(prec(1, /dispid/i)),
+    _kImplements: _ => token(prec(1, /implements/i)),
     _kReadonly: _ => token(prec(1, /readonly/i)),
     _kWriteonly: _ => token(prec(1, /writeonly/i)),
     _kVirtual: _ => token(prec(1, /virtual/i)),
