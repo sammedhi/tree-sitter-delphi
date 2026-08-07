@@ -167,6 +167,7 @@ export default grammar({
       $.external_function_definition,
       $.declaration_section,
       $.function_declaration,
+      $.forward_function_declaration,
       $.uses_clause,
       $.exports_clause
     ),
@@ -572,6 +573,12 @@ export default grammar({
       optional(';'), $._kExternal,
       optional(field('source', choice($.literal, $._name))),
       optional(seq($._kName, field('original_name', $.expression))),
+      optional(';')
+    ),
+
+    forward_function_declaration: $ => seq(
+      $.function_declaration,
+      $._kForward,
       optional(';')
     ),
 
@@ -1179,6 +1186,7 @@ export default grammar({
     _kStatic: _ => token(prec(1, /static/i)),
     _kStdcall: _ => token(prec(1, /stdcall/i)),
     _kExternal: _ => token(prec(1, /external/i)),
+    _kForward: _ => token(prec(1, /forward/i)),
     _kName: _ => token(prec(1, /name/i)),
     _kCdecl: _ => token(prec(1, /cdecl/i)),
     _kRegister: _ => token(prec(1, /register/i)),
