@@ -72,7 +72,8 @@ export default grammar({
     [$.assignment_statement],
     [$.for_numeric_statement],
     [$.case_statement],
-    [$.case_branch]
+    [$.case_branch],
+    [$.goto_statement]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -169,7 +170,8 @@ export default grammar({
       $.function_declaration,
       $.forward_function_declaration,
       $.uses_clause,
-      $.exports_clause
+      $.exports_clause,
+      $.label_declaration
     ),
 
     attribute: $ => seq(
@@ -587,13 +589,6 @@ export default grammar({
       field('name', $.identifier)
     ),
 
-    with_statement: $ => seq(
-      $._kWith,
-      commaSep1($.expression),
-      $._kDo,
-      optional($.statement),
-      optional(';')
-    ),
 
     statement: $ => choice(
       $.block_statement,
@@ -607,6 +602,8 @@ export default grammar({
       $.continue_statement,
       $.exit_statement,
       $.raise_statement,
+      $.goto_statement,
+      $.labeled_statement,
       prec(1, alias($.inherited_expression, $.inherited_statement)),
       $.call_statement,
       $.with_statement,
@@ -615,7 +612,33 @@ export default grammar({
       $._empty_statement
     ),
 
+    label_declaration: $ => seq(
+      $._kLabel,
+      commaSep1(choice($.identifier, $.literal)),
+      ';'
+    ),
+
+    labeled_statement: $ => seq(
+      field('label', choice($.identifier, $.literal)),
+      ':',
+      $.statement
+    ),
+
     _empty_statement: _ => prec(-1, ';'),
+
+    goto_statement: $ => seq(
+      $._kGoto,
+      field('label', $.identifier),
+      optional(';')
+    ),
+
+    with_statement: $ => seq(
+      $._kWith,
+      commaSep1($.expression),
+      $._kDo,
+      optional($.statement),
+      optional(';')
+    ),
 
     raise_statement: $ => seq(
       $._kRaise,
@@ -1136,6 +1159,8 @@ export default grammar({
     _kFor: _ => token(prec(1, /for/i)),
     _kWhile: _ => token(prec(1, /while/i)),
     _kWith: _ => token(prec(1, /with/i)),
+    _kGoto: _ => token(prec(1, /goto/i)),
+    _kLabel: _ => token(prec(1, /label/i)),
     _kTo: _ => token(prec(1, /to/i)),
     _kDownto: _ => token(prec(1, /downto/i)),
     _kDo: _ => token(prec(1, /do/i)),
