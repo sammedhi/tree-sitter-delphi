@@ -607,7 +607,7 @@ export default grammar({
       prec(1, alias($.inherited_expression, $.inherited_statement)),
       $.call_statement,
       $.with_statement,
-      prec(2, $.element_access_expression),
+      $.element_access_expression,
       $.asm_statement,
       $._empty_statement
     ),
@@ -949,12 +949,12 @@ export default grammar({
 
     _inherited_call_expression: $ => prec(PREC.CALL, seq(
       $._kInherited,
-      field('function', $.expression),
+      field('function', choice($.lvalue_expression, $.parenthesized_expression)),
       optional($.argument_list)
     )),
 
     call_expression: $ => prec(PREC.CALL, seq(
-      field('function', $.expression),
+      field('function', choice($.lvalue_expression, $.parenthesized_expression)),
       $.argument_list,
     )),
 
