@@ -73,7 +73,8 @@ export default grammar({
     [$.for_numeric_statement],
     [$.case_statement],
     [$.case_branch],
-    [$.goto_statement]
+    [$.goto_statement],
+    [$.short_string, $.type]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -480,7 +481,16 @@ export default grammar({
       $.function_type,
       $.set_of_type,
       $.record_definition,
-      $.enum_type
+      $.enum_type,
+      $.short_string,
+      $._kw_string
+    ),
+
+    short_string: $ => seq(
+      $._kw_string,
+      '[',
+      $.integer_literal,
+      ']'
     ),
 
     pointer_type: $ => seq('^', field('type', $.type)),
