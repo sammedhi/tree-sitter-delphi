@@ -161,6 +161,10 @@ export default grammar({
 
     import: $ => seq(
       field('name', $._name),
+      optional(seq(
+        $._kw_in, 
+        field('path', $.compound_string_literal))
+      ),
       optional(choice(',', ';'))
     ),
 
