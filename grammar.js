@@ -28,6 +28,75 @@ export default grammar({
     $.comment,
   ],
 
+  reserved: {
+    global: _ => [
+      /and/i,
+      /array/i,
+      /as/i,
+      /asm/i,
+      /begin/i,
+      /case/i,
+      /class/i,
+      /const/i,
+      /constructor/i,
+      /destructor/i,
+      /dispinterface/i,
+      /div/i,
+      /do/i,
+      /downto/i,
+      /else/i,
+      /end/i,
+      /except/i,
+      /exports/i,
+      /file/i,
+      /finalization/i,
+      /finally/i,
+      /for/i,
+      /function/i,
+      /goto/i,
+      /if/i,
+      /implementation/i,
+      /in/i,
+      /inherited/i,
+      /initialization/i,
+      /inline/i,
+      /interface/i,
+      /is/i,
+      /label/i,
+      /library/i,
+      /mod/i,
+      /nil/i,
+      /not/i,
+      /object/i,
+      /of/i,
+      /or/i,
+      /packed/i,
+      /procedure/i,
+      /program/i,
+      /property/i,
+      /raise/i,
+      /record/i,
+      /repeat/i,
+      /resourcestring/i,
+      /set/i,
+      /shl/i,
+      /shr/i,
+      /string/i,
+      /then/i,
+      /threadvar/i,
+      /to/i,
+      /try/i,
+      /type/i,
+      /unit/i,
+      /until/i,
+      /uses/i,
+      /var/i,
+      /while/i,
+      /with/i,
+      /xor/i,
+    ]
+  },
+
   conflicts: $ => [
     [$._simple_name, $.generic_name],
     [$._inherited_call_expression, $.call_expression],
@@ -121,58 +190,58 @@ export default grammar({
       $.file_header,
       repeat($.declaration),
       repeat($.section),
-      $._kw_end,
+      kw('end'),
       '.',
     ),
 
     file_header: $ => seq(
-      field('file_type', choice($._kw_unit, $._kw_program, $._kw_library, $._kw_package)),
+      field('file_type', choice(kw('unit'), kw('program'), kw('library'), kw('package'))),
       field('name', $._name),
-      optional(seq($._kw_deprecated, field('message', $.compound_string_literal))),
+      optional(seq(kw('deprecated'), field('message', $.compound_string_literal))),
       ';'
     ),
 
     section: $ => seq(
       field('_kind', choice(
-        $._kw_interface,
-        $._kw_implementation,
-        $._kw_initialization,
-        $._kw_finalization
+        kw('interface'),
+        kw('implementation'),
+        kw('initialization'),
+        kw('finalization')
       )),
       choice(repeat($.declaration), repeat($.statement)),
     ),
 
     uses_clause: $ => seq(
-      $._kw_uses,
+      kw('uses'),
       repeat($.import),
     ),
 
     contains_clause: $ => seq(
-      $._kw_contains,
+      kw('contains'),
       repeat($.import)
     ),
 
     requires_clause: $ => seq(
-      $._kw_requires,
+      kw('requires'),
       repeat($.import)
     ),
 
     exports_clause: $ => seq(
-      $._kw_exports,
+      kw('exports'),
       repeat($.export)
     ),
 
     export: $ => seq(
       field('name', $.identifier),
       optional($.argument_list),
-      optional(seq($._kw_name, $.compound_string_literal)),
+      optional(seq(kw('name'), $.compound_string_literal)),
       optional(choice(',', ';'))
     ),
 
     import: $ => seq(
       field('name', $._name),
       optional(seq(
-        $._kw_in,
+        kw('in'),
         field('path', $.compound_string_literal))
       ),
       optional(choice(',', ';'))
@@ -205,50 +274,50 @@ export default grammar({
     _attributes: $ => repeat1($.attribute_list),
 
     helper_definition: $ => seq(
-      field('_kind', choice($._kw_class, $._kw_record)),
-      $._kw_helper,
+      field('_kind', choice(kw('class'), kw('record'))),
+      kw('helper'),
       optional($.base_list),
-      $._kw_for,
+      kw('for'),
       field('name', $._name),
       repeat($.class_member),
       repeat($.class_section),
-      $._kw_end
+      kw('end')
     ),
 
     class_definition: $ => seq(
-      $._kw_class,
-      optional(field('inheritance_modifier', choice($._kw_abstract, $._kw_sealed))),
+      kw('class'),
+      optional(field('inheritance_modifier', choice(kw('abstract'), kw('sealed')))),
       optional($.base_list),
 
       repeat($.class_member),
       repeat($.class_section),
-      $._kw_end,
+      kw('end'),
     ),
 
     fieldless_class_definition: $ => seq(
-      $._kw_class,
-      optional(field('inheritance_modifier', choice($._kw_abstract, $._kw_sealed))),
+      kw('class'),
+      optional(field('inheritance_modifier', choice(kw('abstract'), kw('sealed')))),
       $.base_list,
     ),
 
-    forward_class_definition: $ => $._kw_class,
-    forward_interface_definition: $ => choice($._kw_interface, $._kw_dispinterface),
+    forward_class_definition: $ => kw('class'),
+    forward_interface_definition: $ => choice(kw('interface'), kw('dispinterface')),
 
     record_definition: $ => seq(
-      optional($._kw_packed),
-      $._kw_record,
+      optional(kw('packed')),
+      kw('record'),
       repeat($.class_member),
       repeat($.class_section),
-      $._kw_end,
+      kw('end'),
     ),
 
     record_variant_part: $ => seq(
-      $._kw_case,
+      kw('case'),
       optional(
         seq(field('tag', $.identifier), ':'),
       ),
       field('type', $._name),
-      $._kw_of,
+      kw('of'),
       sep($.labeled_constant_list, ';'),
       optional(';')
     ),
@@ -266,13 +335,13 @@ export default grammar({
     ),
 
     class_section: $ => seq(
-      optional($._kw_strict),
+      optional(kw('strict')),
       field('visibility', choice(
-        $._kw_published,
-        $._kw_public,
-        $._kw_protected,
-        $._kw_private,
-        $._kw_automated
+        kw('published'),
+        kw('public'),
+        kw('protected'),
+        kw('private'),
+        kw('automated')
       )),
       repeat($.class_member),
     ),
@@ -287,7 +356,7 @@ export default grammar({
     ),
 
     method_resolution_clause: $ => seq(
-      field('_kind', choice($._kw_function, $._kw_procedure)),
+      field('_kind', choice(kw('function'), kw('procedure'))),
       field('interface_method', $._name),
       '=',
       field('implementing_method', $._simple_name),
@@ -296,7 +365,7 @@ export default grammar({
 
     class_field: $ => seq(
       optional($._attributes),
-      optional($._kw_class),
+      optional(kw('class')),
       commaSep1(field('name', $.identifier)),
       $._type_declaration,
       optional(';')
@@ -304,35 +373,35 @@ export default grammar({
 
     class_property: $ => seq(
       optional($._attributes),
-      optional($._kw_class),
-      $._kw_property,
+      optional(kw('class')),
+      kw('property'),
       field('name', $.identifier),
       optional($.array_parameter_list),
       optional($._type_declaration),
       repeat($.property_attribute),
-      optional(seq(';', choice($._kw_default, $._kw_nodefault))),
+      optional(seq(';', choice(kw('default'), kw('nodefault')))),
       optional(';')
     ),
 
     property_attribute: $ => seq(
       field('_kind', choice(
-        $._kw_read,
-        $._kw_write,
-        $._kw_index,
-        $._kw_stored,
-        seq(optional(field('specifier', choice($._kw_readonly, $._kw_writeonly))), $._kw_dispid),
-        $._kw_implements,
-        $._kw_default
+        kw('read'),
+        kw('write'),
+        kw('index'),
+        kw('stored'),
+        seq(optional(field('specifier', choice(kw('readonly'), kw('writeonly')))), kw('dispid')),
+        kw('implements'),
+        kw('default')
       )),
       field('value', commaSep1($.expression))
     ),
 
     interface_definition: $ => seq(
-      field('kind', choice($._kw_interface, $._kw_dispinterface)),
+      field('kind', choice(kw('interface'), kw('dispinterface'))),
       optional($.base_list),
       optional($.guid_declaration),
       repeat($.class_member),
-      $._kw_end,
+      kw('end'),
     ),
 
     guid_declaration: $ => seq(
@@ -356,7 +425,7 @@ export default grammar({
     parameter_declaration: $ => seq(
       // TODO use alias for the modifier instead
       optional($._attributes),
-      optional(field('modifier', choice($._kw_const, $._kw_var, $._kw_out))),
+      optional(field('modifier', choice(kw('const'), kw('var'), kw('out')))),
       commaSep1($.argument_name),
       optional($._type_declaration),
       optional(seq('=', field('default_value', $.expression))),
@@ -366,42 +435,42 @@ export default grammar({
 
     _method_directive: $ => seq(optional(';'), $.method_directive),
     method_directive: $ => choice(
-      $._kw_virtual,
-      $._kw_abstract,
-      $._kw_override,
-      $._kw_overload,
-      $._kw_unsafe,
-      $._kw_stdcall,
-      $._kw_cdecl,
-      $._kw_register,
-      $._kw_pascal,
-      $._kw_winapi,
-      $._kw_noreturn,
-      $._kw_safecall,
-      $._kw_inline,
-      $._kw_reintroduce,
-      $._kw_static,
-      $._kw_dynamic,
-      $._kw_final,
-      $._kw_experimental,
-      $._kw_varargs,
+      kw('virtual'),
+      kw('abstract'),
+      kw('override'),
+      kw('overload'),
+      kw('unsafe'),
+      kw('stdcall'),
+      kw('cdecl'),
+      kw('register'),
+      kw('pascal'),
+      kw('winapi'),
+      kw('noreturn'),
+      kw('safecall'),
+      kw('inline'),
+      kw('reintroduce'),
+      kw('static'),
+      kw('dynamic'),
+      kw('final'),
+      kw('experimental'),
+      kw('varargs'),
       $.message_directive,
       $.hint_directive,
       $.dispid_directive
     ),
 
     dispid_directive: $ => seq(
-      $._kw_dispid,
+      kw('dispid'),
       field('id', $.expression)
     ),
 
     message_directive: $ => seq(
-      $._kw_message,
+      kw('message'),
       field('id', $.identifier)
     ),
 
     hint_directive: $ => seq(
-      field('_kind', choice($._kw_deprecated, $._kw_platform, $._kw_library)),
+      field('_kind', choice(kw('deprecated'), kw('platform'), kw('library'))),
       optional(field('message', $.compound_string_literal))
     ),
 
@@ -411,17 +480,17 @@ export default grammar({
     ),
 
     _type_declaration_section: $ => seq(
-      field('_kind', $._kw_type),
+      field('_kind', kw('type')),
       repeat($.type_declaration)
     ),
 
     _value_declaration_section: $ => seq(
-      optional($._kw_class),
+      optional(kw('class')),
       field('_kind', choice(
-        $._kw_var,
-        $._kw_threadvar,
-        $._kw_const,
-        $._kw_resourcestring
+        kw('var'),
+        kw('threadvar'),
+        kw('const'),
+        kw('resourcestring')
       )),
       repeat($.global_declaration),
     ),
@@ -450,7 +519,7 @@ export default grammar({
     ),
 
     absolute_declaration: $ => seq(
-      $._kw_absolute,
+      kw('absolute'),
       field('name', $._name)
     ),
 
@@ -476,7 +545,7 @@ export default grammar({
     ),
 
     strong_type_alias_definition: $ => seq(
-      $._kw_type,
+      kw('type'),
       field('type', $.type),
     ),
 
@@ -494,6 +563,7 @@ export default grammar({
     type: $ => choice(
       $._name,
       $.array_type,
+      $.array_of_const,
       $.pointer_type,
       $.class_of_type,
       $.reference_to_type,
@@ -503,11 +573,12 @@ export default grammar({
       $.record_definition,
       $.enum_type,
       $.short_string,
-      $._kw_string
+      $.file_type,
+      kw('string')
     ),
 
     short_string: $ => seq(
-      $._kw_string,
+      kw('string'),
       '[',
       $.integer_literal,
       ']'
@@ -516,16 +587,18 @@ export default grammar({
     pointer_type: $ => seq('^', field('type', $.type)),
 
     array_type: $ => seq(
-      optional($._kw_packed),
-      $._kw_array,
+      optional(kw('packed')),
+      kw('array'),
       optional($.index_range),
-      $._kw_of,
+      kw('of'),
       field('type', $.type)
     ),
 
+    array_of_const: $ => seq(kw('array'), kw('of'), kw('const')),
+
     file_type: $ => seq(
-      $._kw_file,
-      $._kw_of,
+      kw('file'),
+      kw('of'),
       $.type
     ),
 
@@ -545,24 +618,24 @@ export default grammar({
     )),
 
     set_of_type: $ => seq(
-      optional($._kw_packed),
-      $._kw_set,
-      $._kw_of,
+      optional(kw('packed')),
+      kw('set'),
+      kw('of'),
       field('type', $.type)
     ),
 
     class_of_type: $ => seq(
-      $._kw_class,
-      $._kw_of,
+      kw('class'),
+      kw('of'),
       field('type', $._name)
     ),
 
     reference_to_type: $ => seq(
-      $._kw_reference,
-      $._kw_to,
+      kw('reference'),
+      kw('to'),
       field('_kind', choice(
-        $._kw_function,
-        $._kw_procedure
+        kw('function'),
+        kw('procedure')
       )),
       optional($.parameter_list),
       optional($._type_declaration)
@@ -570,25 +643,25 @@ export default grammar({
 
     object_of_type: $ => seq(
       $.function_type,
-      $._kw_of,
-      $._kw_object
+      kw('of'),
+      kw('object')
     ),
 
     function_type: $ => prec(1, seq(
-      field('_kind', choice($._kw_function, $._kw_procedure)),
+      field('_kind', choice(kw('function'), kw('procedure'))),
       $.parameter_list,
       optional($._type_declaration)
     )),
 
     function_declaration: $ => seq(
       optional($._attributes),
-      optional($._kw_class),
+      optional(kw('class')),
       field('_kind', choice(
-        $._kw_procedure,
-        $._kw_function,
-        $._kw_constructor,
-        $._kw_destructor,
-        $._kw_operator
+        kw('procedure'),
+        kw('function'),
+        kw('constructor'),
+        kw('destructor'),
+        kw('operator')
       )),
       field('name', $.function_name),
       optional($.type_parameter_list),
@@ -608,16 +681,16 @@ export default grammar({
 
     external_function_definition: $ => seq(
       $.function_declaration,
-      optional(';'), $._kw_external,
+      optional(';'), kw('external'),
       optional(field('source', choice($.literal, $._name))),
-      optional(seq($._kw_name, field('original_name', $.expression))),
-      optional($._kw_delayed),
+      optional(seq(kw('name'), field('original_name', $.expression))),
+      optional(kw('delayed')),
       optional(';')
     ),
 
     forward_function_declaration: $ => seq(
       $.function_declaration,
-      $._kw_forward,
+      kw('forward'),
       optional(';')
     ),
 
@@ -650,7 +723,7 @@ export default grammar({
     ),
 
     label_declaration: $ => seq(
-      $._kw_label,
+      kw('label'),
       commaSep1(choice($.identifier, $.literal)),
       ';'
     ),
@@ -664,53 +737,53 @@ export default grammar({
     _empty_statement: _ => prec(-1, ';'),
 
     goto_statement: $ => seq(
-      $._kw_goto,
+      kw('goto'),
       field('label', $.identifier),
       optional(';')
     ),
 
     with_statement: $ => seq(
-      $._kw_with,
+      kw('with'),
       commaSep1($.expression),
-      $._kw_do,
+      kw('do'),
       optional($.statement),
       optional(';')
     ),
 
     raise_statement: $ => seq(
-      $._kw_raise,
+      kw('raise'),
       optional($.expression),
-      optional(seq($._kw_at, $.expression)),
+      optional(seq(kw('at'), $.expression)),
       optional(';')
     ),
 
     inherited_expression: $ => seq(
-      $._kw_inherited,
+      kw('inherited'),
       optional(';')
     ),
 
     if_statement: $ => prec.right(seq(
-      $._kw_if,
+      kw('if'),
       field('condition', $.expression),
-      $._kw_then,
+      kw('then'),
       field('then', optional($.statement)),
       optional(seq(
-        $._kw_else,
+        kw('else'),
         optional(field('else', $.statement)),
       )),
       optional(';')
     )),
 
     case_statement: $ => seq(
-      $._kw_case,
+      kw('case'),
       field('value', $.expression),
-      $._kw_of,
+      kw('of'),
       repeat($.case_branch),
       optional(seq(
-        $._kw_else,
+        kw('else'),
         optional(alias(repeat($.statement), $.else_statements)),
       )),
-      $._kw_end,
+      kw('end'),
       optional(';')
     ),
 
@@ -732,7 +805,7 @@ export default grammar({
     ),
 
     variable_declaration_statement: $ => seq(
-      choice($._kw_var, $._kw_const),
+      choice(kw('var'), kw('const')),
       choice(
         seq(
           $.variable_declarator,
@@ -756,9 +829,9 @@ export default grammar({
       field("name", $.identifier),
 
     block_statement: $ => seq(
-      $._kw_begin,
+      kw('begin'),
       repeat($.statement),
-      $._kw_end,
+      kw('end'),
       optional(';')
     ),
 
@@ -774,23 +847,23 @@ export default grammar({
     ),
 
     for_numeric_statement: $ => seq(
-      $._kw_for,
+      kw('for'),
       field('variable', $._for_variable),
       ':=',
       field('initial_value', $.expression),
-      field('direction', choice($._kw_to, $._kw_downto)),
+      field('direction', choice(kw('to'), kw('downto'))),
       field('final_value', $.expression),
-      $._kw_do,
+      kw('do'),
       field('body', optional($.statement)),
       optional(';')
     ),
 
     for_each_statement: $ => seq(
-      $._kw_for,
+      kw('for'),
       field('variable', $._for_variable),
-      $._kw_in,
+      kw('in'),
       field('collection', $.expression),
-      $._kw_do,
+      kw('do'),
       field('body', optional($.statement)),
       optional(';')
     ),
@@ -801,23 +874,23 @@ export default grammar({
     ),
 
     for_variable_declaration: $ => seq(
-      $._kw_var,
+      kw('var'),
       $.variable_declarator,
       optional($._type_declaration),
     ),
 
     while_statement: $ => seq(
-      $._kw_while,
+      kw('while'),
       field('condition', $.expression),
-      $._kw_do,
+      kw('do'),
       field('body', optional($.statement)),
       optional(';')
     ),
 
     repeat_statement: $ => seq(
-      $._kw_repeat,
+      kw('repeat'),
       repeat($.statement),  // last statement before 'until' needs no semicolon
-      $._kw_until,
+      kw('until'),
       field('condition', $.expression),
       optional(';')
     ),
@@ -828,53 +901,53 @@ export default grammar({
     ),
 
     try_except_statement: $ => seq(
-      $._kw_try,
+      kw('try'),
       alias(repeat($.statement), $.try_statements),
-      $._kw_except,
+      kw('except'),
       choice(
         // typed handlers: on E: Exception do ...
         seq(
           repeat1($.exception_handler),
-          optional(seq($._kw_else, alias(repeat($.statement), $.except_else_statements))),
+          optional(seq(kw('else'), alias(repeat($.statement), $.except_else_statements))),
         ),
         // bare except: just statements
         seq(
           alias(repeat($.statement), $.except_statements)
         ),
       ),
-      $._kw_end,
+      kw('end'),
       optional(';')
     ),
 
     exception_handler: $ => seq(
-      $._kw_on,
+      kw('on'),
       optional(seq(field('variable', $.identifier), ':')),
       field('type', $._name),
-      $._kw_do,
+      kw('do'),
       field('body', optional($.statement)),
     ),
 
     try_finally_statement: $ => seq(
-      $._kw_try,
+      kw('try'),
       alias(repeat($.statement), $.try_statements),
-      $._kw_finally,
+      kw('finally'),
       alias(repeat($.statement), $.finally_statements),
-      $._kw_end,
+      kw('end'),
       optional(';')
     ),
 
     continue_statement: $ => seq(
-      $._kw_continue,
+      kw('continue'),
       optional(';')
     ),
 
     break_statement: $ => seq(
-      $._kw_break,
+      kw('break'),
       optional(';')
     ),
 
     exit_statement: $ => seq(
-      $._kw_exit,
+      kw('exit'),
       optional($.argument_list),
       optional(';')
     ),
@@ -922,36 +995,36 @@ export default grammar({
     ),
 
     unary_expression: $ => prec(PREC.UNARY, seq(
-      field('operator', choice('-', $._kw_not)),
+      field('operator', choice('-', kw('not'))),
       field('operand', $.expression),
     )),
 
-    not_in: $ => seq($._kw_not, $._kw_in),
+    not_in: $ => seq(kw('not'), kw('in')),
 
     binary_expression: $ => {
       /** @type {Array<[string|Rule, number]>} */
       const table = [
         ['*', PREC.MULTIPLICATIVE],
         ['/', PREC.MULTIPLICATIVE],
-        [$._kw_div, PREC.MULTIPLICATIVE],
-        [$._kw_mod, PREC.MULTIPLICATIVE],
-        [$._kw_and, PREC.MULTIPLICATIVE],
-        [$._kw_shl, PREC.MULTIPLICATIVE],
-        [$._kw_shr, PREC.MULTIPLICATIVE],
-        [$._kw_as, PREC.MULTIPLICATIVE],
+        [kw('div'), PREC.MULTIPLICATIVE],
+        [kw('mod'), PREC.MULTIPLICATIVE],
+        [kw('and'), PREC.MULTIPLICATIVE],
+        [kw('shl'), PREC.MULTIPLICATIVE],
+        [kw('shr'), PREC.MULTIPLICATIVE],
+        [kw('as'), PREC.MULTIPLICATIVE],
         [$.not_in, PREC.MULTIPLICATIVE],
         ['+', PREC.ADDITIVE],
         ['-', PREC.ADDITIVE],
-        [$._kw_or, PREC.ADDITIVE],
-        [$._kw_xor, PREC.ADDITIVE],
+        [kw('or'), PREC.ADDITIVE],
+        [kw('xor'), PREC.ADDITIVE],
         ['=', PREC.RELATIONAL],
         ['<>', PREC.RELATIONAL],
         ['<', PREC.RELATIONAL],
         ['>', PREC.RELATIONAL],
         ['<=', PREC.RELATIONAL],
         ['>=', PREC.RELATIONAL],
-        [$._kw_in, PREC.RELATIONAL],
-        [$._kw_is, PREC.RELATIONAL],
+        [kw('in'), PREC.RELATIONAL],
+        [kw('is'), PREC.RELATIONAL],
       ];
 
       return choice(...table.map(([operator, precedence]) =>
@@ -964,11 +1037,11 @@ export default grammar({
     },
 
     ternary_expression: $ => seq(
-      $._kw_if,
+      kw('if'),
       field('condition', $.expression),
-      $._kw_then,
+      kw('then'),
       field('then', $.expression),
-      $._kw_else,
+      kw('else'),
       field('else', $.expression)
     ),
 
@@ -989,13 +1062,13 @@ export default grammar({
     ),
 
     _inherited_call_expression: $ => prec(PREC.CALL, seq(
-      $._kw_inherited,
+      kw('inherited'),
       field('function', choice($.lvalue_expression, $.parenthesized_expression)),
       optional($.argument_list)
     )),
 
     call_expression: $ => prec(PREC.CALL, seq(
-      field('function', choice($.lvalue_expression, $.parenthesized_expression)),
+      field('function', choice($.lvalue_expression, $.parenthesized_expression, kw('string'))),
       $.argument_list,
     )),
 
@@ -1003,6 +1076,7 @@ export default grammar({
       $._call_statement,
       optional(';')
     ),
+
     _call_statement: $ => prec(1, choice(
       alias($._simple_name, $.call_expression),
       $.member_access_expression,
@@ -1012,7 +1086,7 @@ export default grammar({
 
     argument_list: $ => seq(
       '(',
-      commaSep($.expression),
+      commaSep(choice($.expression, kw('string'))),
       ')'
     ),
 
@@ -1048,8 +1122,8 @@ export default grammar({
 
     anonymous_function_expression: $ => seq(
       field('_kind', choice(
-        $._kw_function,
-        $._kw_procedure
+        kw('function'),
+        kw('procedure')
       )),
       optional($.parameter_list),
       optional(field('type', $._type_declaration)),
@@ -1098,7 +1172,7 @@ export default grammar({
     type_argument_list: $ => seq(
       '<',
       choice(
-        commaSep(choice($._name, $.array_type)),
+        commaSep(choice($._name, $.array_type, kw('string'))),
       ),
       '>',
     ),
@@ -1120,11 +1194,12 @@ export default grammar({
     type_constraints: $ => commaSep1($._type_constraint),
 
     _type_constraint: $ => choice(
-      $._kw_class,
-      $._kw_record,
-      $._kw_interface,
-      $._kw_constructor,
-      $._kw_unmanaged,
+      kw('class'),
+      kw('record'),
+      kw('interface'),
+      kw('constructor'),
+      kw('unmanaged'),
+      kw('string'),
       $._name,
     ),
 
@@ -1136,19 +1211,19 @@ export default grammar({
     qualified_name: $ => prec(PREC.DOT, seq(
       field('qualifier', $._name),
       '.',
-      field('name', $._simple_name),
+      field('name', choice($._simple_name, kw('string'))),
     )),
 
     member_access_expression: $ => prec(PREC.DOT, seq(
       field('expression', choice($.expression, $._name)),
       '.',
-      field('name', $._simple_name),
+      field('name', choice($._simple_name)),
     )),
 
     asm_statement: $ => seq(
-      $._kw_asm,
+      kw('asm'),
       optional($.asm_block),
-      $._kw_end,
+      kw('end'),
       optional(';')
     ),
 
@@ -1168,130 +1243,17 @@ export default grammar({
 
     boolean_literal: _ => token(prec(1, /true|false/i)),
     nil_literal: _ => alias(/nil/i, "nil"),
-    
-    // Keywords — case insensitive
-    _kw_begin: _ => alias(token(prec(1, /begin/i)), "begin"),
-    _kw_end: _ => alias(token(prec(1, /end/i)), "end"),
-    _kw_program: _ => alias(token(prec(1, /program/i)), "program"),
-    _kw_library: _ => alias(token(prec(1, /library/i)), "library"),
-    _kw_package: _ => alias(token(prec(1, /package/i)), "package"),
-    _kw_unit: _ => alias(token(prec(1, /unit/i)), "unit"),
-    _kw_interface: _ => alias(token(prec(1, /interface/i)), "interface"),
-    _kw_implementation: _ => alias(token(prec(1, /implementation/i)), "implementation"),
-    _kw_initialization: _ => alias(token(prec(1, /initialization/i)), "initialization"),
-    _kw_finalization: _ => alias(token(prec(1, /finalization/i)), "finalization"),
-    _kw_uses: _ => alias(token(prec(1, /uses/i)), "uses"),
-    _kw_contains: _ => alias(token(prec(1, /contains/i)), "contains"),
-    _kw_requires: _ => alias(token(prec(1, /requires/i)), "requires"),
-    _kw_exports: _ => alias(token(prec(1, /exports/i)), "exports"),
-    _kw_type: _ => alias(token(prec(1, /type/i)), "type"),
-    _kw_var: _ => alias(token(prec(1, /var/i)), "var"),
-    _kw_threadvar: _ => alias(token(prec(1, /threadvar/i)), "threadvar"),
-    _kw_const: _ => alias(token(prec(1, /const/i)), "const"),
-    _kw_resourcestring: _ => alias(token(prec(1, /resourcestring/i)), "resourcestring"),
-    _kw_not: _ => alias(token(prec(1, /not/i)), "not"),
-    _kw_and: _ => alias(token(prec(1, /and/i)), "and"),
-    _kw_or: _ => alias(token(prec(1, /or/i)), "or"),
-    _kw_xor: _ => alias(token(prec(1, /xor/i)), "xor"),
-    _kw_div: _ => alias(token(prec(1, /div/i)), "div"),
-    _kw_mod: _ => alias(token(prec(1, /mod/i)), "mod"),
-    _kw_shl: _ => alias(token(prec(1, /shl/i)), "shl"),
-    _kw_shr: _ => alias(token(prec(1, /shr/i)), "shr"),
-    _kw_in: _ => alias(token(prec(1, /in/i)), "in"),
-    _kw_is: _ => alias(token(prec(1, /is/i)), "is"),
-    _kw_as: _ => alias(token(prec(1, /as/i)), "as"),
-    _kw_for: _ => alias(token(prec(1, /for/i)), "for"),
-    _kw_while: _ => alias(token(prec(1, /while/i)), "while"),
-    _kw_with: _ => alias(token(prec(1, /with/i)), "with"),
-    _kw_goto: _ => alias(token(prec(1, /goto/i)), "goto"),
-    _kw_label: _ => alias(token(prec(1, /label/i)), "label"),
-    _kw_to: _ => alias(token(prec(1, /to/i)), "to"),
-    _kw_downto: _ => alias(token(prec(1, /downto/i)), "downto"),
-    _kw_do: _ => alias(token(prec(1, /do/i)), "do"),
-    _kw_repeat: _ => alias(token(prec(1, /repeat/i)), "repeat"),
-    _kw_until: _ => alias(token(prec(1, /until/i)), "until"),
-    _kw_if: _ => alias(token(prec(1, /if/i)), "if"),
-    _kw_then: _ => alias(token(prec(1, /then/i)), "then"),
-    _kw_else: _ => alias(token(prec(1, /else/i)), "else"),
-    _kw_case: _ => alias(token(prec(1, /case/i)), "case"),
-    _kw_of: _ => alias(token(prec(1, /of/i)), "of"),
-    _kw_try: _ => alias(token(prec(1, /try/i)), "try"),
-    _kw_except: _ => alias(token(prec(1, /except/i)), "except"),
-    _kw_finally: _ => alias(token(prec(1, /finally/i)), "finally"),
-    _kw_asm: _ => alias(token(prec(1, /asm/i)), "asm"),
-    _kw_on: _ => alias(token(prec(1, /on/i)), "on"),
-    _kw_packed: _ => alias(token(prec(1, /packed/i)), "packed"),
-    _kw_helper: _ => alias(token(prec(1, /helper/i)), "helper"),
-    _kw_class: _ => alias(token(prec(1, /class/i)), "class"),
-    _kw_dispinterface: _ => alias(token(prec(1, /dispinterface/i)), "dispinterface"),
-    _kw_record: _ => alias(token(prec(1, /record/i)), "record"),
-    _kw_unmanaged: _ => alias(token(prec(1, /unmanaged/i)), "unmanaged"),
-    _kw_procedure: _ => alias(token(prec(1, /procedure/i)), "procedure"),
-    _kw_function: _ => alias(token(prec(1, /function/i)), "function"),
-    _kw_constructor: _ => alias(token(prec(1, /constructor/i)), "constructor"),
-    _kw_destructor: _ => alias(token(prec(1, /destructor/i)), "destructor"),
-    _kw_operator: _ => alias(token(prec(1, /operator/i)), "operator"),
-    _kw_private: _ => alias(token(prec(1, /private/i)), "private"),
-    _kw_protected: _ => alias(token(prec(1, /protected/i)), "protected"),
-    _kw_public: _ => alias(token(prec(1, /public/i)), "public"),
-    _kw_published: _ => alias(token(prec(1, /published/i)), "published"),
-    _kw_automated: _ => alias(token(prec(1, /automated/i)), "automated"),
-    _kw_property: _ => alias(token(prec(1, /property/i)), "property"),
-    _kw_index: _ => alias(token(prec(1, /index/i)), "index"),
-    _kw_read: _ => alias(token(prec(1, /read/i)), "read"),
-    _kw_write: _ => alias(token(prec(1, /write/i)), "write"),
-    _kw_stored: _ => alias(token(prec(1, /stored/i)), "stored"),
-    _kw_default: _ => alias(token(prec(1, /default/i)), "default"),
-    _kw_nodefault: _ => alias(token(prec(1, /nodefault/i)), "nodefault"),
-    _kw_dispid: _ => alias(token(prec(1, /dispid/i)), "dispid"),
-    _kw_implements: _ => alias(token(prec(1, /implements/i)), "implements"),
-    _kw_readonly: _ => alias(token(prec(1, /readonly/i)), "readonly"),
-    _kw_writeonly: _ => alias(token(prec(1, /writeonly/i)), "writeonly"),
-    _kw_virtual: _ => alias(token(prec(1, /virtual/i)), "virtual"),
-    _kw_abstract: _ => alias(token(prec(1, /abstract/i)), "abstract"),
-    _kw_sealed: _ => alias(token(prec(1, /sealed/i)), "sealed"),
-    _kw_override: _ => alias(token(prec(1, /override/i)), "override"),
-    _kw_overload: _ => alias(token(prec(1, /overload/i)), "overload"),
-    _kw_unsafe: _ => alias(token(prec(1, /unsafe/i)), "unsafe"),
-    _kw_reintroduce: _ => alias(token(prec(1, /reintroduce/i)), "reintroduce"),
-    _kw_static: _ => alias(token(prec(1, /static/i)), "static"),
-    _kw_stdcall: _ => alias(token(prec(1, /stdcall/i)), "stdcall"),
-    _kw_external: _ => alias(token(prec(1, /external/i)), "external"),
-    _kw_delayed: _ => alias(token(prec(1, /delayed/i)), "delayed"),
-    _kw_forward: _ => alias(token(prec(1, /forward/i)), "forward"),
-    _kw_name: _ => alias(token(prec(1, /name/i)), "name"),
-    _kw_cdecl: _ => alias(token(prec(1, /cdecl/i)), "cdecl"),
-    _kw_varargs: _ => alias(token(prec(1, /varargs/i)), "varargs"),
-    _kw_register: _ => alias(token(prec(1, /register/i)), "register"),
-    _kw_pascal: _ => alias(token(prec(1, /pascal/i)), "pascal"),
-    _kw_winapi: _ => alias(token(prec(1, /winapi/i)), "winapi"),
-    _kw_noreturn: _ => alias(token(prec(1, /noreturn/i)), "noreturn"),
-    _kw_safecall: _ => alias(token(prec(1, /safecall/i)), "safecall"),
-    _kw_inline: _ => alias(token(prec(1, /inline/i)), "inline"),
-    _kw_deprecated: _ => alias(token(prec(1, /deprecated/i)), "deprecated"),
-    _kw_platform: _ => alias(token(prec(1, /platform/i)), "platform"),
-    _kw_out: _ => alias(token(prec(1, /out/i)), "out"),
-    _kw_array: _ => alias(token(prec(1, /array/i)), "array"),
-    _kw_file: _ => alias(token(prec(1, /file/i)), "file"),
-    _kw_string: _ => alias(token(prec(1, /string/i)), "string"),
-    _kw_set: _ => alias(token(prec(1, /set/i)), "set"),
-    _kw_inherited: _ => alias(token(prec(1, /inherited/i)), "inherited"),
-    _kw_raise: _ => alias(token(prec(1, /raise/i)), "raise"),
-    _kw_at: _ => alias(token(prec(1, /at/i)), "at"),
-    _kw_exit: _ => alias(token(prec(1, /exit/i)), "exit"),
-    _kw_break: _ => alias(token(prec(1, /break/i)), "break"),
-    _kw_continue: _ => alias(token(prec(1, /continue/i)), "continue"),
-    _kw_reference: _ => alias(token(prec(1, /reference/i)), "reference"),
-    _kw_object: _ => alias(token(prec(1, /object/i)), "object"),
-    _kw_strict: _ => alias(token(prec(1, /strict/i)), "strict"),
-    _kw_absolute: _ => alias(token(prec(1, /absolute/i)), "absolute"),
-    _kw_dynamic: _ => alias(token(prec(1, /dynamic/i)), "dynamic"),
-    _kw_final: _ => alias(token(prec(1, /final/i)), "final"),
-    _kw_message: _ => alias(token(prec(1, /message/i)), "message"),
-    _kw_experimental: _ => alias(token(prec(1, /experimental/i)), "experimental")
   }
 });
 
+/**
+ * 
+ * @param {String} name 
+ * @returns {AliasRule}
+ */
+function kw(name) {
+  return alias(new RegExp(name, 'i'), name);
+}
 
 /**
  * Creates a rule to optionally match one or more of the rules separated by `separator`
