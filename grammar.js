@@ -310,7 +310,7 @@ export default grammar({
       optional($.array_parameter_list),
       optional($._type_declaration),
       repeat($.property_attribute),
-      optional(seq(';', $._kw_default)),
+      optional(seq(';', choice($._kw_default, $._kw_nodefault))),
       optional(';')
     ),
 
@@ -384,6 +384,7 @@ export default grammar({
       $._kw_dynamic,
       $._kw_final,
       $._kw_experimental,
+      $._kw_varargs,
       $.message_directive,
       $.hint_directive,
       $.dispid_directive
@@ -679,6 +680,7 @@ export default grammar({
     raise_statement: $ => seq(
       $._kw_raise,
       optional($.expression),
+      optional(seq($._kw_at, $.expression)),
       optional(';')
     ),
 
@@ -1166,7 +1168,7 @@ export default grammar({
 
     boolean_literal: _ => token(prec(1, /true|false/i)),
     nil_literal: _ => alias(/nil/i, "nil"),
-
+    
     // Keywords — case insensitive
     _kw_begin: _ => alias(token(prec(1, /begin/i)), "begin"),
     _kw_end: _ => alias(token(prec(1, /end/i)), "end"),
@@ -1240,6 +1242,7 @@ export default grammar({
     _kw_write: _ => alias(token(prec(1, /write/i)), "write"),
     _kw_stored: _ => alias(token(prec(1, /stored/i)), "stored"),
     _kw_default: _ => alias(token(prec(1, /default/i)), "default"),
+    _kw_nodefault: _ => alias(token(prec(1, /nodefault/i)), "nodefault"),
     _kw_dispid: _ => alias(token(prec(1, /dispid/i)), "dispid"),
     _kw_implements: _ => alias(token(prec(1, /implements/i)), "implements"),
     _kw_readonly: _ => alias(token(prec(1, /readonly/i)), "readonly"),
@@ -1258,6 +1261,7 @@ export default grammar({
     _kw_forward: _ => alias(token(prec(1, /forward/i)), "forward"),
     _kw_name: _ => alias(token(prec(1, /name/i)), "name"),
     _kw_cdecl: _ => alias(token(prec(1, /cdecl/i)), "cdecl"),
+    _kw_varargs: _ => alias(token(prec(1, /varargs/i)), "varargs"),
     _kw_register: _ => alias(token(prec(1, /register/i)), "register"),
     _kw_pascal: _ => alias(token(prec(1, /pascal/i)), "pascal"),
     _kw_winapi: _ => alias(token(prec(1, /winapi/i)), "winapi"),
@@ -1273,6 +1277,7 @@ export default grammar({
     _kw_set: _ => alias(token(prec(1, /set/i)), "set"),
     _kw_inherited: _ => alias(token(prec(1, /inherited/i)), "inherited"),
     _kw_raise: _ => alias(token(prec(1, /raise/i)), "raise"),
+    _kw_at: _ => alias(token(prec(1, /at/i)), "at"),
     _kw_exit: _ => alias(token(prec(1, /exit/i)), "exit"),
     _kw_break: _ => alias(token(prec(1, /break/i)), "break"),
     _kw_continue: _ => alias(token(prec(1, /continue/i)), "continue"),
