@@ -126,7 +126,7 @@ export default grammar({
     ),
 
     file_header: $ => seq(
-      field('file_type', choice($._kw_unit, $._kw_program, $._kw_library)),
+      field('file_type', choice($._kw_unit, $._kw_program, $._kw_library, $._kw_package)),
       field('name', $._name),
       optional(seq($._kw_deprecated, field('message', $.compound_string_literal))),
       ';'
@@ -147,6 +147,16 @@ export default grammar({
       repeat($.import),
     ),
 
+    contains_clause: $ => seq(
+      $._kw_contains,
+      repeat($.import)
+    ),
+
+    requires_clause: $ => seq(
+      $._kw_requires,
+      repeat($.import)
+    ),
+
     exports_clause: $ => seq(
       $._kw_exports,
       repeat($.export)
@@ -162,7 +172,7 @@ export default grammar({
     import: $ => seq(
       field('name', $._name),
       optional(seq(
-        $._kw_in, 
+        $._kw_in,
         field('path', $.compound_string_literal))
       ),
       optional(choice(',', ';'))
@@ -175,6 +185,8 @@ export default grammar({
       $.function_declaration,
       $.forward_function_declaration,
       $.uses_clause,
+      $.requires_clause,
+      $.contains_clause,
       $.exports_clause,
       $.label_declaration
     ),
@@ -259,7 +271,8 @@ export default grammar({
         $._kw_published,
         $._kw_public,
         $._kw_protected,
-        $._kw_private
+        $._kw_private,
+        $._kw_automated
       )),
       repeat($.class_member),
     ),
@@ -362,6 +375,8 @@ export default grammar({
       $._kw_cdecl,
       $._kw_register,
       $._kw_pascal,
+      $._kw_winapi,
+      $._kw_noreturn,
       $._kw_safecall,
       $._kw_inline,
       $._kw_reintroduce,
@@ -507,6 +522,12 @@ export default grammar({
       field('type', $.type)
     ),
 
+    file_type: $ => seq(
+      $._kw_file,
+      $._kw_of,
+      $.type
+    ),
+
     index_range: $ => seq(
       '[',
       commaSep1(choice(
@@ -589,6 +610,7 @@ export default grammar({
       optional(';'), $._kw_external,
       optional(field('source', choice($.literal, $._name))),
       optional(seq($._kw_name, field('original_name', $.expression))),
+      optional($._kw_delayed),
       optional(';')
     ),
 
@@ -902,6 +924,8 @@ export default grammar({
       field('operand', $.expression),
     )),
 
+    not_in: $ => seq($._kw_not, $._kw_in),
+
     binary_expression: $ => {
       /** @type {Array<[string|Rule, number]>} */
       const table = [
@@ -913,6 +937,7 @@ export default grammar({
         [$._kw_shl, PREC.MULTIPLICATIVE],
         [$._kw_shr, PREC.MULTIPLICATIVE],
         [$._kw_as, PREC.MULTIPLICATIVE],
+        [$.not_in, PREC.MULTIPLICATIVE],
         ['+', PREC.ADDITIVE],
         ['-', PREC.ADDITIVE],
         [$._kw_or, PREC.ADDITIVE],
@@ -1060,9 +1085,6 @@ export default grammar({
       $.char_literal,
     )),
 
-    boolean_literal: _ => token(prec(1, /true|false/i)),
-
-    nil_literal: _ => token(prec(1, /nil/i)),
     //#endregion
     _simple_name: $ => choice(
       $.identifier,
@@ -1142,17 +1164,23 @@ export default grammar({
 
     identifier: $ => /[&\p{L}_][&\p{L}0-9_]*/u,
 
+    boolean_literal: _ => token(prec(1, /true|false/i)),
+    nil_literal: _ => alias(/nil/i, "nil"),
+
     // Keywords — case insensitive
     _kw_begin: _ => alias(token(prec(1, /begin/i)), "begin"),
     _kw_end: _ => alias(token(prec(1, /end/i)), "end"),
     _kw_program: _ => alias(token(prec(1, /program/i)), "program"),
     _kw_library: _ => alias(token(prec(1, /library/i)), "library"),
+    _kw_package: _ => alias(token(prec(1, /package/i)), "package"),
     _kw_unit: _ => alias(token(prec(1, /unit/i)), "unit"),
     _kw_interface: _ => alias(token(prec(1, /interface/i)), "interface"),
     _kw_implementation: _ => alias(token(prec(1, /implementation/i)), "implementation"),
     _kw_initialization: _ => alias(token(prec(1, /initialization/i)), "initialization"),
     _kw_finalization: _ => alias(token(prec(1, /finalization/i)), "finalization"),
     _kw_uses: _ => alias(token(prec(1, /uses/i)), "uses"),
+    _kw_contains: _ => alias(token(prec(1, /contains/i)), "contains"),
+    _kw_requires: _ => alias(token(prec(1, /requires/i)), "requires"),
     _kw_exports: _ => alias(token(prec(1, /exports/i)), "exports"),
     _kw_type: _ => alias(token(prec(1, /type/i)), "type"),
     _kw_var: _ => alias(token(prec(1, /var/i)), "var"),
@@ -1205,6 +1233,7 @@ export default grammar({
     _kw_protected: _ => alias(token(prec(1, /protected/i)), "protected"),
     _kw_public: _ => alias(token(prec(1, /public/i)), "public"),
     _kw_published: _ => alias(token(prec(1, /published/i)), "published"),
+    _kw_automated: _ => alias(token(prec(1, /automated/i)), "automated"),
     _kw_property: _ => alias(token(prec(1, /property/i)), "property"),
     _kw_index: _ => alias(token(prec(1, /index/i)), "index"),
     _kw_read: _ => alias(token(prec(1, /read/i)), "read"),
@@ -1225,17 +1254,21 @@ export default grammar({
     _kw_static: _ => alias(token(prec(1, /static/i)), "static"),
     _kw_stdcall: _ => alias(token(prec(1, /stdcall/i)), "stdcall"),
     _kw_external: _ => alias(token(prec(1, /external/i)), "external"),
+    _kw_delayed: _ => alias(token(prec(1, /delayed/i)), "delayed"),
     _kw_forward: _ => alias(token(prec(1, /forward/i)), "forward"),
     _kw_name: _ => alias(token(prec(1, /name/i)), "name"),
     _kw_cdecl: _ => alias(token(prec(1, /cdecl/i)), "cdecl"),
     _kw_register: _ => alias(token(prec(1, /register/i)), "register"),
     _kw_pascal: _ => alias(token(prec(1, /pascal/i)), "pascal"),
+    _kw_winapi: _ => alias(token(prec(1, /winapi/i)), "winapi"),
+    _kw_noreturn: _ => alias(token(prec(1, /noreturn/i)), "noreturn"),
     _kw_safecall: _ => alias(token(prec(1, /safecall/i)), "safecall"),
     _kw_inline: _ => alias(token(prec(1, /inline/i)), "inline"),
     _kw_deprecated: _ => alias(token(prec(1, /deprecated/i)), "deprecated"),
     _kw_platform: _ => alias(token(prec(1, /platform/i)), "platform"),
     _kw_out: _ => alias(token(prec(1, /out/i)), "out"),
     _kw_array: _ => alias(token(prec(1, /array/i)), "array"),
+    _kw_file: _ => alias(token(prec(1, /file/i)), "file"),
     _kw_string: _ => alias(token(prec(1, /string/i)), "string"),
     _kw_set: _ => alias(token(prec(1, /set/i)), "set"),
     _kw_inherited: _ => alias(token(prec(1, /inherited/i)), "inherited"),
@@ -1251,7 +1284,7 @@ export default grammar({
     _kw_final: _ => alias(token(prec(1, /final/i)), "final"),
     _kw_message: _ => alias(token(prec(1, /message/i)), "message"),
     _kw_experimental: _ => alias(token(prec(1, /experimental/i)), "experimental")
-  },
+  }
 });
 
 
