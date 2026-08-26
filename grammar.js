@@ -101,10 +101,11 @@ export default grammar({
 
   conflicts: $ => [
     [$._simple_name, $.generic_name],
+    [$.short_string, $.identifier],
+    [$.identifier, $._reserved_identifier],
     [$._reserved_name, $._reserved_generic_name],
     [$.function_name, $._reserved_generic_name],
     [$._inherited_call_expression, $.call_expression],
-    [$.function_name, $.generic_name],
     [$.enum_value, $._simple_name],
 
     [$.global_declaration, $.variable_declarator],
@@ -147,12 +148,11 @@ export default grammar({
     [$.case_statement],
     [$.case_branch],
     [$.goto_statement],
-    [$.short_string, $.type]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
   // so keyword rules that match the same pattern take priority
-  word: $ => $.identifier,
+  word: $ => $._identifier_token,
 
   supertypes: $ => [
     $.comment,
@@ -578,7 +578,6 @@ export default grammar({
       $.enum_type,
       $.short_string,
       $.file_type,
-      kw('string')
     ),
 
     short_string: $ => seq(
@@ -700,7 +699,7 @@ export default grammar({
 
     function_name: $ => seq(
       optional(field('qualifier', seq($._name, '.'))),
-      field('name', reserved('properties', $.identifier))
+      field('name', $._reserved_identifier)
     ),
 
 
@@ -1072,7 +1071,7 @@ export default grammar({
     )),
 
     call_expression: $ => prec(PREC.CALL, seq(
-      field('function', choice($.lvalue_expression, $.parenthesized_expression, kw('string'))),
+      field('function', choice($.lvalue_expression, $.parenthesized_expression)),
       $.argument_list,
     )),
 
@@ -1090,7 +1089,7 @@ export default grammar({
 
     argument_list: $ => seq(
       '(',
-      commaSep(choice($.expression, kw('string'))),
+      commaSep($.expression),
       ')'
     ),
 
@@ -1174,19 +1173,19 @@ export default grammar({
     generic_name: $ => seq($.identifier, $.type_argument_list),
 
     _reserved_name: $ => choice(
-      reserved('properties', $.identifier),
+      $._reserved_identifier,
       alias($._reserved_generic_name, $.generic_name)
     ),
 
     _reserved_generic_name: $ => seq(
-      reserved('properties', $.identifier),
+      $._reserved_identifier,
       $.type_argument_list
     ),
 
     type_argument_list: $ => seq(
       '<',
       choice(
-        commaSep(choice($._name, $.array_type, kw('string'))),
+        commaSep(choice($._name, $.array_type)),
       ),
       '>',
     ),
@@ -1213,7 +1212,6 @@ export default grammar({
       kw('interface'),
       kw('constructor'),
       kw('unmanaged'),
-      kw('string'),
       $._name,
     ),
 
@@ -1253,7 +1251,16 @@ export default grammar({
     brace_comment: _ => token(seq('{', /[^}]*/, '}')),
     block_comment: _ => token(seq('(*', /[^*]*\*+([^*)][^*]*\*+)*/, ')')),
 
-    identifier: $ => /[&\p{L}_][&\p{L}0-9_]*/u,
+    _identifier_token: $ => /[&\p{L}_][&\p{L}0-9_]*/u,
+    identifier: $ => choice(
+      $._identifier_token,
+      kw('string')
+    ),
+
+    _reserved_identifier: $ => reserved(
+      'properties',
+      choice($._identifier_token, kw('string'))
+    ),
 
     boolean_literal: _ => token(prec(1, /true|false/i)),
     nil_literal: _ => alias(/nil/i, "nil"),
