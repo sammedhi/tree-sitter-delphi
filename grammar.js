@@ -94,11 +94,15 @@ export default grammar({
       /while/i,
       /with/i,
       /xor/i,
-    ]
+    ],
+
+    properties: _ => []
   },
 
   conflicts: $ => [
     [$._simple_name, $.generic_name],
+    [$._reserved_name, $._reserved_generic_name],
+    [$.function_name, $._reserved_generic_name],
     [$._inherited_call_expression, $.call_expression],
     [$.function_name, $.generic_name],
     [$.enum_value, $._simple_name],
@@ -696,7 +700,7 @@ export default grammar({
 
     function_name: $ => seq(
       optional(field('qualifier', seq($._name, '.'))),
-      field('name', $.identifier)
+      field('name', reserved('properties', $.identifier))
     ),
 
 
@@ -1169,6 +1173,16 @@ export default grammar({
 
     generic_name: $ => seq($.identifier, $.type_argument_list),
 
+    _reserved_name: $ => choice(
+      reserved('properties', $.identifier),
+      alias($._reserved_generic_name, $.generic_name)
+    ),
+
+    _reserved_generic_name: $ => seq(
+      reserved('properties', $.identifier),
+      $.type_argument_list
+    ),
+
     type_argument_list: $ => seq(
       '<',
       choice(
@@ -1211,14 +1225,14 @@ export default grammar({
     qualified_name: $ => prec(PREC.DOT, seq(
       field('qualifier', $._name),
       '.',
-      field('name', choice($._simple_name, kw('string'))),
+      field('name', $._reserved_name),
     )),
 
     member_access_expression: $ => prec(PREC.DOT, seq(
       field('expression', choice($.expression, $._name)),
       '.',
-      field('name', choice($._simple_name)),
-    )),
+      field('name', $._reserved_name)),
+    ),
 
     asm_statement: $ => seq(
       kw('asm'),
