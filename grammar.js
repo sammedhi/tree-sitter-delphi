@@ -99,10 +99,14 @@ export default grammar({
     properties: _ => []
   },
 
+  inline: $ => [
+    $._identifier
+  ],
+
   conflicts: $ => [
     [$._simple_name, $.generic_name],
-    [$.short_string, $.identifier],
-    [$.identifier, $._reserved_identifier],
+    [$.generic_name, $._reserved_identifier],
+    [$.short_string, $._simple_name],
     [$._reserved_name, $._reserved_generic_name],
     [$.function_name, $._reserved_generic_name],
     [$._inherited_call_expression, $.call_expression],
@@ -152,7 +156,7 @@ export default grammar({
 
   // Tells tree-sitter that identifiers are the "word" token,
   // so keyword rules that match the same pattern take priority
-  word: $ => $._identifier_token,
+  word: $ => $.identifier,
 
   supertypes: $ => [
     $.comment,
@@ -236,7 +240,7 @@ export default grammar({
     ),
 
     export: $ => seq(
-      field('name', $.identifier),
+      field('name', $._identifier),
       optional($.argument_list),
       optional(seq(kw('name'), $.compound_string_literal)),
       optional(choice(',', ';'))
@@ -318,7 +322,7 @@ export default grammar({
     record_variant_part: $ => seq(
       kw('case'),
       optional(
-        seq(field('tag', $.identifier), ':'),
+        seq(field('tag', $._identifier), ':'),
       ),
       field('type', $._name),
       kw('of'),
@@ -370,7 +374,7 @@ export default grammar({
     class_field: $ => seq(
       optional($._attributes),
       optional(kw('class')),
-      commaSep1(field('name', $.identifier)),
+      commaSep1(field('name', $._identifier)),
       $._type_declaration,
       optional(';')
     ),
@@ -379,7 +383,7 @@ export default grammar({
       optional($._attributes),
       optional(kw('class')),
       kw('property'),
-      field('name', $.identifier),
+      field('name', $._identifier),
       optional($.array_parameter_list),
       optional($._type_declaration),
       repeat($.property_attribute),
@@ -435,7 +439,7 @@ export default grammar({
       optional(seq('=', field('default_value', $.expression))),
     ),
 
-    argument_name: $ => $.identifier,
+    argument_name: $ => $._identifier,
 
     _method_directive: $ => seq(optional(';'), $.method_directive),
     method_directive: $ => choice(
@@ -470,7 +474,7 @@ export default grammar({
 
     message_directive: $ => seq(
       kw('message'),
-      field('id', $.identifier)
+      field('id', $._identifier)
     ),
 
     hint_directive: $ => seq(
@@ -501,7 +505,7 @@ export default grammar({
 
     type_declaration: $ => seq(
       optional($._attributes),
-      field('name', $.identifier),
+      field('name', $._identifier),
       optional($.type_parameter_list),
       '=',
       $._type_definition,
@@ -511,7 +515,7 @@ export default grammar({
 
     global_declaration: $ => seq(
       optional($._attributes),
-      commaSep1($.identifier),
+      commaSep1($._identifier),
       optional($._type_declaration),
       optional(seq(
         '=',
@@ -560,7 +564,7 @@ export default grammar({
     ),
 
     enum_value: $ => seq(
-      field('name', $.identifier),
+      field('name', $._identifier),
       optional(seq('=', field('value', $.expression))),
     ),
 
@@ -727,12 +731,12 @@ export default grammar({
 
     label_declaration: $ => seq(
       kw('label'),
-      commaSep1(choice($.identifier, $.literal)),
+      commaSep1(choice($._identifier, $.literal)),
       ';'
     ),
 
     labeled_statement: $ => seq(
-      field('label', choice($.identifier, $.literal)),
+      field('label', choice($._identifier, $.literal)),
       ':',
       $.statement
     ),
@@ -741,7 +745,7 @@ export default grammar({
 
     goto_statement: $ => seq(
       kw('goto'),
-      field('label', $.identifier),
+      field('label', $._identifier),
       optional(';')
     ),
 
@@ -829,7 +833,7 @@ export default grammar({
     _variable_initialization: $ => seq(choice(':=', '='), field('initial_value', $.expression)),
 
     variable_declarator: $ =>
-      field("name", $.identifier),
+      field("name", $._identifier),
 
     block_statement: $ => seq(
       kw('begin'),
@@ -872,7 +876,7 @@ export default grammar({
     ),
 
     _for_variable: $ => choice(
-      $.identifier,
+      $._identifier,
       alias($.for_variable_declaration, $.variable_declaration)
     ),
 
@@ -924,7 +928,7 @@ export default grammar({
 
     exception_handler: $ => seq(
       kw('on'),
-      optional(seq(field('variable', $.identifier), ':')),
+      optional(seq(field('variable', $._identifier), ':')),
       field('type', $._name),
       kw('do'),
       field('body', optional($.statement)),
@@ -1059,7 +1063,7 @@ export default grammar({
     )),
 
     labeled_value: $ => seq(
-      field('label', $.identifier),
+      field('label', $._identifier),
       ':',
       field('value', $.expression)
     ),
@@ -1166,11 +1170,11 @@ export default grammar({
 
     //#endregion
     _simple_name: $ => choice(
-      $.identifier,
+      $._identifier,
       $.generic_name
     ),
 
-    generic_name: $ => seq($.identifier, $.type_argument_list),
+    generic_name: $ => seq($._identifier, $.type_argument_list),
 
     _reserved_name: $ => choice(
       $._reserved_identifier,
@@ -1197,7 +1201,7 @@ export default grammar({
     ),
 
     type_parameter: $ => seq(
-      commaSep1(field('name', $.identifier)),
+      commaSep1(field('name', $._identifier)),
       optional(seq(
         ':',
         $.type_constraints,
@@ -1251,15 +1255,15 @@ export default grammar({
     brace_comment: _ => token(seq('{', /[^}]*/, '}')),
     block_comment: _ => token(seq('(*', /[^*]*\*+([^*)][^*]*\*+)*/, ')')),
 
-    _identifier_token: $ => /[&\p{L}_][&\p{L}0-9_]*/u,
-    identifier: $ => choice(
-      $._identifier_token,
+    identifier: $ => /[&\p{L}_][&\p{L}0-9_]*/u,
+    _identifier: $ => choice(
+      $.identifier,
       kw('string')
     ),
 
     _reserved_identifier: $ => reserved(
       'properties',
-      choice($._identifier_token, kw('string'))
+      $.identifier
     ),
 
     boolean_literal: _ => token(prec(1, /true|false/i)),
