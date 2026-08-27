@@ -123,9 +123,7 @@ export default grammar({
     [$.class_property],
     [$.type, $.object_of_type],
     [$.forward_interface_definition, $.interface_definition],
-    [$.attribute, $.index_range],
     [$.lvalue_expression, $._call_statement],
-    [$.qualified_name, $.member_access_expression],
     [$._type_definition, $.type],
     [$.index_range, $.not_lvalue_expression],
     [$.record_variant_part],
@@ -726,6 +724,7 @@ export default grammar({
       $.with_statement,
       $.element_access_expression,
       $.asm_statement,
+      alias($.parenthesized_expression, $.parenthesis_statement),
       $._empty_statement
     ),
 
@@ -1053,7 +1052,7 @@ export default grammar({
     ),
 
     dereference_expression: $ => prec(PREC.DEREFERENCE, seq(
-      field('operand', $.expression),
+      field('operand', choice($.parenthesized_expression, $.lvalue_expression)),
       '^'
     )),
 
@@ -1119,7 +1118,7 @@ export default grammar({
     ),
 
     element_access_expression: $ => prec(PREC.POSTFIX, seq(
-      field('expression', $.expression),
+      field('expression', choice($.parenthesized_expression, $.lvalue_expression)),
       field('subscript', seq(
         '[',
         commaSep1($.expression),
@@ -1231,7 +1230,7 @@ export default grammar({
     )),
 
     member_access_expression: $ => prec(PREC.DOT, seq(
-      field('expression', choice($.expression, $._name)),
+      field('expression', choice($.parenthesized_expression, $.lvalue_expression, $.literal)),
       '.',
       field('name', $._reserved_name)),
     ),
