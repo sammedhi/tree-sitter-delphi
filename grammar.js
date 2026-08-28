@@ -473,7 +473,7 @@ export default grammar({
 
     message_directive: $ => seq(
       kw('message'),
-      field('id', $._identifier)
+      field('id', $.expression)
     ),
 
     hint_directive: $ => seq(
