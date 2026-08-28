@@ -26,6 +26,7 @@ export default grammar({
   extras: $ => [
     /\s/,
     $.comment,
+    $.invalid_character
   ],
 
   reserved: {
@@ -1253,7 +1254,7 @@ export default grammar({
       kw('end'),
       optional(';')
     ),
-
+    
     comment: $ => choice(
       $.line_comment,
       $.doc_comment,
@@ -1279,6 +1280,8 @@ export default grammar({
 
     boolean_literal: _ => token(prec(1, /true|false/i)),
     nil_literal: _ => alias(/nil/i, "nil"),
+
+    invalid_character: $ => /[\x00-\x08\x0B\x0E-\x1F\x7F-\x9F\u200B-\u200F\u2028\u2029\uFEFF\uFFFD]/,
   }
 });
 
