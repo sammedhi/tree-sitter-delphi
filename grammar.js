@@ -663,7 +663,7 @@ export default grammar({
 
     function_type: $ => prec(1, seq(
       field('kind', choice(kw('function'), kw('procedure'))),
-      $.parameter_list,
+      optional($.parameter_list),
       optional($._type_declaration),
       repeat($._method_directive)
     )),
