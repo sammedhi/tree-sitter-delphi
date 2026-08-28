@@ -1001,7 +1001,7 @@ export default grammar({
     ),
 
     unary_expression: $ => prec(PREC.UNARY, seq(
-      field('operator', choice('-', kw('not'))),
+      field('operator', choice('+', '-', kw('not'))),
       field('operand', $.expression),
     )),
 
