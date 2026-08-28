@@ -112,6 +112,7 @@ export default grammar({
     [$._inherited_call_expression, $.call_expression],
     [$.enum_value, $._simple_name],
     [$.function_type],
+    [$.parameter_declaration],
 
     [$.global_declaration, $.variable_declarator],
     [$._type_declaration_section],
@@ -433,6 +434,7 @@ export default grammar({
       // TODO use alias for the modifier instead
       optional($._attributes),
       optional(field('modifier', choice(kw('const'), kw('var'), kw('out')))),
+      optional($._attributes),
       commaSep1($.argument_name),
       optional($._type_declaration),
       optional(seq('=', field('default_value', $.expression))),
