@@ -111,6 +111,7 @@ export default grammar({
     [$.function_name, $._reserved_generic_name],
     [$._inherited_call_expression, $.call_expression],
     [$.enum_value, $._simple_name],
+    [$.function_type],
 
     [$.global_declaration, $.variable_declarator],
     [$._type_declaration_section],
@@ -461,7 +462,6 @@ export default grammar({
       kw('experimental'),
       kw('varargs'),
       $.message_directive,
-      $.hint_directive,
       $.dispid_directive
     ),
 
@@ -655,7 +655,8 @@ export default grammar({
     function_type: $ => prec(1, seq(
       field('_kind', choice(kw('function'), kw('procedure'))),
       $.parameter_list,
-      optional($._type_declaration)
+      optional($._type_declaration),
+      repeat($._method_directive)
     )),
 
     function_declaration: $ => seq(
@@ -673,6 +674,8 @@ export default grammar({
       optional($.parameter_list),
       optional(field('return_type', seq(':', $.type))),
       repeat($._method_directive),
+      optional(';'),
+      optional($.hint_directive),
       optional(';')
     ),
 
@@ -1133,6 +1136,7 @@ export default grammar({
       )),
       optional($.parameter_list),
       optional(field('type', $._type_declaration)),
+      repeat($._method_directive),
       repeat($.declaration),
       choice($.block_statement, $.asm_statement),
     ),
