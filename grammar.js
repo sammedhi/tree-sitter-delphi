@@ -1266,7 +1266,7 @@ export default grammar({
     brace_comment: _ => token(seq('{', /[^}]*/, '}')),
     block_comment: _ => token(seq('(*', /[^*]*\*+([^*)][^*]*\*+)*/, ')')),
 
-    identifier: $ => /[&\p{L}_][&\p{L}0-9_]*/u,
+    identifier: $ =>  /[&\p{L}_][&\p{L}\p{Nd}_]*/u,
     _identifier: $ => choice(
       $.identifier,
       kw('string')
