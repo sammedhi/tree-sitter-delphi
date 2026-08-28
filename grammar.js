@@ -1124,9 +1124,10 @@ export default grammar({
     const_array_constructor_expression: $ => seq(
       '(',
       choice(
-        sep($.expression, ','),
-        sep1($.labeled_value, ';')
+        sep($.expression, choice(',', ';')),
+        sep1($.labeled_value, choice(',', ';')),
       ),
+      optional(choice(',', ';')),
       ')'
     ),
 
