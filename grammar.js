@@ -209,7 +209,7 @@ export default grammar({
     ),
 
     section: $ => seq(
-      field('_kind', choice(
+      field('kind', choice(
         kw('interface'),
         kw('implementation'),
         kw('initialization'),
@@ -281,7 +281,7 @@ export default grammar({
     _attributes: $ => repeat1($.attribute_list),
 
     helper_definition: $ => seq(
-      field('_kind', choice(kw('class'), kw('record'))),
+      field('kind', choice(kw('class'), kw('record'))),
       kw('helper'),
       optional($.base_list),
       kw('for'),
@@ -363,7 +363,7 @@ export default grammar({
     ),
 
     method_resolution_clause: $ => seq(
-      field('_kind', choice(kw('function'), kw('procedure'))),
+      field('kind', choice(kw('function'), kw('procedure'))),
       field('interface_method', $._name),
       '=',
       field('implementing_method', $._simple_name),
@@ -391,7 +391,7 @@ export default grammar({
     ),
 
     property_attribute: $ => seq(
-      field('_kind', choice(
+      field('kind', choice(
         kw('read'),
         kw('write'),
         kw('index'),
@@ -475,7 +475,7 @@ export default grammar({
     ),
 
     hint_directive: $ => seq(
-      field('_kind', choice(kw('deprecated'), kw('platform'), kw('library'), kw('experimental'))),
+      field('kind', choice(kw('deprecated'), kw('platform'), kw('library'), kw('experimental'))),
       optional(field('message', $.compound_string_literal))
     ),
 
@@ -485,13 +485,13 @@ export default grammar({
     ),
 
     _type_declaration_section: $ => seq(
-      field('_kind', kw('type')),
+      field('kind', kw('type')),
       repeat($.type_declaration)
     ),
 
     _value_declaration_section: $ => seq(
       optional(kw('class')),
-      field('_kind', choice(
+      field('kind', choice(
         kw('var'),
         kw('threadvar'),
         kw('const'),
@@ -644,7 +644,7 @@ export default grammar({
     reference_to_type: $ => seq(
       kw('reference'),
       kw('to'),
-      field('_kind', choice(
+      field('kind', choice(
         kw('function'),
         kw('procedure')
       )),
@@ -659,7 +659,7 @@ export default grammar({
     ),
 
     function_type: $ => prec(1, seq(
-      field('_kind', choice(kw('function'), kw('procedure'))),
+      field('kind', choice(kw('function'), kw('procedure'))),
       $.parameter_list,
       optional($._type_declaration),
       repeat($._method_directive)
@@ -668,7 +668,7 @@ export default grammar({
     function_declaration: $ => seq(
       optional($._attributes),
       optional(kw('class')),
-      field('_kind', choice(
+      field('kind', choice(
         kw('procedure'),
         kw('function'),
         kw('constructor'),
@@ -1136,7 +1136,7 @@ export default grammar({
     )),
 
     anonymous_function_expression: $ => seq(
-      field('_kind', choice(
+      field('kind', choice(
         kw('function'),
         kw('procedure')
       )),
