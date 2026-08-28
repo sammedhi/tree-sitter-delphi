@@ -580,7 +580,14 @@ export default grammar({
       $.enum_type,
       $.short_string,
       $.file_type,
+      $.subrange_type
     ),
+
+    subrange_type: $ => prec.left(PREC.RANGE, seq(
+      field('from', choice($.literal, $._name)),
+      '..',
+      field('to', choice($.literal, $._name))
+    )),
 
     short_string: $ => seq(
       kw('string'),
