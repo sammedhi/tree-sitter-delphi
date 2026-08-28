@@ -508,7 +508,7 @@ export default grammar({
       optional($.type_parameter_list),
       '=',
       $._type_definition,
-      optional($.hint_directive),
+      repeat($.hint_directive),
       optional(';')
     ),
 
@@ -521,7 +521,7 @@ export default grammar({
         $._section_value,
       )),
       optional($.absolute_declaration),
-      optional($.hint_directive),
+      repeat($.hint_directive),
       optional(';')
     ),
 
@@ -683,7 +683,7 @@ export default grammar({
       optional(field('return_type', seq(':', $.type))),
       repeat($._method_directive),
       optional(';'),
-      optional($.hint_directive),
+      repeat($.hint_directive),
       optional(';')
     ),
 
