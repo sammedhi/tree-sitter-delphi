@@ -1152,9 +1152,9 @@ export default grammar({
     ),
 
     integer_literal: _ => token(choice(
-      /[0-9]+/,           // decimal
-      /\$[0-9a-fA-F]+/,  // hex
-      /%[01]+/,           // binary
+      /[0-9_]+/,           // decimal
+      /\$[0-9a-fA-F_]+/,  // hex
+      /%[01_]+/,           // binary
     )),
 
     float_literal: $ => token(choice(
