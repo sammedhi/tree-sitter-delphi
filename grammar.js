@@ -459,7 +459,6 @@ export default grammar({
       kw('static'),
       kw('dynamic'),
       kw('final'),
-      kw('experimental'),
       kw('varargs'),
       $.message_directive,
       $.dispid_directive
@@ -476,7 +475,7 @@ export default grammar({
     ),
 
     hint_directive: $ => seq(
-      field('_kind', choice(kw('deprecated'), kw('platform'), kw('library'))),
+      field('_kind', choice(kw('deprecated'), kw('platform'), kw('library'), kw('experimental'))),
       optional(field('message', $.compound_string_literal))
     ),
 
