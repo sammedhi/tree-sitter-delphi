@@ -982,6 +982,7 @@ export default grammar({
       $.dereference_expression,
       $.element_access_expression,
       $.call_expression,
+      $.address_of_expression
     )),
 
     // expression that can only exist as rvalue
