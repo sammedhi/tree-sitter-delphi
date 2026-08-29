@@ -114,6 +114,7 @@ export default grammar({
     [$.enum_value, $._simple_name],
     [$.function_type],
     [$.parameter_declaration],
+    [$.declaration, $.function_definition],
 
     [$.global_declaration, $.variable_declarator],
     [$._type_declaration_section],
@@ -683,14 +684,12 @@ export default grammar({
       optional($.parameter_list),
       optional(field('return_type', seq(':', $.type))),
       repeat($._method_directive),
-      optional(';'),
-      repeat($.hint_directive),
+      seq(optional(';'), repeat($.hint_directive)),
       optional(';')
     ),
 
     function_definition: $ => seq(
       field('header', $.function_declaration),
-      ';',
       repeat($.declaration),
       field('body', choice($.block_statement, $.asm_statement)),
       optional(';')
