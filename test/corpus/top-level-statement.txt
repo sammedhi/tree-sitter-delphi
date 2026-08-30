@@ -9,11 +9,8 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+    body: (block_statement)))
 
 ================================================================================
 Library
@@ -26,11 +23,8 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kLibrary)
       name: (identifier))
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+    body: (block_statement)))
 
 ================================================================================
 Unit - minimal (no initialization or finalization)
@@ -44,13 +38,9 @@ end.
 (source_file
   (unit_file
     (file_header
-      file_type: (kUnit)
       name: (identifier))
-    (section
-      kind: (kInterface))
-    (section
-      kind: (kImplementation))
-    (kEnd)))
+    (section)
+    (section)))
 
 ================================================================================
 Unit - with initialization
@@ -65,15 +55,10 @@ end.
 (source_file
   (unit_file
     (file_header
-      file_type: (kUnit)
       name: (identifier))
-    (section
-      kind: (kInterface))
-    (section
-      kind: (kImplementation))
-    (section
-      kind: (kInitialization))
-    (kEnd)))
+    (section)
+    (section)
+    (section)))
 
 ================================================================================
 Unit - with initialization and finalization
@@ -89,17 +74,11 @@ end.
 (source_file
   (unit_file
     (file_header
-      file_type: (kUnit)
       name: (identifier))
-    (section
-      kind: (kInterface))
-    (section
-      kind: (kImplementation))
-    (section
-      kind: (kInitialization))
-    (section
-      kind: (kFinalization))
-    (kEnd)))
+    (section)
+    (section)
+    (section)
+    (section)))
 
 ================================================================================
 Initialization with statements
@@ -119,14 +98,10 @@ end.
 (source_file
   (unit_file
     (file_header
-      file_type: (kUnit)
       name: (identifier))
+    (section)
+    (section)
     (section
-      kind: (kInterface))
-    (section
-      kind: (kImplementation))
-    (section
-      kind: (kInitialization)
       (assignment_statement
         left: (identifier)
         right: (integer_literal))
@@ -135,14 +110,12 @@ end.
         right: (compound_string_literal
           (string_literal))))
     (section
-      kind: (kFinalization)
       (assignment_statement
         left: (identifier)
         right: (integer_literal))
       (assignment_statement
         left: (identifier)
-        right: (float_literal)))
-    (kEnd)))
+        right: (float_literal)))))
 
 ================================================================================
 Var declaration section
@@ -158,10 +131,8 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     (declaration_section
-      kind: (kVar)
       (global_declaration
         (identifier)
         (identifier)
@@ -170,9 +141,7 @@ end.
       (global_declaration
         (identifier)
         type: (identifier)))
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+    body: (block_statement)))
 
 ================================================================================
 Const declaration section
@@ -190,10 +159,8 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     (declaration_section
-      kind: (kConst)
       (global_declaration
         (identifier)
         (integer_literal))
@@ -209,9 +176,7 @@ end.
         (identifier)
         type: (identifier)
         (integer_literal)))
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+    body: (block_statement)))
 
 ================================================================================
 Resourcestring declaration section
@@ -229,10 +194,8 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     (declaration_section
-      kind: (kResourcestring)
       (global_declaration
         (identifier)
         (compound_string_literal
@@ -241,6 +204,4 @@ end.
         (identifier)
         (compound_string_literal
           (string_literal))))
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+    body: (block_statement)))

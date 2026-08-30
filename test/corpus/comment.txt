@@ -9,12 +9,9 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     (line_comment)
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+    body: (block_statement)))
 
 ================================================================================
 Doc comment in program
@@ -29,11 +26,8 @@ end.
   (doc_comment)
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+    body: (block_statement)))
 
 ================================================================================
 Brace comment in program
@@ -47,12 +41,9 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     (brace_comment)
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+    body: (block_statement)))
 
 ================================================================================
 Block comment in program
@@ -66,12 +57,9 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     (block_comment)
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+    body: (block_statement)))
 
 ================================================================================
 Multiple comment types in unit
@@ -90,16 +78,12 @@ end.
   (doc_comment)
   (unit_file
     (file_header
-      file_type: (kUnit)
       name: (identifier))
     (line_comment)
-    (section
-      kind: (kInterface))
+    (section)
     (brace_comment)
-    (section
-      kind: (kImplementation))
-    (block_comment)
-    (kEnd)))
+    (section)
+    (block_comment)))
 
 ================================================================================
 Multiline brace comment
@@ -116,12 +100,9 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     (brace_comment)
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+    body: (block_statement)))
 
 ================================================================================
 Multiline block comment
@@ -138,9 +119,6 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     (block_comment)
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+    body: (block_statement)))
