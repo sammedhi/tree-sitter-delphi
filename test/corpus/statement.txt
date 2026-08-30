@@ -13,34 +13,27 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (variable_declaration_statement
-        (kVar)
         (variable_declarator
           name: (identifier))
         type: (identifier))
       (variable_declaration_statement
-        (kVar)
         (variable_declarator
           name: (identifier))
         type: (identifier)
         initial_value: (integer_literal))
       (variable_declaration_statement
-        (kVar)
         (variable_declarator
           name: (identifier))
         initial_value: (integer_literal))
       (variable_declaration_statement
-        (kVar)
         (variable_declarator
           name: (identifier))
         (variable_declarator
           name: (identifier))
-        type: (identifier))
-      (kEnd))))
+        type: (identifier)))))
 
 ================================================================================
 Empty block statement in program
@@ -53,11 +46,8 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+    body: (block_statement)))
 
 ================================================================================
 Nested block statement
@@ -72,14 +62,9 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
-      (block_statement
-        (kBegin)
-        (kEnd))
-      (kEnd))))
+      (block_statement))))
 
 ================================================================================
 Multiple nested block statements
@@ -96,17 +81,10 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
-      (block_statement
-        (kBegin)
-        (kEnd))
-      (block_statement
-        (kBegin)
-        (kEnd))
-      (kEnd))))
+      (block_statement)
+      (block_statement))))
 
 ================================================================================
 Simple assignment
@@ -120,14 +98,11 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (assignment_statement
         left: (identifier)
-        right: (integer_literal))
-      (kEnd))))
+        right: (integer_literal)))))
 
 ================================================================================
 For loop
@@ -144,35 +119,25 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (for_numeric_statement
-        (kFor)
         variable: (identifier)
         initial_value: (integer_literal)
-        direction: (kTo)
         final_value: (integer_literal)
-        (kDo)
         body: (assignment_statement
           left: (identifier)
           right: (integer_literal)))
       (for_numeric_statement
-        (kFor)
         variable: (variable_declaration
-          (kVar)
           (variable_declarator
             name: (identifier))
           type: (identifier))
         initial_value: (integer_literal)
-        direction: (kDownto)
         final_value: (integer_literal)
-        (kDo)
         body: (assignment_statement
           left: (identifier)
-          right: (integer_literal)))
-      (kEnd))))
+          right: (integer_literal))))))
 
 ================================================================================
 For each
@@ -189,33 +154,23 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (for_each_statement
-        (kFor)
         variable: (identifier)
-        (kIn)
         collection: (identifier)
-        (kDo)
         body: (assignment_statement
           left: (identifier)
           right: (integer_literal)))
       (for_each_statement
-        (kFor)
         variable: (variable_declaration
-          (kVar)
           (variable_declarator
             name: (identifier))
           type: (identifier))
-        (kIn)
         collection: (identifier)
-        (kDo)
         body: (assignment_statement
           left: (identifier)
-          right: (integer_literal)))
-      (kEnd))))
+          right: (integer_literal))))))
 
 ================================================================================
 While loop
@@ -230,20 +185,15 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (while_statement
-        (kWhile)
         condition: (binary_expression
           left: (identifier)
           right: (integer_literal))
-        (kDo)
         body: (assignment_statement
           left: (identifier)
-          right: (integer_literal)))
-      (kEnd))))
+          right: (integer_literal))))))
 
 ================================================================================
 Repeat until loop
@@ -260,20 +210,15 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (repeat_statement
-        (kRepeat)
         (assignment_statement
           left: (identifier)
           right: (integer_literal))
-        (kUntil)
         condition: (binary_expression
           left: (identifier)
-          right: (integer_literal)))
-      (kEnd))))
+          right: (integer_literal))))))
 
 ================================================================================
 If statement - no else
@@ -288,20 +233,15 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (if_statement
-        (kIf)
         condition: (binary_expression
           left: (identifier)
           right: (integer_literal))
-        (kThen)
         then: (assignment_statement
           left: (identifier)
-          right: (integer_literal)))
-      (kEnd))))
+          right: (integer_literal))))))
 
 ================================================================================
 If else statement
@@ -318,24 +258,18 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (if_statement
-        (kIf)
         condition: (binary_expression
           left: (identifier)
           right: (integer_literal))
-        (kThen)
         then: (assignment_statement
           left: (identifier)
           right: (integer_literal))
-        (kElse)
         else: (assignment_statement
           left: (identifier)
-          right: (integer_literal)))
-      (kEnd))))
+          right: (integer_literal))))))
 
 ================================================================================
 Case statement - literals and range
@@ -353,14 +287,10 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (case_statement
-        (kCase)
         value: (identifier)
-        (kOf)
         (case_branch
           pattern: (case_pattern
             (integer_literal))
@@ -382,9 +312,7 @@ end.
               final: (integer_literal)))
           body: (assignment_statement
             left: (identifier)
-            right: (integer_literal)))
-        (kEnd))
-      (kEnd))))
+            right: (integer_literal)))))))
 
 ================================================================================
 Unary expression
@@ -401,10 +329,8 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (assignment_statement
         left: (identifier)
         right: (unary_expression
@@ -416,17 +342,14 @@ end.
       (assignment_statement
         left: (identifier)
         right: (unary_expression
-          operator: (kNot)
           operand: (boolean_literal)))
       (assignment_statement
         left: (identifier)
         right: (unary_expression
-          operator: (kNot)
-          operand: (parenthesized_expression
+          operand: (const_array_constructor_expression
             (binary_expression
               left: (identifier)
-              right: (integer_literal)))))
-      (kEnd))))
+              right: (integer_literal))))))))
 
 ================================================================================
 Try finally
@@ -444,21 +367,17 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (try_finally_statement
-        (kTry)
-        (assignment_statement
-          left: (identifier)
-          right: (integer_literal))
-        (kFinally)
-        (assignment_statement
-          left: (identifier)
-          right: (integer_literal))
-        (kEnd))
-      (kEnd))))
+        (try_statements
+          (assignment_statement
+            left: (identifier)
+            right: (integer_literal)))
+        (finally_statements
+          (assignment_statement
+            left: (identifier)
+            right: (integer_literal)))))))
 
 ================================================================================
 Try except - typed handlers with else
@@ -479,37 +398,28 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (try_except_statement
-        (kTry)
-        (assignment_statement
-          left: (identifier)
-          right: (integer_literal))
-        (kExcept)
+        (try_statements
+          (assignment_statement
+            left: (identifier)
+            right: (integer_literal)))
         (exception_handler
-          (kOn)
           variable: (identifier)
           type: (identifier)
-          (kDo)
           body: (assignment_statement
             left: (identifier)
             right: (integer_literal)))
         (exception_handler
-          (kOn)
           type: (identifier)
-          (kDo)
           body: (assignment_statement
             left: (identifier)
             right: (integer_literal)))
-        (kElse)
-        (assignment_statement
-          left: (identifier)
-          right: (integer_literal))
-        (kEnd))
-      (kEnd))))
+        (except_else_statements
+          (assignment_statement
+            left: (identifier)
+            right: (integer_literal)))))))
 
 ================================================================================
 Break, continue, inherited, exit statements
@@ -530,28 +440,18 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
-      (inherited_statement
-        (kInherited))
+      (inherited_statement)
       (while_statement
-        (kWhile)
         condition: (boolean_literal)
-        (kDo)
         body: (block_statement
-          (kBegin)
           (break_statement)
-          (continue_statement)
-          (kEnd)))
+          (continue_statement)))
+      (exit_statement)
       (exit_statement
-        (kExit))
-      (exit_statement
-        (kExit)
         (argument_list
-          (boolean_literal)))
-      (kEnd))))
+          (boolean_literal))))))
 
 ================================================================================
 Raise statement
@@ -566,12 +466,9 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (raise_statement
-        (kRaise)
         (call_expression
           function: (member_access_expression
             expression: (identifier)
@@ -580,15 +477,13 @@ end.
             (compound_string_literal
               (string_literal)))))
       (raise_statement
-        (kRaise)
         (call_expression
           function: (member_access_expression
             expression: (identifier)
             name: (identifier))
           (argument_list
             (compound_string_literal
-              (string_literal)))))
-      (kEnd))))
+              (string_literal))))))))
 
 ================================================================================
 With statement
@@ -604,19 +499,14 @@ end.
 (source_file
   (runnable_file
     (file_header
-      (kProgram)
       (identifier))
     (block_statement
-      (kBegin)
       (with_statement
-        (kWith)
         (call_expression
           (member_access_expression
             (identifier)
             (identifier))
           (argument_list))
-        (kDo)
         (assignment_statement
           (identifier)
-          (integer_literal)))
-      (kEnd))))
+          (integer_literal))))))

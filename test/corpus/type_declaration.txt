@@ -14,25 +14,18 @@ end.
 (source_file
   (unit_file
     (file_header
-      file_type: (kUnit)
       name: (identifier))
     (section
-      kind: (kInterface)
       (declaration_section
-        kind: (kType)
         (type_declaration
           name: (identifier)
           (type_alias_definition
             type: (identifier))))
       (declaration_section
-        kind: (kType)
         (type_declaration
           name: (identifier)
-          (type_alias_definition
-            type: (identifier)))))
-    (section
-      kind: (kImplementation))
-    (kEnd)))
+          (type_alias_definition))))
+    (section)))
 
 ================================================================================
 Type alias
@@ -48,12 +41,9 @@ end.
 (source_file
   (unit_file
     (file_header
-      file_type: (kUnit)
       name: (identifier))
     (section
-      kind: (kInterface)
       (declaration_section
-        kind: (kType)
         (type_declaration
           name: (identifier)
           (type_alias_definition
@@ -62,9 +52,7 @@ end.
                 qualifier: (identifier)
                 name: (identifier))
               name: (identifier))))))
-    (section
-      kind: (kImplementation))
-    (kEnd)))
+    (section)))
 
 ================================================================================
 Class declaration
@@ -93,16 +81,12 @@ end.
 (source_file
   (unit_file
     (file_header
-      file_type: (kUnit)
       name: (identifier))
     (section
-      kind: (kInterface)
       (declaration_section
-        kind: (kType)
         (type_declaration
           name: (identifier)
           (class_definition
-            (kClass)
             (base_list
               (identifier)
               (identifier))
@@ -110,17 +94,13 @@ end.
               name: (identifier)
               type: (identifier))
             (class_section
-              visibility: (kPrivate)
               (class_field
-                name: (identifier)
-                type: (identifier))
+                name: (identifier))
               (class_field
                 name: (identifier)
                 type: (identifier)))
             (class_section
-              visibility: (kPublic)
               (function_declaration
-                kind: (kConstructor)
                 name: (function_name
                   name: (identifier))
                 (parameter_list
@@ -128,63 +108,42 @@ end.
                     (argument_name
                       (identifier))
                     (argument_name
-                      (identifier))
-                    type: (identifier))
+                      (identifier)))
                   (parameter_declaration
                     (argument_name
                       (identifier))
                     type: (identifier))))
               (function_declaration
-                kind: (kDestructor)
                 name: (function_name
                   name: (identifier)))
               (function_declaration
-                kind: (kFunction)
                 name: (function_name
                   name: (identifier))
-                return_type: (identifier)
-                (method_directive
-                  (kOverride)))
+                (method_directive))
               (function_declaration
-                (kClass)
-                kind: (kProcedure)
                 name: (function_name
                   name: (identifier))
-                (method_directive
-                  (kStdcall)))
+                (method_directive))
               (class_property
-                (kProperty)
                 name: (identifier)
-                type: (identifier)
                 (property_attribute
-                  kind: (kRead)
                   value: (identifier))
                 (property_attribute
-                  kind: (kWrite)
                   value: (identifier)))
               (class_property
-                (kProperty)
                 name: (identifier)
                 type: (identifier)
                 (property_attribute
-                  kind: (kRead)
                   value: (identifier)))
               (function_declaration
-                kind: (kProcedure)
                 name: (function_name
                   name: (identifier))
                 (parameter_list
                   (parameter_declaration
-                    modifier: (kConst)
                     (argument_name
-                      (identifier))
-                    type: (identifier)))
-                (method_directive
-                  (kVirtual))))
-            (kEnd)))))
-    (section
-      kind: (kImplementation))
-    (kEnd)))
+                      (identifier))))
+                (method_directive)))))))
+    (section)))
 
 ================================================================================
 Enum type declaration
@@ -200,35 +159,33 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     (declaration_section
-      kind: (kType)
       (type_declaration
         name: (identifier)
-        (enum_definition
-          (enum_value
-            name: (identifier))
-          (enum_value
-            name: (identifier))
-          (enum_value
-            name: (identifier))))
+        (type_alias_definition
+          type: (enum_type
+            (enum_value
+              name: (identifier))
+            (enum_value
+              name: (identifier))
+            (enum_value
+              name: (identifier)))))
       (type_declaration
         name: (identifier)
-        (enum_definition
-          (enum_value
-            name: (identifier)
-            value: (integer_literal))
-          (enum_value
-            name: (identifier)
-            value: (integer_literal))
-          (enum_value
-            name: (identifier))
-          (enum_value
-            name: (identifier)))))
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+        (type_alias_definition
+          type: (enum_type
+            (enum_value
+              name: (identifier)
+              value: (integer_literal))
+            (enum_value
+              name: (identifier)
+              value: (integer_literal))
+            (enum_value
+              name: (identifier))
+            (enum_value
+              name: (identifier))))))
+    body: (block_statement)))
 
 ================================================================================
 Array type
@@ -244,28 +201,19 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     (declaration_section
-      kind: (kVar)
       (global_declaration
         (identifier)
         type: (array_type
-          (kArray)
-          (kOf)
           type: (identifier)))
       (global_declaration
         (identifier)
         type: (array_type
-          (kArray)
-          (kOf)
           type: (generic_name
             (identifier)
-            (type_argument_list
-              (identifier))))))
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+            (type_argument_list)))))
+    body: (block_statement)))
 
 ================================================================================
 Interface declaration
@@ -286,50 +234,34 @@ end.
 (source_file
   (unit_file
     (file_header
-      file_type: (kUnit)
       name: (identifier))
     (section
-      kind: (kInterface)
       (declaration_section
-        kind: (kType)
         (type_declaration
           name: (identifier)
           (interface_definition
-            (kInterface)
             (base_list
               (identifier))
             (guid_declaration
               (compound_string_literal
                 (string_literal)))
             (function_declaration
-              kind: (kFunction)
               name: (function_name
-                name: (identifier))
-              return_type: (identifier))
+                name: (identifier)))
             (function_declaration
-              kind: (kProcedure)
               name: (function_name
                 name: (identifier))
               (parameter_list
                 (parameter_declaration
-                  modifier: (kConst)
                   (argument_name
-                    (identifier))
-                  type: (identifier))))
+                    (identifier)))))
             (class_property
-              (kProperty)
               name: (identifier)
-              type: (identifier)
               (property_attribute
-                kind: (kRead)
                 value: (identifier))
               (property_attribute
-                kind: (kWrite)
-                value: (identifier)))
-            (kEnd)))))
-    (section
-      kind: (kImplementation))
-    (kEnd)))
+                value: (identifier)))))))
+    (section)))
 
 ================================================================================
 Procedural types
@@ -353,28 +285,23 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     (declaration_section
-      kind: (kType)
       (type_declaration
         name: (identifier)
         (type_alias_definition
           type: (function_type
-            kind: (kProcedure)
             (parameter_list))))
       (type_declaration
         name: (identifier)
         (type_alias_definition
           type: (function_type
-            kind: (kFunction)
             (parameter_list)
             type: (identifier))))
       (type_declaration
         name: (identifier)
         (type_alias_definition
           type: (function_type
-            kind: (kProcedure)
             (parameter_list
               (parameter_declaration
                 (argument_name
@@ -388,7 +315,6 @@ end.
         name: (identifier)
         (type_alias_definition
           type: (function_type
-            kind: (kFunction)
             (parameter_list
               (parameter_declaration
                 (argument_name
@@ -404,43 +330,29 @@ end.
         (type_alias_definition
           type: (object_of_type
             (function_type
-              kind: (kProcedure)
-              (parameter_list))
-            (kOf)
-            (kObject))))
+              (parameter_list)))))
       (type_declaration
         name: (identifier)
         (type_alias_definition
           type: (reference_to_type
-            (kReference)
-            (kTo)
-            kind: (kProcedure)
             (parameter_list))))
       (type_declaration
         name: (identifier)
         (type_alias_definition
           type: (reference_to_type
-            (kReference)
-            (kTo)
-            kind: (kFunction)
             (parameter_list)
             type: (identifier))))
       (type_declaration
         name: (identifier)
         (type_alias_definition
           type: (reference_to_type
-            (kReference)
-            (kTo)
-            kind: (kFunction)
             (parameter_list
               (parameter_declaration
                 (argument_name
                   (identifier))
                 type: (identifier)))
             type: (identifier)))))
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+    body: (block_statement)))
 
 ================================================================================
 Record type
@@ -459,23 +371,16 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     (declaration_section
-      kind: (kType)
       (type_declaration
         name: (identifier)
         (record_definition
-          (kRecord)
           (class_field
             name: (identifier)
             type: (identifier))
           (class_section
-            visibility: (kPublic)
             (class_field
               name: (identifier)
-              type: (identifier)))
-          (kEnd))))
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+              type: (identifier))))))
+    body: (block_statement)))

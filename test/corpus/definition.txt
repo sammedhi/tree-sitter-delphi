@@ -22,11 +22,9 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     (function_definition
       header: (function_declaration
-        kind: (kProcedure)
         name: (function_name
           qualifier: (identifier)
           name: (identifier))
@@ -37,22 +35,17 @@ end.
             type: (identifier))
           (parameter_declaration
             (argument_name
-              (identifier))
-            type: (identifier))))
+              (identifier)))))
       (declaration_section
-        kind: (kVar)
         (global_declaration
           (identifier)
           type: (identifier)))
       body: (block_statement
-        (kBegin)
         (assignment_statement
           left: (identifier)
-          right: (boolean_literal))
-        (kEnd)))
+          right: (boolean_literal))))
     (function_definition
       header: (function_declaration
-        kind: (kFunction)
         name: (function_name
           qualifier: (identifier)
           name: (identifier))
@@ -67,16 +60,12 @@ end.
             type: (identifier)))
         return_type: (identifier))
       body: (block_statement
-        (kBegin)
         (assignment_statement
           left: (identifier)
           right: (binary_expression
             left: (identifier)
-            right: (identifier)))
-        (kEnd)))
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+            right: (identifier)))))
+    body: (block_statement)))
 
 ================================================================================
 Generic declarations with constraints
@@ -100,10 +89,8 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     (declaration_section
-      kind: (kType)
       (type_declaration
         name: (identifier)
         (type_parameter_list
@@ -111,16 +98,12 @@ end.
             name: (identifier)
             (type_constraints
               (identifier)
-              (identifier)
-              (kConstructor)))
+              (identifier)))
           (type_parameter
             name: (identifier)
-            (type_constraints
-              (kRecord))))
+            (type_constraints)))
         (class_definition
-          (kClass)
           (function_declaration
-            kind: (kFunction)
             name: (function_name
               name: (identifier))
             (type_parameter_list
@@ -128,14 +111,11 @@ end.
                 name: (identifier)
                 (type_constraints
                   (identifier)
-                  (identifier)
-                  (kConstructor)))
+                  (identifier)))
               (type_parameter
                 name: (identifier)
-                (type_constraints
-                  (kRecord))))
-            (parameter_list))
-          (kEnd)))
+                (type_constraints)))
+            (parameter_list))))
       (type_declaration
         name: (identifier)
         (type_alias_definition
@@ -145,7 +125,6 @@ end.
               (identifier))))))
     (function_definition
       header: (function_declaration
-        kind: (kFunction)
         name: (function_name
           name: (identifier))
         (type_parameter_list
@@ -153,16 +132,10 @@ end.
             name: (identifier)
             (type_constraints
               (identifier)
-              (identifier)
-              (kConstructor)))
+              (identifier)))
           (type_parameter
             name: (identifier)
-            (type_constraints
-              (kRecord))))
+            (type_constraints)))
         (parameter_list))
-      body: (block_statement
-        (kBegin)
-        (kEnd)))
-    body: (block_statement
-      (kBegin)
-      (kEnd))))
+      body: (block_statement))
+    body: (block_statement)))

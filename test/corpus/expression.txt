@@ -26,10 +26,8 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (assignment_statement
         left: (identifier)
         right: (binary_expression
@@ -54,43 +52,11 @@ end.
         left: (identifier)
         right: (binary_expression
           left: (integer_literal)
-          operator: (kDiv)
           right: (integer_literal)))
       (assignment_statement
         left: (identifier)
         right: (binary_expression
           left: (integer_literal)
-          operator: (kMod)
-          right: (integer_literal)))
-      (assignment_statement
-        left: (identifier)
-        right: (binary_expression
-          left: (integer_literal)
-          operator: (kAnd)
-          right: (integer_literal)))
-      (assignment_statement
-        left: (identifier)
-        right: (binary_expression
-          left: (integer_literal)
-          operator: (kOr)
-          right: (integer_literal)))
-      (assignment_statement
-        left: (identifier)
-        right: (binary_expression
-          left: (integer_literal)
-          operator: (kXor)
-          right: (integer_literal)))
-      (assignment_statement
-        left: (identifier)
-        right: (binary_expression
-          left: (integer_literal)
-          operator: (kShl)
-          right: (integer_literal)))
-      (assignment_statement
-        left: (identifier)
-        right: (binary_expression
-          left: (integer_literal)
-          operator: (kShr)
           right: (integer_literal)))
       (assignment_statement
         left: (identifier)
@@ -122,7 +88,31 @@ end.
         right: (binary_expression
           left: (integer_literal)
           right: (integer_literal)))
-      (kEnd))))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal)))
+      (assignment_statement
+        left: (identifier)
+        right: (binary_expression
+          left: (integer_literal)
+          right: (integer_literal))))))
 
 ================================================================================
 Complex binary expression
@@ -136,24 +126,20 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (assignment_statement
         left: (identifier)
         right: (binary_expression
           left: (binary_expression
-            left: (parenthesized_expression
+            left: (const_array_constructor_expression
               (binary_expression
                 left: (integer_literal)
                 right: (integer_literal)))
             right: (integer_literal))
           right: (binary_expression
             left: (integer_literal)
-            operator: (kDiv)
-            right: (integer_literal))))
-      (kEnd))))
+            right: (integer_literal)))))))
 
 ================================================================================
 Call expression
@@ -170,32 +156,31 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
-      (call_expression
-        function: (identifier)
-        (argument_list))
-      (call_expression
-        function: (identifier)
-        (argument_list
-          (identifier)
-          (integer_literal)
-          (compound_string_literal
-            (string_literal))))
-      (call_expression
-        (kInherited)
-        function: (identifier)
-        (argument_list
-          (identifier)))
-      (call_expression
-        function: (member_access_expression
+      (call_statement
+        (call_expression
+          function: (identifier)
+          (argument_list)))
+      (call_statement
+        (call_expression
+          function: (identifier)
+          (argument_list
+            (identifier)
+            (integer_literal)
+            (compound_string_literal
+              (string_literal)))))
+      (call_statement
+        (call_expression
+          function: (identifier)
+          (argument_list
+            (identifier))))
+      (call_statement
+        (member_access_expression
           expression: (identifier)
-          name: (identifier))
-        (argument_list
-          (identifier)))
-      (kEnd))))
+          name: (identifier)))
+      (parenthesis_statement
+        (identifier)))))
 
 ================================================================================
 Pointer expressions
@@ -213,10 +198,8 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (assignment_statement
         left: (identifier)
         right: (address_of_expression
@@ -234,8 +217,7 @@ end.
       (assignment_statement
         left: (dereference_expression
           operand: (identifier))
-        right: (integer_literal))
-      (kEnd))))
+        right: (integer_literal)))))
 
 ================================================================================
 Array constructor expression
@@ -255,10 +237,8 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (assignment_statement
         left: (identifier)
         right: (array_constructor_expression))
@@ -285,14 +265,14 @@ end.
           (call_expression
             function: (identifier)
             (argument_list))))
-      (call_expression
-        function: (identifier)
-        (argument_list
-          (array_constructor_expression
-            (integer_literal)
-            (integer_literal)
-            (integer_literal))))
-      (kEnd))))
+      (call_statement
+        (call_expression
+          (identifier)))
+      (parenthesis_statement
+        (array_constructor_expression
+          (integer_literal)
+          (integer_literal)
+          (integer_literal))))))
 
 ================================================================================
 Element access expression
@@ -314,10 +294,8 @@ end.
 (source_file
   (runnable_file
     (file_header
-      file_type: (kProgram)
       name: (identifier))
     body: (block_statement
-      (kBegin)
       (assignment_statement
         left: (identifier)
         right: (element_access_expression
@@ -359,5 +337,4 @@ end.
         left: (element_access_expression
           expression: (identifier)
           subscript: (integer_literal))
-        right: (integer_literal))
-      (kEnd))))
+        right: (integer_literal)))))
