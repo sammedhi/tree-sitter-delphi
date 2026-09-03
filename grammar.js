@@ -685,7 +685,7 @@ export default grammar({
       optional($.parameter_list),
       optional(field('return_type', seq(':', $.type))),
       repeat($._method_directive),
-      seq(';', repeat($.hint_directive)),
+      repeat(seq(optional(';'), $.hint_directive)),
       ';'
     ),
 
@@ -697,7 +697,7 @@ export default grammar({
 
     external_function_definition: $ => seq(
       $.function_declaration,
-      ';', kw('external'),
+      optional(seq(';', kw('external'))),
       optional(field('source', choice($.literal, $._name))),
       optional(seq(kw('name'), field('original_name', $.expression))),
       optional(kw('delayed')),
