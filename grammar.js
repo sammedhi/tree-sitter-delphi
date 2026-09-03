@@ -178,7 +178,8 @@ export default grammar({
   externals: $ => [
     $.multiline_string,
     $.float_no_decimal,
-    $.asm_block
+    $.asm_block,
+    $.automatic_semicolon
   ],
 
   rules: {
@@ -192,7 +193,7 @@ export default grammar({
     runnable_file: $ => seq(
       $.file_header,
       repeat($.declaration),
-      field('body', choice($.block_statement, $.asm_statement)),
+      field('body', choice($.block, $.asm_bl)),
       '.',
     ),
 
@@ -329,7 +330,7 @@ export default grammar({
       field('type', $._name),
       kw('of'),
       sep($.labeled_constant_list, ';'),
-      optional(';')
+      ';'
     ),
 
     labeled_constant_list: $ => seq(
@@ -370,7 +371,7 @@ export default grammar({
       field('interface_method', $._name),
       '=',
       field('implementing_method', $._simple_name),
-      optional(';')
+      ';'
     ),
 
     class_field: $ => seq(
@@ -378,7 +379,7 @@ export default grammar({
       optional(kw('class')),
       commaSep1(field('name', $._identifier)),
       $._type_declaration,
-      optional(';')
+      ';'
     ),
 
     class_property: $ => seq(
@@ -390,7 +391,7 @@ export default grammar({
       optional($._type_declaration),
       repeat($.property_attribute),
       optional(seq(';', choice(kw('default'), kw('nodefault')))),
-      optional(';')
+      ';'
     ),
 
     property_attribute: $ => seq(
@@ -444,7 +445,7 @@ export default grammar({
 
     argument_name: $ => $._identifier,
 
-    _method_directive: $ => seq(optional(';'), $.method_directive),
+    _method_directive: $ => seq(';', $.method_directive),
     method_directive: $ => choice(
       kw('virtual'),
       kw('abstract'),
@@ -511,7 +512,7 @@ export default grammar({
       '=',
       $._type_definition,
       repeat($.hint_directive),
-      optional(';')
+      ';'
     ),
 
     global_declaration: $ => seq(
@@ -524,7 +525,7 @@ export default grammar({
       )),
       optional($.absolute_declaration),
       repeat($.hint_directive),
-      optional(';')
+      ';'
     ),
 
     absolute_declaration: $ => seq(
@@ -684,30 +685,29 @@ export default grammar({
       optional($.parameter_list),
       optional(field('return_type', seq(':', $.type))),
       repeat($._method_directive),
-      seq(optional(';'), repeat($.hint_directive)),
-      optional(';')
+      seq(';', repeat($.hint_directive)),
+      ';'
     ),
 
     function_definition: $ => seq(
       field('header', $.function_declaration),
       repeat($.declaration),
       field('body', choice($.block_statement, $.asm_statement)),
-      optional(';')
     ),
 
     external_function_definition: $ => seq(
       $.function_declaration,
-      optional(';'), kw('external'),
+      ';', kw('external'),
       optional(field('source', choice($.literal, $._name))),
       optional(seq(kw('name'), field('original_name', $.expression))),
       optional(kw('delayed')),
-      optional(';')
+      ';'
     ),
 
     forward_function_declaration: $ => seq(
       $.function_declaration,
       kw('forward'),
-      optional(';')
+      ';'
     ),
 
     function_name: $ => seq(
@@ -756,7 +756,7 @@ export default grammar({
     goto_statement: $ => seq(
       kw('goto'),
       field('label', $._identifier),
-      optional(';')
+      $._semicolon
     ),
 
     with_statement: $ => seq(
@@ -764,19 +764,18 @@ export default grammar({
       commaSep1($.expression),
       kw('do'),
       optional($.statement),
-      optional(';')
     ),
 
     raise_statement: $ => seq(
       kw('raise'),
       optional($.expression),
       optional(seq(kw('at'), $.expression)),
-      optional(';')
+      $._semicolon
     ),
 
     inherited_expression: $ => seq(
       kw('inherited'),
-      optional(';')
+      $._semicolon
     ),
 
     if_statement: $ => prec.right(seq(
@@ -788,7 +787,6 @@ export default grammar({
         kw('else'),
         optional(field('else', $.statement)),
       )),
-      optional(';')
     )),
 
     case_statement: $ => seq(
@@ -801,7 +799,7 @@ export default grammar({
         optional(alias(repeat($.statement), $.else_statements)),
       )),
       kw('end'),
-      optional(';')
+      $._semicolon
     ),
 
     case_branch: $ => seq(
@@ -818,7 +816,7 @@ export default grammar({
       field('left', $.lvalue_expression),
       ':=',
       field('right', $.expression),
-      optional(';')
+      $._semicolon
     ),
 
     variable_declaration_statement: $ => seq(
@@ -836,7 +834,7 @@ export default grammar({
           $._type_declaration
         )
       ),
-      optional(';')
+      $._semicolon
     ),
 
     _type_declaration: $ => seq(":", field('type', $.type)),
@@ -845,11 +843,15 @@ export default grammar({
     variable_declarator: $ =>
       field("name", $._identifier),
 
-    block_statement: $ => seq(
+    block: $ => seq(
       kw('begin'),
       repeat($.statement),
       kw('end'),
-      optional(';')
+    ),
+
+    block_statement: $ => seq(
+      $.block, 
+      $._semicolon
     ),
 
     loop_statement: $ => choice(
@@ -872,7 +874,6 @@ export default grammar({
       field('final_value', $.expression),
       kw('do'),
       field('body', optional($.statement)),
-      optional(';')
     ),
 
     for_each_statement: $ => seq(
@@ -882,7 +883,6 @@ export default grammar({
       field('collection', $.expression),
       kw('do'),
       field('body', optional($.statement)),
-      optional(';')
     ),
 
     _for_variable: $ => choice(
@@ -901,7 +901,6 @@ export default grammar({
       field('condition', $.expression),
       kw('do'),
       field('body', optional($.statement)),
-      optional(';')
     ),
 
     repeat_statement: $ => seq(
@@ -909,7 +908,7 @@ export default grammar({
       repeat($.statement),  // last statement before 'until' needs no semicolon
       kw('until'),
       field('condition', $.expression),
-      optional(';')
+      $._semicolon
     ),
 
     try_statement: $ => choice(
@@ -933,7 +932,7 @@ export default grammar({
         ),
       ),
       kw('end'),
-      optional(';')
+      $._semicolon
     ),
 
     exception_handler: $ => seq(
@@ -950,23 +949,23 @@ export default grammar({
       kw('finally'),
       alias(repeat($.statement), $.finally_statements),
       kw('end'),
-      optional(';')
+      $._semicolon
     ),
 
     continue_statement: $ => seq(
       kw('continue'),
-      optional(';')
+      $._semicolon
     ),
 
     break_statement: $ => seq(
       kw('break'),
-      optional(';')
+      $._semicolon
     ),
 
     exit_statement: $ => seq(
       kw('exit'),
       optional($.argument_list),
-      optional(';')
+      $._semicolon
     ),
 
     expression: $ => choice(
@@ -1092,7 +1091,7 @@ export default grammar({
 
     call_statement: $ => seq(
       $._call_statement,
-      optional(';')
+      $._semicolon
     ),
 
     _call_statement: $ => prec(1, choice(
@@ -1148,7 +1147,7 @@ export default grammar({
       optional(field('type', $._type_declaration)),
       repeat($._method_directive),
       repeat($.declaration),
-      choice($.block_statement, $.asm_statement),
+      choice($.block, $.asm_bl),
     ),
 
     integer_literal: _ => token(choice(
@@ -1249,11 +1248,20 @@ export default grammar({
       field('name', $._reserved_name)),
     ),
 
-    asm_statement: $ => seq(
+    asm_bl: $ => seq(
       kw('asm'),
       optional($.asm_block),
       kw('end'),
-      optional(';')
+    ),
+
+    asm_statement: $ => seq(
+      $.asm_bl,
+      $._semicolon
+    ),
+
+    _semicolon: $ => choice(
+      ';',
+      $.automatic_semicolon
     ),
     
     comment: $ => choice(
