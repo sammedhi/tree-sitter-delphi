@@ -115,46 +115,16 @@ export default grammar({
     [$.function_type],
     [$.parameter_declaration],
     [$.declaration, $.function_definition],
-    [$.record_variant_part, $._semicolon],
 
     [$.global_declaration, $.variable_declarator],
     [$._type_declaration_section],
     [$._value_declaration_section],
 
     [$.parenthesized_expression, $.const_array_constructor_expression],
-    [$.class_definition, $.forward_class_definition],
-    [$.class_definition, $.fieldless_class_definition],
-    [$.function_declaration],
-    [$.class_property],
     [$.type, $.object_of_type],
-    [$.forward_interface_definition, $.interface_definition],
-    [$.lvalue_expression, $._call_statement],
     [$._type_definition, $.type],
     [$.index_range, $.not_lvalue_expression],
-    [$.record_variant_part],
-
-    [$.raise_statement],
-    [$.exit_statement],
-    [$.inherited_expression],
-    [$.compound_string_literal],
-    [$.while_statement],
-    [$.with_statement],
-    [$.break_statement],
-    [$.continue_statement],
-    [$.call_statement],
-    [$.block_statement],
-    [$.asm_statement],
-    [$.for_each_statement],
-    [$.reference_to_type],
-    [$.variable_declaration_statement],
-    [$.repeat_statement],
-    [$.try_except_statement],
-    [$.try_finally_statement],
-    [$.assignment_statement],
-    [$.for_numeric_statement],
-    [$.case_statement],
-    [$.case_branch],
-    [$.goto_statement],
+    [$.record_variant_part]
   ],
 
   // Tells tree-sitter that identifiers are the "word" token,
@@ -322,7 +292,6 @@ export default grammar({
       repeat($.class_section),
       kw('end'),
     ),
-
     record_variant_part: $ => seq(
       kw('case'),
       optional(
@@ -330,14 +299,26 @@ export default grammar({
       ),
       field('type', $._name),
       kw('of'),
-      sep($.labeled_constant_list, ';'),
-      $._semicolon
+      sep1($.labeled_constant_list, ';'),
+      optional(';')
     ),
 
     labeled_constant_list: $ => seq(
-      field('case', $.expression),
+      field('case', commaSep1($.expression)),
       ':',
-      $.parameter_list,
+      $.variant_field_list,
+    ),
+
+    variant_field_list: $ => seq(
+      '(',
+      sep(choice($.variant_field, $.record_variant_part), ';'),
+      optional(';'),
+      ')',
+    ),
+
+    variant_field: $ => seq(
+      commaSep1(field('name', $._identifier)),
+      $._type_declaration,
     ),
 
     base_list: $ => seq(
@@ -424,7 +405,7 @@ export default grammar({
 
     parameter_list: $ => seq(
       '(',
-      sep(choice($.parameter_declaration, $.record_variant_part), ';'),
+      sep(choice($.parameter_declaration), ';'),
       ')',
     ),
 
@@ -435,7 +416,6 @@ export default grammar({
     ),
 
     parameter_declaration: $ => seq(
-      // TODO use alias for the modifier instead
       optional($._attributes),
       optional(field('modifier', choice(kw('const'), kw('var'), kw('out')))),
       optional($._attributes),
@@ -764,7 +744,7 @@ export default grammar({
       kw('with'),
       commaSep1($.expression),
       kw('do'),
-      optional($.statement),
+      $.statement,
     ),
 
     raise_statement: $ => seq(
@@ -806,7 +786,7 @@ export default grammar({
     case_branch: $ => seq(
       field('pattern', commaSep1($.case_pattern)),
       ':',
-      field('body', optional($.statement)),
+      field('body', $.statement),
     ),
 
     case_pattern: $ => choice(
@@ -851,7 +831,7 @@ export default grammar({
     ),
 
     block_statement: $ => seq(
-      $.block, 
+      $.block,
       $._semicolon
     ),
 
@@ -874,7 +854,7 @@ export default grammar({
       field('direction', choice(kw('to'), kw('downto'))),
       field('final_value', $.expression),
       kw('do'),
-      field('body', optional($.statement)),
+      field('body', $.statement),
     ),
 
     for_each_statement: $ => seq(
@@ -883,7 +863,7 @@ export default grammar({
       kw('in'),
       field('collection', $.expression),
       kw('do'),
-      field('body', optional($.statement)),
+      field('body', $.statement),
     ),
 
     _for_variable: $ => choice(
@@ -901,7 +881,7 @@ export default grammar({
       kw('while'),
       field('condition', $.expression),
       kw('do'),
-      field('body', optional($.statement)),
+      field('body', $.statement),
     ),
 
     repeat_statement: $ => seq(
@@ -1264,7 +1244,7 @@ export default grammar({
       ';',
       $.automatic_semicolon
     ),
-    
+
     comment: $ => choice(
       $.line_comment,
       $.doc_comment,
@@ -1277,7 +1257,7 @@ export default grammar({
     brace_comment: _ => token(seq('{', /[^}]*/, '}')),
     block_comment: _ => token(seq('(*', /[^*]*\*+([^*)][^*]*\*+)*/, ')')),
 
-    identifier: $ =>  /[&\p{L}_][&\p{L}\p{Nd}_]*/u,
+    identifier: $ => /[&\p{L}_][&\p{L}\p{Nd}_]*/u,
     _identifier: $ => choice(
       $.identifier,
       kw('string')
