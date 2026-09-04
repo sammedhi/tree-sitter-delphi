@@ -21,8 +21,178 @@ enum TokenType
 {
   MULTILINE_STRING,
   FLOAT_NO_DECIMAL,
-  ASM_BLOCK
+  ASM_BLOCK,
+  AUTOMATIC_SEMICOLON
 };
+
+static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
+
+// ---------------------------------------------------------------------
+// Helpers for AUTOMATIC_SEMICOLON — must be defined (or at least
+// forward-declared) before tree_sitter_delphi_external_scanner_scan,
+// since C has no implicit function declarations post-C99/pedantic builds.
+// ---------------------------------------------------------------------
+
+static bool skip_whitespace_and_comments(TSLexer *lexer)
+{
+  for (;;)
+  {
+    if (iswspace(lexer->lookahead))
+    {
+      skip(lexer);
+      continue;
+    }
+
+    // Line comment: // ...
+    if (lexer->lookahead == '/')
+    {
+      skip(lexer);
+      if (lexer->lookahead != '/')
+        return false; // was just '/', not a comment
+      while (lexer->lookahead != '\n' && lexer->lookahead != 0)
+      {
+        skip(lexer);
+      }
+      continue;
+    }
+
+    // Brace comment: { ... }
+    if (lexer->lookahead == '{')
+    {
+      skip(lexer);
+      while (lexer->lookahead != '}')
+      {
+        if (lexer->lookahead == 0)
+          return false; // unterminated
+        skip(lexer);
+      }
+      skip(lexer);
+      continue;
+    }
+
+    // Paren-star comment: (* ... *)
+    if (lexer->lookahead == '(')
+    {
+      skip(lexer);
+      if (lexer->lookahead != '*')
+        return false; // was just '(', not a comment
+      skip(lexer);
+      for (;;)
+      {
+        if (lexer->lookahead == 0)
+          return false; // unterminated
+        if (lexer->lookahead == '*')
+        {
+          skip(lexer);
+          if (lexer->lookahead == ')')
+          {
+            skip(lexer);
+            break;
+          }
+          continue;
+        }
+        skip(lexer);
+      }
+      continue;
+    }
+
+    return true; // reached real content
+  }
+}
+
+static bool scan_automatic_semicolon(TSLexer *lexer)
+{
+  lexer->result_symbol = AUTOMATIC_SEMICOLON;
+  lexer->mark_end(lexer); // zero-width token, anchored before trailing ws/comments
+
+  if (!skip_whitespace_and_comments(lexer))
+  {
+    return false;
+  }
+
+  if (lexer->lookahead == 0)
+  {
+    return true; // EOF also permits an implicit ';'
+  }
+
+  if (lexer->is_at_included_range_start(lexer))
+  {
+    return true;
+  }
+
+  // Only these keywords may legally follow a statement without ';':
+  // end, else, except, finally, until
+  switch (towlower(lexer->lookahead))
+  {
+  case 'e':
+    skip(lexer);
+    switch (towlower(lexer->lookahead))
+    {
+    case 'n': // end
+      skip(lexer);
+      if (towlower(lexer->lookahead) != 'd')
+        return false;
+      skip(lexer);
+      break;
+    case 'l': // else
+      skip(lexer);
+      if (towlower(lexer->lookahead) != 's')
+        return false;
+      skip(lexer);
+      if (towlower(lexer->lookahead) != 'e')
+        return false;
+      skip(lexer);
+      break;
+    case 'x': // except
+      skip(lexer);
+      for (unsigned i = 0; i < 4; i++)
+      {
+        if (towlower(lexer->lookahead) != "cept"[i])
+          return false;
+        skip(lexer);
+      }
+      break;
+    default:
+      return false;
+    }
+    break;
+
+  case 'u': // until
+    skip(lexer);
+    for (unsigned i = 0; i < 4; i++)
+    {
+      if (towlower(lexer->lookahead) != "ntil"[i])
+        return false;
+      skip(lexer);
+    }
+    break;
+
+  case 'f': // finally
+    skip(lexer);
+    for (unsigned i = 0; i < 6; i++)
+    {
+      if (towlower(lexer->lookahead) != "inally"[i])
+        return false;
+      skip(lexer);
+    }
+    break;
+
+  default:
+    return false;
+  }
+
+  // Reject prefix matches like `endless` or `finallyValue`.
+  if (iswalnum(lexer->lookahead) || lexer->lookahead == '_')
+  {
+    return false;
+  }
+
+  return true;
+}
+
+// ---------------------------------------------------------------------
+// Required scanner lifecycle functions
+// ---------------------------------------------------------------------
 
 void *tree_sitter_delphi_external_scanner_create(void)
 {
@@ -47,9 +217,14 @@ void tree_sitter_delphi_external_scanner_deserialize(void *payload, const char *
 bool tree_sitter_delphi_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)
 {
   if (!valid_symbols[MULTILINE_STRING] && !valid_symbols[FLOAT_NO_DECIMAL] &&
-      !valid_symbols[ASM_BLOCK])
+      !valid_symbols[ASM_BLOCK] && !valid_symbols[AUTOMATIC_SEMICOLON])
   {
     return false;
+  }
+
+  if (valid_symbols[AUTOMATIC_SEMICOLON])
+  {
+    return scan_automatic_semicolon(lexer);
   }
 
   // Skip whitespace that just precedes the literal (harmless to treat as trivia).

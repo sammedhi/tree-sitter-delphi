@@ -115,6 +115,7 @@ export default grammar({
     [$.function_type],
     [$.parameter_declaration],
     [$.declaration, $.function_definition],
+    [$.record_variant_part, $._semicolon],
 
     [$.global_declaration, $.variable_declarator],
     [$._type_declaration_section],
@@ -330,7 +331,7 @@ export default grammar({
       field('type', $._name),
       kw('of'),
       sep($.labeled_constant_list, ';'),
-      ';'
+      $._semicolon
     ),
 
     labeled_constant_list: $ => seq(
@@ -371,7 +372,7 @@ export default grammar({
       field('interface_method', $._name),
       '=',
       field('implementing_method', $._simple_name),
-      ';'
+      $._semicolon
     ),
 
     class_field: $ => seq(
@@ -379,7 +380,7 @@ export default grammar({
       optional(kw('class')),
       commaSep1(field('name', $._identifier)),
       $._type_declaration,
-      ';'
+      $._semicolon
     ),
 
     class_property: $ => seq(
@@ -391,7 +392,7 @@ export default grammar({
       optional($._type_declaration),
       repeat($.property_attribute),
       optional(seq(';', choice(kw('default'), kw('nodefault')))),
-      ';'
+      $._semicolon
     ),
 
     property_attribute: $ => seq(
@@ -445,7 +446,7 @@ export default grammar({
 
     argument_name: $ => $._identifier,
 
-    _method_directive: $ => seq(';', $.method_directive),
+    _method_directive: $ => seq(optional(';'), $.method_directive),
     method_directive: $ => choice(
       kw('virtual'),
       kw('abstract'),
@@ -512,7 +513,7 @@ export default grammar({
       '=',
       $._type_definition,
       repeat($.hint_directive),
-      ';'
+      $._semicolon
     ),
 
     global_declaration: $ => seq(
@@ -525,7 +526,7 @@ export default grammar({
       )),
       optional($.absolute_declaration),
       repeat($.hint_directive),
-      ';'
+      $._semicolon
     ),
 
     absolute_declaration: $ => seq(
@@ -686,7 +687,7 @@ export default grammar({
       optional(field('return_type', seq(':', $.type))),
       repeat($._method_directive),
       repeat(seq(optional(';'), $.hint_directive)),
-      ';'
+      $._semicolon
     ),
 
     function_definition: $ => seq(
