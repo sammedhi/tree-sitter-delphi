@@ -698,17 +698,17 @@ export default grammar({
 
     external_function_definition: $ => seq(
       $.function_declaration,
-      optional(seq(';', kw('external'))),
+      kw('external'),
       optional(field('source', choice($.literal, $._name))),
       optional(seq(kw('name'), field('original_name', $.expression))),
       optional(kw('delayed')),
-      ';'
+      $._semicolon
     ),
 
     forward_function_declaration: $ => seq(
       $.function_declaration,
       kw('forward'),
-      ';'
+      $._semicolon
     ),
 
     function_name: $ => seq(
