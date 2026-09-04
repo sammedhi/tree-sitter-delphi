@@ -513,7 +513,7 @@ export default grammar({
       '=',
       $._type_definition,
       repeat($.hint_directive),
-      $._semicolon
+      ';'
     ),
 
     global_declaration: $ => seq(
