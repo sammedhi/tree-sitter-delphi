@@ -149,7 +149,7 @@ export default grammar({
   externals: $ => [
     $.multiline_string,
     $.float_no_decimal,
-    $.asm_block,
+    $.asm_instructions,
     $.automatic_semicolon
   ],
 
@@ -164,7 +164,7 @@ export default grammar({
     runnable_file: $ => seq(
       $.file_header,
       repeat($.declaration),
-      field('body', choice($.block, $.asm_bl)),
+      field('body', choice($.block, $.asm_block)),
       '.',
     ),
 
@@ -1128,7 +1128,7 @@ export default grammar({
       optional(field('type', $._type_declaration)),
       repeat($._method_directive),
       repeat($.declaration),
-      choice($.block, $.asm_bl),
+      choice($.block, $.asm_block),
     ),
 
     integer_literal: _ => token(choice(
@@ -1229,14 +1229,14 @@ export default grammar({
       field('name', $._reserved_name)),
     ),
 
-    asm_bl: $ => seq(
+    asm_block: $ => seq(
       kw('asm'),
-      optional($.asm_block),
+      optional($.asm_instructions),
       kw('end'),
     ),
 
     asm_statement: $ => seq(
-      $.asm_bl,
+      $.asm_block,
       $._semicolon
     ),
 
