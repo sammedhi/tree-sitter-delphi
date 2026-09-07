@@ -26,7 +26,7 @@ export default grammar({
   extras: $ => [
     /\s/,
     $.comment,
-    $.invalid_character
+    $.invalid_character,
   ],
 
   reserved: {
@@ -712,7 +712,8 @@ export default grammar({
       $.element_access_expression,
       $.asm_statement,
       alias($.parenthesized_expression, $.parenthesis_statement),
-      $._empty_statement
+      $._empty_statement,
+      // $.preproc_if_in_statement
     ),
 
     inherited_statement: $ => seq(
@@ -955,7 +956,8 @@ export default grammar({
       $.index_range,
       $.ternary_expression,
       $.set_range,
-      $.inherited_expression
+      $.inherited_expression,
+      $.preproc_if_in_expression
     ),
 
     //#region literals
@@ -1222,6 +1224,24 @@ export default grammar({
       $.automatic_semicolon
     ),
 
+    ...preprocIf('_in_statement', $ => repeat($.statement), -1),
+    // ...preprocIf('_in_declaration', $ => seq(repeat($.declaration), repeat($.section))),
+    // ...preprocIf('_in_attribute_list', $ => $._attributes),
+    // ...preprocIf('_in_class_member', $ => seq(repeat($.class_member), repeat($.class_section))),
+    ...preprocIf('_in_expression', $ => sep($.expression, choice(',', ';')), -2),
+    // ...preprocIf('_in_declaration_section', $ => choice(repeat($._type_declaration), repeat($.global_declaration))),
+    // ...preprocIf('_in_uses', $ => repeat(choice($._import))),
+    // ...preprocIf('_in_method_directive', $ => repeat($._method_directive)),
+    // ...preprocIf('_in_case', $ => repeat($.case_branch)),
+
+    preproc_ifdef: _ => /\{\$ifdef[^\}]*\}/i,
+    preproc_ifndef: _ => /\{\$ifndef[^\}]*\}/i,
+    preproc_if: _ => /\{\$if [^\}]*\}/i,
+    preproc_endif: _ => /\{\$endif[^\}]*\}/i,
+    preproc_else: _ => /\{\$else[^\}]*\}/i,
+    preproc_elseif: _ => /\{\$elseif[^\}]*/i,
+    preproc_ifend: _ => /\{\$ifend[^\}]*\}/i,
+
     comment: $ => choice(
       $.line_comment,
       $.doc_comment,
@@ -1231,7 +1251,7 @@ export default grammar({
 
     doc_comment: _ => token(prec(1, seq('///', /.*/))),
     line_comment: _ => token(seq('//', /.*/)),
-    brace_comment: _ => token(seq('{', /[^}]*/, '}')),
+    brace_comment: _ => token(prec(-1, seq('{', /[^}]*/, '}'))),
     block_comment: _ => token(seq('(*', /[^*]*\*+([^*)][^*]*\*+)*/, ')')),
 
     identifier: $ => /[&\p{L}_][&\p{L}\p{Nd}_]*/u,
@@ -1280,6 +1300,52 @@ export default grammar({
  */
 function kw(name) {
   return alias(new RegExp(name, 'i'), name);
+}
+/**
+ *
+ * @param {string} suffix
+ *
+ * @param {RuleBuilder<string>} content
+ *
+ * @param {number} precedence
+ *
+ *
+ * @returns {RuleBuilders<string, string>}
+ */
+function preprocIf(suffix, content, precedence = 0) {
+
+  /**
+   *
+   * @param {GrammarSymbols<string>} $
+   *
+   * @returns {ChoiceRule}
+   */
+  function alternativeBlock($) {
+    return choice(
+      suffix ? alias($['preproc_else' + suffix], $.preproc_else) : $.preproc_else,
+      suffix ? alias($['preproc_elseif' + suffix], $.preproc_elseif) : $.preproc_elseif,
+    );
+  }
+
+  return {
+    ['preproc_if' + suffix]: $ => prec(precedence, seq(
+      choice($.preproc_ifdef, $.preproc_if),
+      content($),
+      field('alternative', optional(alternativeBlock($))),
+      choice($.preproc_endif, $.preproc_ifend)
+    )),
+    ['preproc_else' + suffix]: $ => prec(precedence, seq(
+      $.preproc_else,
+      content($),
+    )),
+    ['preproc_elseif' + suffix]: $ => prec(precedence, seq(
+      $.preproc_elseif,
+      field('condition', $.expression),
+      '}',
+      content($),
+      field('alternative', optional(alternativeBlock($))),
+    )),
+  }
 }
 
 /**
