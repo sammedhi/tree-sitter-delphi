@@ -1279,6 +1279,27 @@ export default grammar({
  * 
  * @param {String} name 
  * @returns {AliasRule}
+ * 
+ * Since keywords are case incensitive in delphi we need a regex to find them,
+ * however in tree-sitter regex won't create a new anonymous node the same way a
+ * string 'name' would. To circumvent this issue we use the alias rule that allow
+ * the creation of anonymous from a rule like a regex in our case.
+ * 
+ * Even through this solution is good enough to generate a proper tree, it have one issue when debugging
+ * conflicts, since the generated error message is unaware of the alias rule, the message will looks something like this
+ * 
+ * Unresolved conflict for symbol sequence:
+ * 
+ *    'record_variant_part_token1'  'short_string_token1'  •  '<'  …
+ * 
+ * with is unreadable. To fix this it's advised to temporarily replace the result of this function by 
+ *  return name;
+ * 
+ * It's also important to comment the global reserved keyword set since the parser generation won't possible since the regex
+ * case incensitive keywords won't exist anymore in the resulting grammar
+ * 
+ * This will deactivate the case incensitiveness of the grammar, but it should be fine since this is only useful to get a better
+ * error message for conflicts and should be reverted after
  */
 function kw(name) {
   return alias(new RegExp(name, 'i'), name);
