@@ -713,7 +713,7 @@ export default grammar({
       $.asm_statement,
       alias($.parenthesized_expression, $.parenthesis_statement),
       $._empty_statement,
-      // $.preproc_if_in_statement
+      $.preproc_if_in_statement
     ),
 
     inherited_statement: $ => seq(
