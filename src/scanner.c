@@ -21,7 +21,7 @@ enum TokenType
 {
   MULTILINE_STRING,
   FLOAT_NO_DECIMAL,
-  ASM_BLOCK,
+  ASM_INSTRUCTIONS,
   AUTOMATIC_SEMICOLON
 };
 
@@ -217,7 +217,7 @@ void tree_sitter_delphi_external_scanner_deserialize(void *payload, const char *
 bool tree_sitter_delphi_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols)
 {
   if (!valid_symbols[MULTILINE_STRING] && !valid_symbols[FLOAT_NO_DECIMAL] &&
-      !valid_symbols[ASM_BLOCK] && !valid_symbols[AUTOMATIC_SEMICOLON])
+      !valid_symbols[ASM_INSTRUCTIONS] && !valid_symbols[AUTOMATIC_SEMICOLON])
   {
     return false;
   }
@@ -258,7 +258,7 @@ bool tree_sitter_delphi_external_scanner_scan(void *payload, TSLexer *lexer, con
     return true;
   }
 
-  if (valid_symbols[ASM_BLOCK])
+  if (valid_symbols[ASM_INSTRUCTIONS])
   {
     bool advanced_any = false;
 
@@ -299,7 +299,7 @@ bool tree_sitter_delphi_external_scanner_scan(void *payload, TSLexer *lexer, con
                 // let the normal "end" token handle it instead.
                 return false;
               }
-              lexer->result_symbol = ASM_BLOCK;
+              lexer->result_symbol = ASM_INSTRUCTIONS;
               return true; // mark_end was already set right before "end"
             }
           }
