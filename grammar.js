@@ -127,8 +127,6 @@ export default grammar({
     [$.record_variant_part]
   ],
 
-  // Tells tree-sitter that identifiers are the "word" token,
-  // so keyword rules that match the same pattern take priority
   word: $ => $.identifier,
 
   supertypes: $ => [
@@ -139,9 +137,6 @@ export default grammar({
     $.literal,
     $.lvalue_expression,
     $.not_lvalue_expression,
-    $.loop_statement,
-    $.for_statement,
-    $.try_statement,
     $.class_member,
     $.declaration
   ],
@@ -179,7 +174,7 @@ export default grammar({
     file_header: $ => seq(
       field('file_type', choice(kw('unit'), kw('program'), kw('library'), kw('package'))),
       field('name', $._name),
-      optional(seq(kw('deprecated'), field('message', $.compound_string_literal))),
+      optional($.hint_directive),
       ';'
     ),
 
@@ -193,21 +188,20 @@ export default grammar({
       choice(repeat($.declaration), repeat($.statement)),
     ),
 
-    uses_clause: $ => seq(
-      kw('uses'),
-      repeat($.import),
+    unit_reference_clause: $ => seq(
+      field('kind', choice(kw('uses'), kw('contains'), kw('requires'))),
+      repeat($.unit_reference),
     ),
 
-    contains_clause: $ => seq(
-      kw('contains'),
-      repeat($.import)
+    unit_reference: $ => seq(
+      field('name', $._name),
+      optional(seq(
+        kw('in'),
+        field('path', $.compound_string_literal))
+      ),
+      optional(choice(',', ';'))
     ),
-
-    requires_clause: $ => seq(
-      kw('requires'),
-      repeat($.import)
-    ),
-
+    
     exports_clause: $ => seq(
       kw('exports'),
       repeat($.export)
@@ -220,24 +214,13 @@ export default grammar({
       optional(choice(',', ';'))
     ),
 
-    import: $ => seq(
-      field('name', $._name),
-      optional(seq(
-        kw('in'),
-        field('path', $.compound_string_literal))
-      ),
-      optional(choice(',', ';'))
-    ),
-
     declaration: $ => choice(
       $.function_definition,
       $.external_function_definition,
       $.declaration_section,
       $.function_declaration,
       $.forward_function_declaration,
-      $.uses_clause,
-      $.requires_clause,
-      $.contains_clause,
+      $.unit_reference_clause,
       $.exports_clause,
       $.label_declaration
     ),
@@ -256,7 +239,11 @@ export default grammar({
     _attributes: $ => repeat1($.attribute_list),
 
     helper_definition: $ => seq(
-      field('kind', choice(kw('class'), kw('record'))),
+      field('kind', choice(
+        kw('class'), 
+        kw('record'))
+      ),
+      
       kw('helper'),
       optional($.base_list),
       kw('for'),
@@ -268,7 +255,10 @@ export default grammar({
 
     class_definition: $ => seq(
       kw('class'),
-      optional(field('inheritance_modifier', choice(kw('abstract'), kw('sealed')))),
+      optional(field('inheritance_modifier', choice(
+        kw('abstract'), 
+        kw('sealed')
+      ))),
       optional($.base_list),
 
       repeat($.class_member),
@@ -292,6 +282,7 @@ export default grammar({
       repeat($.class_section),
       kw('end'),
     ),
+
     record_variant_part: $ => seq(
       kw('case'),
       optional(
@@ -609,7 +600,7 @@ export default grammar({
     ),
 
     set_range: $ => prec.left(PREC.RANGE, seq(
-      field('intial', $.expression),
+      field('initial', $.expression),
       '..',
       field('final', $.expression),
     )),
@@ -701,17 +692,21 @@ export default grammar({
       $.block_statement,
       $.assignment_statement,
       $.variable_declaration_statement,
-      $.loop_statement,
+      $.for_each_statement,
+      $.for_numeric_statement,
+      $.while_statement,
+      $.repeat_statement,
       $.if_statement,
       $.case_statement,
-      $.try_statement,
+      $.try_except_statement,
+      $.try_finally_statement,
       $.break_statement,
       $.continue_statement,
       $.exit_statement,
       $.raise_statement,
       $.goto_statement,
       $.labeled_statement,
-      prec(1, alias($.inherited_expression, $.inherited_statement)),
+      prec(1, $.inherited_statement),
       $.call_statement,
       $.with_statement,
       $.element_access_expression,
@@ -720,10 +715,15 @@ export default grammar({
       $._empty_statement
     ),
 
+    inherited_statement: $ => seq(
+      $.inherited_expression,
+      $._semicolon
+    ),
+
     label_declaration: $ => seq(
       kw('label'),
       commaSep1(choice($._identifier, $.literal)),
-      ';'
+      $._semicolon
     ),
 
     labeled_statement: $ => seq(
@@ -754,10 +754,7 @@ export default grammar({
       $._semicolon
     ),
 
-    inherited_expression: $ => seq(
-      kw('inherited'),
-      $._semicolon
-    ),
+    inherited_expression: $ => kw('inherited'),
 
     if_statement: $ => prec.right(seq(
       kw('if'),
@@ -784,13 +781,9 @@ export default grammar({
     ),
 
     case_branch: $ => seq(
-      field('pattern', commaSep1($.case_pattern)),
+      field('pattern', commaSep1(alias($.expression, $.case_pattern))),
       ':',
-      field('body', $.statement),
-    ),
-
-    case_pattern: $ => choice(
-      $.expression,
+      field('body', choice($.statement, $.automatic_semicolon)),
     ),
 
     assignment_statement: $ => seq(
@@ -835,17 +828,6 @@ export default grammar({
       $._semicolon
     ),
 
-    loop_statement: $ => choice(
-      $.for_statement,
-      $.while_statement,
-      $.repeat_statement
-    ),
-
-    for_statement: $ => choice(
-      $.for_numeric_statement,
-      $.for_each_statement,
-    ),
-
     for_numeric_statement: $ => seq(
       kw('for'),
       field('variable', $._for_variable),
@@ -854,7 +836,7 @@ export default grammar({
       field('direction', choice(kw('to'), kw('downto'))),
       field('final_value', $.expression),
       kw('do'),
-      field('body', $.statement),
+      field('body', choice($.statement, $.automatic_semicolon)),
     ),
 
     for_each_statement: $ => seq(
@@ -863,7 +845,7 @@ export default grammar({
       kw('in'),
       field('collection', $.expression),
       kw('do'),
-      field('body', $.statement),
+      field('body', choice($.statement, $.automatic_semicolon)),
     ),
 
     _for_variable: $ => choice(
@@ -881,7 +863,7 @@ export default grammar({
       kw('while'),
       field('condition', $.expression),
       kw('do'),
-      field('body', $.statement),
+      field('body', choice($.statement, $.automatic_semicolon)),
     ),
 
     repeat_statement: $ => seq(
@@ -890,11 +872,6 @@ export default grammar({
       kw('until'),
       field('condition', $.expression),
       $._semicolon
-    ),
-
-    try_statement: $ => choice(
-      $.try_except_statement,
-      $.try_finally_statement,
     ),
 
     try_except_statement: $ => seq(
@@ -921,7 +898,7 @@ export default grammar({
       optional(seq(field('variable', $._identifier), ':')),
       field('type', $._name),
       kw('do'),
-      field('body', optional($.statement)),
+      field('body', choice($.statement, $.automatic_semicolon)),
     ),
 
     try_finally_statement: $ => seq(
@@ -1112,11 +1089,11 @@ export default grammar({
 
     element_access_expression: $ => prec(PREC.POSTFIX, seq(
       field('expression', choice($.parenthesized_expression, $.lvalue_expression)),
-      field('subscript', seq(
+      seq(
         '[',
-        commaSep1($.expression),
+        commaSep1(alias($.expression, $.subscript)),
         ']'
-      ))
+      )
     )),
 
     anonymous_function_expression: $ => seq(
