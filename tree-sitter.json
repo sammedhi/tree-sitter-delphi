@@ -8,7 +8,8 @@
       "scope": "source.delphi",
       "file-types": [
         "pas",
-        "dpr"
+        "dpr",
+        "dpk"
       ],
       "injection-regex": "^delphi$",
       "class-name": "TreeSitterDelphi"
