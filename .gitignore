@@ -15,10 +15,6 @@ dist/
 out/
 bin/
 
-# Tree-sitter generated parser files
-src/parser.c
-src/grammar.json
-src/node-types.json
 
 # Prebuilds / compiled addons
 prebuilds/
