@@ -4505,7 +4505,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "automatic_semicolon"
+                "name": "_automatic_semicolon"
               }
             ]
           }
@@ -4841,7 +4841,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "automatic_semicolon"
+                "name": "_automatic_semicolon"
               }
             ]
           }
@@ -4909,7 +4909,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "automatic_semicolon"
+                "name": "_automatic_semicolon"
               }
             ]
           }
@@ -5008,7 +5008,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "automatic_semicolon"
+                "name": "_automatic_semicolon"
               }
             ]
           }
@@ -5247,7 +5247,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "automatic_semicolon"
+                "name": "_automatic_semicolon"
               }
             ]
           }
@@ -7557,7 +7557,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "automatic_semicolon"
+          "name": "_automatic_semicolon"
         }
       ]
     },
@@ -7816,7 +7816,7 @@
     },
     {
       "type": "SYMBOL",
-      "name": "automatic_semicolon"
+      "name": "_automatic_semicolon"
     }
   ],
   "inline": [

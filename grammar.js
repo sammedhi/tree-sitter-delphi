@@ -145,7 +145,7 @@ export default grammar({
     $.multiline_string,
     $.float_no_decimal,
     $.asm_instructions,
-    $.automatic_semicolon
+    $._automatic_semicolon
   ],
 
   rules: {
@@ -783,7 +783,7 @@ export default grammar({
     case_branch: $ => seq(
       field('pattern', commaSep1(alias($.expression, $.case_pattern))),
       ':',
-      field('body', choice($.statement, $.automatic_semicolon)),
+      field('body', choice($.statement, $._automatic_semicolon)),
     ),
 
     assignment_statement: $ => seq(
@@ -836,7 +836,7 @@ export default grammar({
       field('direction', choice(kw('to'), kw('downto'))),
       field('final_value', $.expression),
       kw('do'),
-      field('body', choice($.statement, $.automatic_semicolon)),
+      field('body', choice($.statement, $._automatic_semicolon)),
     ),
 
     for_each_statement: $ => seq(
@@ -845,7 +845,7 @@ export default grammar({
       kw('in'),
       field('collection', $.expression),
       kw('do'),
-      field('body', choice($.statement, $.automatic_semicolon)),
+      field('body', choice($.statement, $._automatic_semicolon)),
     ),
 
     _for_variable: $ => choice(
@@ -863,7 +863,7 @@ export default grammar({
       kw('while'),
       field('condition', $.expression),
       kw('do'),
-      field('body', choice($.statement, $.automatic_semicolon)),
+      field('body', choice($.statement, $._automatic_semicolon)),
     ),
 
     repeat_statement: $ => seq(
@@ -898,7 +898,7 @@ export default grammar({
       optional(seq(field('variable', $._identifier), ':')),
       field('type', $._name),
       kw('do'),
-      field('body', choice($.statement, $.automatic_semicolon)),
+      field('body', choice($.statement, $._automatic_semicolon)),
     ),
 
     try_finally_statement: $ => seq(
@@ -1219,7 +1219,7 @@ export default grammar({
 
     _semicolon: $ => choice(
       ';',
-      $.automatic_semicolon
+      $._automatic_semicolon
     ),
 
     comment: $ => choice(
